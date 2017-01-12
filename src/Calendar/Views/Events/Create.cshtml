@@ -1,0 +1,111 @@
+@model Calendar.Models.Event
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <h4>Event</h4>
+        <hr />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label asp-for="Subject" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Subject" class="form-control" />
+                <span asp-validation-for="Subject" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="TaskDescription" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="TaskDescription" class="form-control" />
+                <span asp-validation-for="TaskDescription" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="StartDateTime" class="col-md-2 control-label col-xs-3"></label>
+            <div class="col-md-10 col-xs-3">
+                <input type="datetime-local" asp-for="StartDateTime" class="form-control" />
+                <span asp-validation-for="StartDateTime" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="EndDateTime" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="EndDateTime" class="form-control" />
+                <span asp-validation-for="EndDateTime" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AffectedHosts" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="AffectedHosts" class="form-control" />
+                <span asp-validation-for="AffectedHosts" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="AffectedProjects" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="AffectedProjects" class="form-control" />
+                <span asp-validation-for="AffectedProjects" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="AffectedTeams" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="AffectedTeams" class="form-control" />
+                <span asp-validation-for="AffectedTeams" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Severity" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Severity" class="form-control" />
+                <span asp-validation-for="Severity" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Category" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Reference" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Reference" class="form-control" />
+                <span asp-validation-for="Reference" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Result" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="Result" class="form-control" />
+                <span asp-validation-for="Result" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
