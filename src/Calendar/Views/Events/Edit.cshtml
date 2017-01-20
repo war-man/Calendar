@@ -1,4 +1,7 @@
+@using Calendar.Models.Services
+
 @model Calendar.Models.Event
+@inject StaticListOfValuesService LOVs
 
 @{
     ViewData["Title"] = "Edit";
@@ -26,18 +29,43 @@
                 <span asp-validation-for="TaskDescription" class="text-danger" />
             </div>
         </div>
+  
         <div class="form-group">
             <label asp-for="StartDateTime" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="StartDateTime" class="form-control" />
-                <span asp-validation-for="StartDateTime" class="text-danger" />
+            <div class="col-md-4">
+                <div class='input-group date' id='dtpickerStart'>
+                    <input asp-for="StartDateTime" class="form-control" />                    
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                        <span asp-validation-for="StartDateTime" class="text-danger" />
+                    </span>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        $('#dtpickerStart').datetimepicker({
+                            format: 'lll',
+                            sideBySide: true
+                        });
+                    });
+                </script>
             </div>
-        </div>
-        <div class="form-group">
             <label asp-for="EndDateTime" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <input asp-for="EndDateTime" class="form-control" />
-                <span asp-validation-for="EndDateTime" class="text-danger" />
+            <div class="col-md-4">
+                <div class='input-group date' id='dtpickerEnd'>
+                    <input asp-for="EndDateTime" class="form-control" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                        <span asp-validation-for="EndDateTime" class="text-danger" />
+                    </span>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        $('#dtpickerEnd').datetimepicker({
+                            format: 'lll',
+                            sideBySide: true                           
+                        });
+                    });
+                </script>
             </div>
         </div>
         <div class="form-group">
@@ -64,7 +92,14 @@
         <div class="form-group">
             <label asp-for="Severity" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="Severity" class="form-control" />
+                <select asp-for="Severity" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListSeverities())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+
                 <span asp-validation-for="Severity" class="text-danger" />
             </div>
         </div>

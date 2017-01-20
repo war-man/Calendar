@@ -29,5 +29,7 @@ namespace Calendar.Data
         public DbSet<Team> Team { get; set; }
 
         public DbSet<Project> Project { get; set; }
+
+        public DbSet<TeamProject> TeamProject { get; set; }
     }
 }

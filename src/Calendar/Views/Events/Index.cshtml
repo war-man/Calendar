@@ -61,11 +61,14 @@
             <td>
                 @Html.DisplayFor(modelItem => item.AffectedTeams)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Reference)
+            <td>                
+                @if (!String.IsNullOrEmpty(item.Reference))
+                {
+                    <a href="http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp?i_CRN=@item.Reference">@item.Reference</a>
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Result)
+                @Html.DisplayFor(modelItem => item.Result)                
             </td>
             <td>
                 <ul>

@@ -24,10 +24,11 @@ namespace Calendar.Models
                              Subject = "Schedule Confirmed (Service Impact) (Windows) DC6 WCDCIIS08S - Perform IP Change Drill Test in the OS instance(s) on 8 Dec 2016 (CR16112804)",
                              Category = "Server",
                              AffectedProjects = "ERP",
-                             AffectedTeams = "HA2,HA6,HA7",
+                             AffectedTeams = "HA2, HA6, HA7",
                              AffectedHosts = "DC6/WCDCIIS08S",
                              TaskDescription = "Perform IP Change Drill Test ",
                              Reference = "CR16112804",
+                             Severity = 0,
                              Result = "Successfully completed on schedule"
                          },
                          new Event
@@ -41,13 +42,12 @@ namespace Calendar.Models
                              AffectedHosts = "DC7/erp77014",
                              TaskDescription = "Voltage Regulator Module replacement ",
                              Reference = "PR1855565",
+                             Severity = 1,
                              Result = "Successfully completed on schedule"
                          }
                     );
                     context.SaveChanges();
                 }
-
-
 
                 // Look for any Event.
                 if (!context.Team.Any())
@@ -83,11 +83,15 @@ namespace Calendar.Models
                              Name = "HA6",
                              Description = "Enterprise Resource Planning Project Team 6"
                          },
-
                          new Team
                          {
                              Name = "HA7",
                              Description = "Enterprise Resource Planning Project Team 7"
+                         },
+                         new Team
+                         {
+                             Name = "HAS",
+                             Description = "HAS"
                          }
                          );
                     context.SaveChanges();
@@ -122,6 +126,55 @@ namespace Calendar.Models
                             Description = "Business Intelligence",
                             Administrator = "HA4"
                          }
+                    );
+                    context.SaveChanges();
+
+                }
+
+                // Look for any TeamProject Relationships.
+                if (!context.TeamProject.Any())
+                {
+                    context.TeamProject.AddRange(
+                        new TeamProject
+                        {
+                            Team = "HA2",
+                            Project = "HYP"
+                        },
+                        new TeamProject
+                        {
+                            Team = "HA2",
+                            Project = "SFMS"
+                        },
+                        new TeamProject
+                        {
+                            Team = "HA2",
+                            Project = "ERP"
+                        },
+                        new TeamProject
+                        {
+                            Team = "HA6",
+                            Project = "ERP"
+                        },
+                        new TeamProject
+                        {
+                            Team = "HA7",
+                            Project = "ERP"
+                        },
+                        new TeamProject
+                        {
+                            Team = "HA8",
+                            Project = "ERP"
+                        },
+                        new TeamProject
+                        {
+                            Team = "HA9",
+                            Project = "ERP"
+                        },
+                        new TeamProject
+                        {
+                            Team = "HAS",
+                            Project = "BA"
+                        }
                     );
                     context.SaveChanges();
 

@@ -148,6 +148,24 @@ namespace Calendar.Data.Migrations
                     b.ToTable("Team");
                 });
 
+            modelBuilder.Entity("Calendar.Models.TeamProject", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Project")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 5);
+
+                    b.Property<string>("Team")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 5);
+
+                    b.HasKey("ID");
+
+                    b.ToTable("TeamProject");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityRole", b =>
                 {
                     b.Property<string>("Id");

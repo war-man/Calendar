@@ -3,9 +3,11 @@
 *@
 
 @using Calendar.Helpers
+@using Calendar.Models.Services
 
 @model IEnumerable<Calendar.Helpers.CalendarEvent>
 @inject Calendar.Controllers.TeamsController Teams
+@inject Calendar.Models.Services.EventStatisticsService EventStatsService
 
 @{
     Layout = "_LayoutCalendar";
@@ -33,8 +35,10 @@
 
     int NumOfCalRow = (int)Math.Ceiling(((LastDateOfTheCalendar.Date - FirstDateOfTheCalendar.Date).TotalDays + 1) / DAYSINAWEEK);
 
-    Dictionary<string, int> ProjectColorAssign = new Dictionary<string, int>();
+    /* Provide summary figures on Event,Team,Project */
+    EventStatsService.Initialize(FirstDateOfTheCalendar, LastDateofTheMonth);
 
+    Dictionary<string, int> ProjectColorAssign = new Dictionary<string, int>();
 
     foreach (var item in Model)
     {
@@ -113,42 +117,7 @@
 <div class="container">
     <div class="row">
         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
-            <div class="panel panel-default" style="border-color:#0b8724;">
-                <!-- Default panel contents -->
-                <div class="panel-heading" style="background-color:#2bc406;border-color:#0b8724;">                                        
-                    <h4 class="panel-title"><a style="text-decoration:none;" asp-action="Calendar" role="button" style="border:0;" asp-route-year="@ViewDate.Year" asp-route-month="@ViewDate.Month" asp-route-filterproject="@ViewBag.FilterProject" asp-route-filterteam="">HA Section&nbsp<span class="badge" style="background-color:#333333">@Model.Count()</span></a></h4>
-                </div>
-                <div class="panel-body" style="padding: 0 0 0 9px">
-                    <ul class="list-group">
-                        @{
-                            /*var teams = CalEvents.SelectMany(m => m.Teams).Distinct().ToList();*/
-                            var teams = Teams.ListAll();
-
-                            foreach (var t in teams)
-                            {
-                                var cnt = Model.Where(m => m.Teams.Contains(t.Name)).Count();
-                                <li class="list-group-item" style="border:0px solid;padding:0;">
-                                    @if (@cnt == 0)
-                                    {
-                                        <a class="btn btn-default btn-s disabled" href="#" role="button" style="border:0;">
-                                            @t.Name
-                                            &nbsp;&nbsp;<span class="badge" style="background-color:gray">&nbsp;@cnt&nbsp;</span>
-                                        </a>
-                                    }
-                                    else
-                                    {
-                                        var btn_active = (t.Name == ViewBag.FilterTeam) ? "active" : "";
-                                        <a class="btn btn-default btn-s @btn_active" asp-action="Calendar" role="button" style="border:0;" asp-route-year="@ViewDate.Year" asp-route-month="@ViewDate.Month" asp-route-filterproject="@ViewBag.FilterProject" asp-route-filterteam="@t.Name">
-                                            @t.Name
-                                            &nbsp;&nbsp;<span class="badge" style="background-color:#333333">&nbsp;@cnt&nbsp;</span>
-                                        </a>
-                                    }
-                                </li>
-                            }
-                        }
-                    </ul>
-                </div>
-            </div>
+            <div id="tree" style1="height:700px;"></div>
         </div>
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">
             <!-- main calenar -->
@@ -260,15 +229,18 @@
 
                                                 var over_title = ((e.Severity == 1) ? "<span class='glyphicon glyphicon-exclamation-sign' style='color:red'></span>" : "") + ce.OriginalStart.ToString("dd-MMM h:mmtt") + " - " + ce.OriginalEnd.ToString("dd-MMM h:mmtt");
                                                 var over_content = "<b>Subject:</b> " + e.Subject + "<br><b>Project(s):</b> " + e.AffectedProjects + "<br><b>Host(s):</b> " + e.AffectedHosts;
+                                                over_content = over_content + "<br><b>Reference:</b> <a target=_blank href=http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp?i_CRN=" + e.Reference + ">" + e.Reference + "</a>";
                                                 var over_placement = (row == 0) ? "bottom" : "top";
 
                                         <td class="st-c" colspan="@ColSpan">                                            
                                             <div class="st-c-pos">                                                
-                                                @if (e.Severity == 1)
+                                                @*
+                                                @if (!ce.Continue && e.Severity == 1)
                                                 {
                                                     <span class="glyphicon glyphicon-exclamation-sign" style="color:red;position:absolute;top:-3px;left:-3px"></span>
                                                 }
-                                                <div class="ca-evp-@d.@grid_row.@NumOfDays rb-n cal-proj-color-3" data-placement=@over_placement data-toggle="popover" data-container="body" data-title="@over_title" data-content="@over_content" data-html="true">                                                                                                        
+                                                *@
+                                                <div class="ca-evp-@d.@grid_row.@NumOfDays rb-n cal-proj-color-severity-@e.Severity" data-placement=@over_placement data-toggle="popover" data-trigger="focus" data-container="body" data-title="@over_title" data-content="@over_content" data-html="true">                                                                                                        
                                                     <div class="rb-ni">
                                                         <!--<a style="text-decoration:none; color:#ffffff;" asp-controller="Events" asp-action="Details" asp-route-id="@e.ID">-->
                                                         <a style="text-decoration:none; color:#ffffff;" href="#">
@@ -321,4 +293,150 @@
 
         </div>
     </div>
+    <div class="row" style="display:none">
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+            <div class="panel panel-default" style="border-color:#0b8724;">
+                <!-- Default panel contents -->
+                <div class="panel-heading" style="background-color:#2bc406;border-color:#0b8724;">
+                    <h4 class="panel-title"><a style="text-decoration:none;" asp-action="Calendar" role="button" asp-route-year="@ViewDate.Year" asp-route-month="@ViewDate.Month" asp-route-filterproject="@ViewBag.FilterProject" asp-route-filterteam="">HA Section&nbsp<span class="badge badge-grey">@EventStatsService.SectionEventCount</span></a></h4>
+                </div>
+                <div class="panel-body" style="padding: 0 0 0 9px">
+                    <ul class="list-group">
+                        @{
+                            /*var teams = CalEvents.SelectMany(m => m.Teams).Distinct().ToList();*/
+
+                            //var teams = Teams.ListAll();
+                            var teams = EventStatsService.TeamStats;
+
+                            foreach (var t in teams)
+                            {
+                                //var cnt = Model.Where(m => m.Teams.Contains(t.Name)).Count();
+                                var cnt = t.TeamEventCount;
+                                <li class="list-group-item" style="border:0px solid;padding:0;">
+                                    @if (@cnt == 0)
+                                    {
+                                        <a class="btn btn-default btn-s disabled" href="#" role="button" style="border:0;padding-bottom:3px;padding-top:3px;">
+                                            @t.Team
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="badge badge-grey">@cnt</span>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        var btn_active = (t.Team == ViewBag.FilterTeam) ? "active" : "";
+                                        <a class="btn btn-default btn-s @btn_active" asp-action="Calendar" role="button" style="border:0;padding-bottom:3px;padding-top:3px;" asp-route-year="@ViewDate.Year" asp-route-month="@ViewDate.Month" asp-route-filterproject="@ViewBag.FilterProject" asp-route-filterteam="@t.Team">
+                                            @t.Team
+                                            &nbsp;&nbsp;&nbsp;&nbsp;<span class="badge badge-inverse">@cnt</span>
+                                        </a>
+                                    }
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div> <!--class="panel panel-default"-->
+        </div>
+
+        <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10">            
+        </div>
+    </div>
 </div>
+
+<script type="text/javascript">
+
+$(function() {
+    var treedata = [];                      /* array */
+    var teams = @Html.Raw(Json.Serialize(EventStatsService.TeamStats));
+    var sectionevtcnt = @Html.Raw(Json.Serialize(EventStatsService.SectionEventCount));
+
+    //alert(JSON.stringify(teams));
+    for (i = 0; i < teams.length; i++) {
+        var teamnode    = {};                  /* object for each team */
+        var projs       = teams[i].projects;   /* array list of projects */
+        var projevtcnts = teams[i].projectEventCounts;
+        var projnode    = [];                  /* array of object (project node) */
+
+        for (j = 0; j < projs.length; j++) {
+            if (projevtcnts[j] > 0) {
+                if (teams[i].team == '@ViewBag.FilterTeam' && projs[j] == '@ViewBag.FilterProject')
+                    projnode[j] = {text:projs[j], tags: [projevtcnts[j]], selectable:false, state: { selected:true }, href: "Calendar?year=@ViewDate.Year&month=@ViewDate.Month&filterteam="+teams[i].team+"&filterproject="+projs[j] };
+                else
+                    projnode[j] = {text:projs[j], tags: [projevtcnts[j]], selectable:false, href: "Calendar?year=@ViewDate.Year&month=@ViewDate.Month&filterteam="+teams[i].team+"&filterproject="+projs[j] };
+            }
+            else
+                projnode[j] = {text:projs[j], tags: [0], enableLinks:false, selectable:false, href: "#"};
+        }
+        //alert(teams[i].team + ' ' + JSON.stringify(projnode));
+
+        if (projs.length == 0) {
+            teamnode = {text:teams[i].team, tags: [0], enableLinks:false, selectable:false, href: "#"};
+        } else
+        {
+            if (teams[i].team == '@ViewBag.FilterTeam')
+                if ('@ViewBag.FilterProject' == '')
+                    teamnode = {text:teams[i].team, tags: [teams[i].teamEventCount], selectable:false, state: { selected:true,expanded:true }, href: "Calendar?year=@ViewDate.Year&month=@ViewDate.Month&filterteam="+teams[i].team, nodes:projnode};
+                else
+                    teamnode = {text:teams[i].team, tags: [teams[i].teamEventCount], selectable:false, state: { expanded:true }, href: "Calendar?year=@ViewDate.Year&month=@ViewDate.Month&filterteam="+teams[i].team, nodes:projnode};
+            else
+                teamnode = {text:teams[i].team, tags: [teams[i].teamEventCount], selectable:false, href: "Calendar?year=@ViewDate.Year&month=@ViewDate.Month&filterteam="+teams[i].team, nodes:projnode};
+        }
+
+        //alert('teamnode ' + JSON.stringify(teamnode));
+        treedata[i] = teamnode;
+    }
+
+    var treetop = [];
+
+    if ('@ViewBag.FilterTeam' == '' && '@ViewBag.FilterProject' == '')
+        treetop[0] = {text:"HA Section", nodes:treedata, state: { selected:true }, tags: [sectionevtcnt], href: "Calendar?year=@ViewDate.Year&month=@ViewDate.Month"};
+    else
+        treetop[0] = {text:"HA Section", nodes:treedata, tags: [sectionevtcnt], href: "Calendar?year=@ViewDate.Year&month=@ViewDate.Month"};
+
+    //alert(JSON.stringify(treetop));
+
+    var treedata2 = [
+  {
+      text: "Parent 1",
+      tags: ['available'],
+      nodes: [
+        {
+            text: "Child 1",
+            nodes: [
+              {
+                  text: "Grandchild 1"
+              },
+              {
+                  text: "Grandchild 2"
+              }
+            ]
+        },
+        {
+            text: "Child 2"
+        }
+      ]
+  },
+  {
+      text: "Parent 2"
+  },
+  {
+      text: "Parent 3"
+  },
+  {
+      text: "Parent 4"
+  },
+  {
+      text: "Parent 5"
+  }
+    ];
+
+    // Some logic to retrieve, or generate tree structure
+    $('#tree').treeview({
+        showTags: true,
+        enableLinks: true,
+        color: "#428bca",
+        data: treetop
+    });
+
+    //$('#tree').treeview('selectNode', 2);
+
+});
+</script>

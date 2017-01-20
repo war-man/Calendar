@@ -50,6 +50,8 @@ namespace Calendar
             services.AddMvc();
 
             // Add application services.
+            services.AddTransient<Calendar.Models.Services.EventStatisticsService>();
+            services.AddTransient<Calendar.Models.Services.StaticListOfValuesService>();
             services.AddTransient<Calendar.Controllers.TeamsController>();
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();

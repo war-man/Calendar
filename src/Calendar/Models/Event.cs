@@ -9,9 +9,9 @@ namespace Calendar.Models
     public class Event
     {
         public int ID { get; set; }
-        [Display(Name = "Start Time"), DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy HH:mm}"), DataType(DataType.DateTime), Required]
+        [Display(Name = "Start Time"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy h:mm tt}", ApplyFormatInEditMode = true), DataType(DataType.DateTime), Required]
         public DateTime StartDateTime { get; set; }
-        [Display(Name = "End Time"), DisplayFormat(DataFormatString = "{0:dd-MMM-yyyy HH:mm}"), DataType(DataType.DateTime), Required]
+        [Display(Name = "End Time"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy h:mm tt}", ApplyFormatInEditMode = true), DataType(DataType.DateTime), Required]
         public DateTime EndDateTime { get; set; }
         [StringLength(500, MinimumLength = 3)]
         public string Subject { get; set; }

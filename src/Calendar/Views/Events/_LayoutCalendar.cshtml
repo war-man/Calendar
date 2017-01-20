@@ -7,16 +7,58 @@
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css" />
         <link rel="stylesheet" href="~/css/calendar.css" />
-        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/site.css" />        
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
-              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
+              asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />        
+        <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
         <link rel="stylesheet" href="~/css/calendar.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />        
     </environment>
+    
+    <environment names="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/tether/dist/js/tether.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>        
+        <script src="~/lib/bootstrap-treeview/public/js/bootstrap-treeview.js"></script>
+        <script src="~/lib/moment/min/moment-with-locales.min.js"></script>
+        <script src="~/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="~/js/calendar.js" asp-append-version="true"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    </environment>
+    <environment names="Staging,Production">
+        <script src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+                asp-fallback-test="window.jQuery">
+        </script>
+        <script src="~/lib/tether/dist/js/tether.min.js"
+                asp-fallback-src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.1/js/tether.min.js">
+        </script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
+        </script>
+        <script src="~/lib/bootstrap-treeview/dist/bootstrap-treeview.min.js"></script>
+        <script src="~/lib/moment/min/moment-with-locales.min.js"></script>
+        <script src="~/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="~/js/calendar.min.js" asp-append-version="true"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>
+
+    @RenderSection("scripts", required: false)
+
+    <script type="text/javascript">
+        /* IE only. Prompt message when Compatibility Mode is turned on.*/
+        var ie = IeVersion();
+
+        if (ie.CompatibilityMode)
+            alert("This Calendar does't support Compatibility Mode. Please turn it off and retry.");
+    </script>
+
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -39,43 +81,8 @@
             </div>
         </div>
     </div>
-    <div class="container body-content" style="margin: 5px 0 0 40px">
+    <div class="container body-content" style="margin: 5px 0 0 30px">
         @RenderBody()
     </div>
-
-    <environment names="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/tether/dist/js/tether.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-        <script src="~/js/calendar.js" asp-append-version="true"></script>
-        <script src="~/js/site.js" asp-append-version="true"></script>
-    </environment>
-    <environment names="Staging,Production">
-
-        <script src="~/lib/tether/dist/js/tether.min.js"
-            asp-fallback-src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.3.1/js/tether.min.js">
-        </script>
-        <script src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-test="window.jQuery">
-        </script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
-        </script>
-        <script src="~/js/calendar.min.js" asp-append-version="true"></script>
-        <script src="~/js/site.min.js" asp-append-version="true"></script>
-    </environment>
-
-    @RenderSection("scripts", required: false)
-    
-    <script type="text/javascript">
-        /* IE only. Prompt message when Compatibility Mode is turned on.*/
-        var ie = IeVersion();
-
-        if (ie.CompatibilityMode)
-            alert("This Calendar does't support Compatibility Mode. Please turn it off and retry.");
-    </script>
-
 </body>
 </html>

@@ -130,6 +130,27 @@
 }
 
 
+.cal-proj-color-severity-1 {
+    font-size: 12px;
+    border:1px solid #f59b95;
+    color:#EAEAEA;
+    background-color:#ff0000;
+}
+
+.cal-proj-color-severity-2 {
+    font-size: 12px;
+    border:1px solid #e67515;
+    color:#777777;
+    background-color:#f39c12;
+}
+
+.cal-proj-color-severity-3 {
+    font-size: 12px;    
+    border:1px solid #0b8724;
+    color:#EAEAEA;
+    background-color:#2bc406;
+}
+
 .cal-proj-color-0 {
     font-size: 11px;
     border:1px solid #f59b95;
