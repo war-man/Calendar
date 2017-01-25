@@ -126,6 +126,7 @@
         </div>
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
+                <input type="hidden" name="Redir" value="@ViewBag.Redir"/>
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>
@@ -133,7 +134,14 @@
 </form>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @if (@ViewBag.Redir == "Calendar")
+    {
+        <a asp-action="Calendar">Back to Calendar</a>
+    }
+    else
+    {
+        <a asp-action="Index">Back to List</a>
+    }
 </div>
 
 @section Scripts {

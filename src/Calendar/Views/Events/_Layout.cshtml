@@ -49,11 +49,9 @@
         /* IE only. Prompt message when Compatibility Mode is turned on.*/
         var ie = IeVersion();
 
-        if (ie.CompatibilityMode) {
+        if (ie.CompatibilityMode)
             alert("This Calendar does't support Compatibility Mode. Please turn it off and retry.");
-        }
     </script>
-
 
 </head>
 <body>
@@ -77,7 +75,7 @@
             </div>
         </div>
     </div>
-    <div class="container body-content" >
+    <div class="container body-content">
         @RenderBody()
         <hr />
         <footer>

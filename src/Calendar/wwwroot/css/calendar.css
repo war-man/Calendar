@@ -220,3 +220,8 @@
     color:#777777;
     background-color:#f0d0ce;
 }
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}

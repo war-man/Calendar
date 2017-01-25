@@ -153,7 +153,7 @@ namespace Calendar.Controllers
         }
 
         // GET: Events/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> xEdit(int? id)
         {
             if (id == null)
             {
@@ -168,12 +168,29 @@ namespace Calendar.Controllers
             return View(@event);
         }
 
+        // GET: Events/Edit/5
+        public async Task<IActionResult> Edit(int? id, string redir)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var @event = await _context.Event.SingleOrDefaultAsync(m => m.ID == id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Redir = redir;
+            return View(@event);
+        }
+
         // POST: Events/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,Severity")] Event @event)
+        public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,Severity")] Event @event)
         {
             if (id != @event.ID)
             {
@@ -198,7 +215,10 @@ namespace Calendar.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index");
+                if (redir == "Calendar")
+                    return RedirectToAction("Calendar");
+                else
+                    return RedirectToAction("Index");
             }
             return View(@event);
         }

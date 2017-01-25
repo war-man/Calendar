@@ -26,5 +26,11 @@
     "inputFiles": [
       "wwwroot/js/calendar.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap-treeview/src/js/bootstrap-treeview.min.js",
+    "inputFiles": [
+      "wwwroot/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"
+    ]
   }
 ]
