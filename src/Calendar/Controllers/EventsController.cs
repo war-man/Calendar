@@ -91,9 +91,9 @@ namespace Calendar.Controllers
             {
                 CalendarEvent ce = new CalendarEvent(item);
 
-                ce.Servers = item.AffectedHosts.Split(',').Select(p => p.Trim()).ToList();
-                ce.Projects = item.AffectedProjects.Split(',').Select(p => p.Trim()).ToList();
-                ce.Teams = item.AffectedTeams.Split(',').Select(p => p.Trim()).ToList();
+                ce.Servers = item.AffectedHosts.Split(',').Select(p => p.Trim().ToUpper()).ToList();
+                ce.Projects = item.AffectedProjects.Split(',').Select(p => p.Trim().ToUpper()).ToList();
+                ce.Teams = item.AffectedTeams.Split(',').Select(p => p.Trim().ToUpper()).ToList();
 
                 /* we need to trim the startdate and enddate */
                 if (ce.e.StartDateTime < FirstDateOfTheCalendar)
@@ -153,7 +153,8 @@ namespace Calendar.Controllers
         }
 
         // GET: Events/Edit/5
-        public async Task<IActionResult> xEdit(int? id)
+        /*
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -167,6 +168,7 @@ namespace Calendar.Controllers
             }
             return View(@event);
         }
+        */
 
         // GET: Events/Edit/5
         public async Task<IActionResult> Edit(int? id, string redir)
@@ -215,8 +217,31 @@ namespace Calendar.Controllers
                         throw;
                     }
                 }
-                if (redir == "Calendar")
-                    return RedirectToAction("Calendar");
+                //string sredir = redir.Replace("%3F", "?").Replace("%3D","=").Replace("%26","&");
+                string sredir;
+                string pYear = "", pMonth = "";
+
+                if (redir != null && redir.StartsWith("Calendar"))
+                {
+                    sredir = Uri.UnescapeDataString(redir);
+
+                    string[] sparam = sredir.Split('&');
+
+                    foreach (var p in sparam)
+                    {
+                        string[] svalue = p.Split('=');
+
+                        if (svalue[0].ToLower() == "year")
+                            pYear = svalue[1];
+                        if (svalue[0].ToLower() == "month")
+                            pMonth = svalue[1];
+                    }
+
+                    RedirectToActionResult redirectResult = new RedirectToActionResult("Calendar", "Events", new { @year = pYear, @month = pMonth });
+                    //return RedirectToAction(Uri.UnescapeDataString(redir));
+                    //return RedirectToAction(sredir);                
+                    return redirectResult;
+                }
                 else
                     return RedirectToAction("Index");
             }

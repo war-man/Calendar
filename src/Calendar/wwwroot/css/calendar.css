@@ -50,6 +50,7 @@
     table-layout: fixed;
     top: 0;
     width: 100%;
+    /*border-collapse: unset;*/
 }
 
 .st-bg {
@@ -224,4 +225,19 @@
 .nopadding {
    padding: 0 !important;
    margin: 0 !important;
+}
+
+.section-node {
+    font-weight: bold;
+}
+
+.team-node {
+    /*font-size: 1.1vw;*/
+}
+
+.project-node {
+    font-size: 0.85em;
+    /*font-size: 0.9vw;*/
+    padding: 5px 15px;
+    color: #428bca;
 }

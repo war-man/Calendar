@@ -133,10 +133,11 @@
     </div>
 </form>
 
-<div>
-    @if (@ViewBag.Redir == "Calendar")
+<div>    
+
+    @if (@ViewBag.Redir != null && @ViewBag.Redir.StartsWith("Calendar"))
     {
-        <a asp-action="Calendar">Back to Calendar</a>
+        <a href="@Uri.UnescapeDataString(ViewBag.Redir)">Back to Calendar</a>                
     }
     else
     {

@@ -35,7 +35,7 @@ namespace Calendar.Models.Services
             var team = from m in _context.Team.OrderBy(m => m.Name)
                        select m;
 
-            var teamproject = from m in _context.TeamProject.OrderBy(m => m.Team)
+            var teamproject = from m in _context.TeamProject.OrderBy(m => m.Team).OrderBy(n => n.Project)
                               select m;
 
 

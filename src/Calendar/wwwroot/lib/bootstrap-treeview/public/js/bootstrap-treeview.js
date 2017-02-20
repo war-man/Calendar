@@ -517,6 +517,7 @@
 				.addClass(node.state.disabled ? 'node-disabled' : '')
 				.addClass(node.state.selected ? 'node-selected' : '')
 				.addClass(node.searchResult ? 'search-result' : '')
+                .addClass(node.customClass ? node.customClass : '') /* add custom style class */
 				.attr('data-nodeid', node.nodeId)
 				.attr('style', _this.buildStyleOverride(node));
 

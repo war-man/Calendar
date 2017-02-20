@@ -95,7 +95,7 @@
         content += "<tr><th valign=top>Host(s) </th><td>" + pEvt.AffectedHosts + "</td></tr>";
         content += "<tr><th valign=top>Reference </th><td><a target=_blank href=http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp?i_CRN=" + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
         content += "<tr><th valign=top>Result </th><td>" + pEvt.Result + "</td></tr></table>";
-        content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=Calendar'>Edit Event Details</a>";
+        content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>Edit Event Details</a>";
         return content;
     }
 }
@@ -110,7 +110,7 @@
           <div class="row">
             <div class="col-xs-4 col-sm-4 col-md-3 col-lg-4">
                 <a class="btn btn-primary glyphicon glyphicon-calendar" asp-action="Calendar" role="button" title="Show Today"></a>
-                <a class="btn btn-primary glyphicon glyphicon-chevron-left" asp-action="Calendar" role="button" title="Previous Period" asp-route-year="@ViewDate_Prev.Year" asp-route-month="@ViewDate_Prev.Month" asp-route-filterproject="@ViewBag.FilterProject" asp-route-filterteam="@ViewBag.FilterTeam"></a><a class="btn btn-primary glyphicon glyphicon-chevron-right" asp-action="Calendar" asp-route-year="@ViewDate_Next.Year" asp-route-month="@ViewDate_Next.Month" asp-route-filterproject="@ViewBag.FilterProject" asp-route-filterteam="@ViewBag.FilterTeam"></a>
+                <a class="btn btn-primary glyphicon glyphicon-chevron-left" asp-action="Calendar" role="button" title="Previous Period" asp-route-year="@ViewDate_Prev.Year" asp-route-month="@ViewDate_Prev.Month" asp-route-filterproject="@ViewBag.FilterProject" asp-route-filterteam="@ViewBag.FilterTeam"></a><a class="btn btn-primary glyphicon glyphicon-chevron-right" asp-action="Calendar" title="Next Period" asp-route-year="@ViewDate_Next.Year" asp-route-month="@ViewDate_Next.Month" asp-route-filterproject="@ViewBag.FilterProject" asp-route-filterteam="@ViewBag.FilterTeam"></a>
             </div>
             <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 text-center">
                 <lable class="m-title">@ViewDate.ToString("MMMM yyyy")</lable>
@@ -118,7 +118,7 @@
             <div class="col-xs-4 col-sm-4 col-md-5 col-lg-4 text-right">
                 <div class="form-group" onsubmit="return false;">
                     <form class="form-inline">
-                        <label for="idFilterProject" style="display:none">Project</label> <input type="text" id="idFilterProject" name="FilterProject" value="@ViewBag.FilterProject" placeholder="e.g. ERP" class="form-control" title="Filter by Project">
+                        <label for="idFilterProject" style="display:none">Project</label> <input type="text" id="idFilterProject" name="FilterProject" value="@ViewBag.FilterProject" placeholder="e.g. ERP" class="form-control" title="Filter by Project" autofocus>
                         <input type="hidden" name="year" value="@ViewDate.Year"/>
                         <input type="hidden" name="month" value="@ViewDate.Month" />
                         <input type="hidden" name="FilterTeam" value="@ViewBag.FilterTeam"/>
@@ -376,16 +376,16 @@ else
 
         for (j = 0; j < projs.length; j++) {
             if (projevtcnts[j] == 0)
-                projnode[j] = {text:projs[j], custom: "p", tags: [0], selectable:false };
+                projnode[j] = {text:projs[j], customClass: "project-node", custom: "p", tags: [0], selectable:false };
             else
-                projnode[j] = {text:projs[j], custom: "p", tags: [projevtcnts[j]] };
+                projnode[j] = {text:projs[j], customClass: "project-node", custom: "p", tags: [projevtcnts[j]] };
         }
         //alert(teams[i].team + ' ' + JSON.stringify(projnode));
 
         if (projs.length == 0)
-            teamnode = {text:teams[i].team, custom: "t", tags: [0], selectable:false };
+            teamnode = {text:teams[i].team, customClass: "team-node", custom: "t", tags: [0], selectable:false };
         else
-            teamnode = {text:teams[i].team, custom: "t", tags: [teams[i].teamEventCount], selectable:(teams[i].teamEventCount>0), nodes:projnode};
+            teamnode = {text:teams[i].team, customClass: "team-node", custom: "t", tags: [teams[i].teamEventCount], selectable:(teams[i].teamEventCount>0), nodes:projnode};
 
         //alert('teamnode ' + JSON.stringify(teamnode));
         teamtree[i] = teamnode;
@@ -393,7 +393,7 @@ else
 
     var teamtreetop = [];
 
-    teamtreetop[0] = {text:"HA Section", nodes:teamtree, state: { selected:true }, tags: [sectionevtcnt] };
+    teamtreetop[0] = {text:"HA Section", customClass: "section-node", nodes:teamtree, state: { selected:true }, tags: [sectionevtcnt] };
 
     //alert(JSON.stringify(treetop));
 
@@ -401,7 +401,8 @@ else
     $('#teamtree').treeview({
         showTags: true,
         enableLinks: false,
-        color: "#428bca",
+        color: "#337ab7",
+        selectedBackColor: "#337ab7",
         data: teamtreetop
     });
 
@@ -450,7 +451,7 @@ else
             var e  = ce.e;
 
             if (node.custom == "t") {
-                if ($.inArray(node.text, ce.teams) >= 0)
+                if ($.inArray(node.text.toUpperCase(), ce.teams) >= 0)
                     eids2show.push(e.id);
                 else
                     eids2hide.push(e.id);
@@ -458,7 +459,7 @@ else
                 //find the parent. i.e. the team of the project
                 var pnode = $('#teamtree').treeview('getParent', node);
                 if (pnode) {
-                    if ($.inArray(pnode.text, ce.teams) >= 0 && $.inArray(node.text, ce.projects) >= 0) 
+                    if ($.inArray(pnode.text.toUpperCase(), ce.teams) >= 0 && $.inArray(node.text.toUpperCase(), ce.projects) >= 0) 
                         eids2show.push(e.id);
                     else
                         eids2hide.push(e.id);
@@ -475,7 +476,7 @@ else
 
         var proj = $('#idFilterProject').val().toUpperCase().trim();
         
-        $('#idFilterProject').val(proj);
+        //$('#idFilterProject').val(proj);
 
         if (proj == "") return;
 
@@ -497,6 +498,13 @@ else
         var nodes = $('#teamtree').treeview('getSelected');
         for (i=0; i < nodes.length; i++) {
             $('#teamtree').treeview('unselectNode', [ nodes[i].nodeId, { silent: true} ]);
-        }                
+        }
+        $('#idFilterProject').focus();
     }
+
+    $("#idFilterProject").keypress(function(event) {
+        if (event.which == 13) {
+            doFilter();
+        }
+    });
 </script>

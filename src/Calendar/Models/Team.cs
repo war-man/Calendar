@@ -9,7 +9,7 @@ namespace Calendar.Models
     public class Team
     {
         public int ID { get; set; }
-        [StringLength(5, MinimumLength = 2), Required]
+        [StringLength(15, MinimumLength = 2), Required]
         public string Name { get; set; }
         [StringLength(50, MinimumLength = 3), Required]
         public string Description { get; set; }
