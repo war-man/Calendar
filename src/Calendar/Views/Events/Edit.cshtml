@@ -2,6 +2,9 @@
 
 @model Calendar.Models.Event
 @inject StaticListOfValuesService LOVs
+@inject Calendar.Controllers.TeamsController Teams
+@inject Calendar.Controllers.ProjectsController Projects
+
 
 @{
     ViewData["Title"] = "Edit";
@@ -71,21 +74,21 @@
         <div class="form-group">
             <label asp-for="AffectedHosts" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="AffectedHosts" class="form-control" />
+                <input asp-for="AffectedHosts" class="form-control" data-role="tagsinput" />
                 <span asp-validation-for="AffectedHosts" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
             <label asp-for="AffectedProjects" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="AffectedProjects" class="form-control" />
+                <input asp-for="AffectedProjects" class="form-control" data-role="tagsinput" />
                 <span asp-validation-for="AffectedProjects" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
             <label asp-for="AffectedTeams" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="AffectedTeams" class="form-control" />
+                <input asp-for="AffectedTeams" class="form-control" data-role="tagsinput" />
                 <span asp-validation-for="AffectedTeams" class="text-danger" />
             </div>
         </div>
@@ -148,3 +151,65 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script type="text/javascript">
+
+    $('#AffectedHosts').tagsinput({
+        tagClass: 'label label-default'
+    });
+
+
+    /* JSON.parse doesn't work. Just use the for loop instead. */
+    var p = @Html.Raw(Json.Serialize(Projects.ListAll()));
+    var projects = [];
+
+    for (i = 0; i < p.length; i++) {
+        projects[i] = p[i].name;
+    }
+
+    //alert(JSON.stringify(p));
+    //alert(projects);
+
+    var bobjProj = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        // url points to a json file that contains an array of country names, see
+        // https://github.com/twitter/typeahead.js/blob/gh-pages/data/countries.json
+        local: projects
+    });
+    bobjProj.initialize();
+
+    $('#AffectedProjects').tagsinput({
+        tagClass: 'label label-default',
+        typeaheadjs: {
+            source: bobjProj.ttAdapter()
+        }
+    });
+
+    /* JSON.parse doesn't work. Just use the for loop instead. */
+    var t = @Html.Raw(Json.Serialize(Teams.ListAll()));
+    var teams = [];
+
+    for (i = 0; i < t.length; i++) {
+        teams[i] = t[i].name;
+    }
+
+    //alert(JSON.stringify(t));
+    //alert(teams);
+    var bloodHoundObj = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        // url points to a json file that contains an array of country names, see
+        // https://github.com/twitter/typeahead.js/blob/gh-pages/data/countries.json
+        local: teams
+    });
+    bloodHoundObj.initialize();
+
+    $('#AffectedTeams').tagsinput({
+        tagClass: 'label label-default',
+        typeaheadjs: {
+            source: bloodHoundObj.ttAdapter()
+        }
+    });
+
+</script>

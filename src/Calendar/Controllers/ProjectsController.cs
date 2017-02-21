@@ -14,6 +14,11 @@ namespace Calendar.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+        public IEnumerable<Project> ListAll()
+        {
+            return _context.Project.AsEnumerable();
+        }
+
         public ProjectsController(ApplicationDbContext context)
         {
             _context = context;    

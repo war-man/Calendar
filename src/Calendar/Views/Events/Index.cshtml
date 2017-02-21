@@ -41,7 +41,9 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model)
+{
+
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.StartDateTime)
@@ -53,13 +55,22 @@
                 @Html.DisplayFor(modelItem => item.Subject)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AffectedHosts)
+                @{
+                    String affectedhosts = item.AffectedHosts.Replace(",", ", ");
+                    @affectedhosts
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AffectedProjects)
+                @{
+                    String affectedprojects = item.AffectedProjects.Replace(",", ", ");
+                    @affectedprojects
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AffectedTeams)
+                @{
+                    String affectedteams = item.AffectedTeams.Replace(",", ", ");
+                    @affectedteams
+                }
             </td>
             <td>                
                 @if (!String.IsNullOrEmpty(item.Reference))

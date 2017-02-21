@@ -50,6 +50,7 @@ textarea {
   }
 }
 
-
-
-
+/* quick fix for tagsinput not taking up the whole col width */
+.bootstrap-tagsinput {
+width: 100%;
+}
