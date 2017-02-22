@@ -187,7 +187,8 @@
     $('#AffectedProjects').tagsinput({
         tagClass: 'label label-default',
         typeaheadjs: {
-            source: bobjProj.ttAdapter()
+            source: bobjProj.ttAdapter(),
+            limit: 10
         }
     });
 
@@ -213,7 +214,8 @@
     $('#AffectedTeams').tagsinput({
         tagClass: 'label label-default',
         typeaheadjs: {
-            source: bloodHoundObj.ttAdapter()
+            source: bloodHoundObj.ttAdapter(),
+            limit: 10
         }
     });
 
