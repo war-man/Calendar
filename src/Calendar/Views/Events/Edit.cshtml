@@ -154,6 +154,16 @@
 
 <script type="text/javascript">
 
+    /* prevent submit form by hitting Enter */
+    $(document).ready(function() {
+        $(window).keydown(function(event){
+            if(event.keyCode == 13) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    });
+
     $('#AffectedHosts').tagsinput({
         tagClass: 'label label-default'
     });

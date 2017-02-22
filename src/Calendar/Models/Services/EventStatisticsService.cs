@@ -23,11 +23,12 @@ namespace Calendar.Models.Services
             _context = context;
         }
         
+        /* It will be good if we can pass the Model in the Calendar.cshtml so that we don't need to run the query again. */
         public void Initialize(DateTime FirstDateOfTheCalendar, DateTime LastDateOfTheCalendar)
         {
             
             SectionEventCount = 0;            
-
+            
             var evt = from m in _context.Event.Where(m => !(m.EndDateTime <= FirstDateOfTheCalendar
                                                             || m.StartDateTime >= LastDateOfTheCalendar))
                       select m;
@@ -40,13 +41,35 @@ namespace Calendar.Models.Services
 
 
             SectionEventCount = evt.Count();
-            TeamStats = new List<TeamProjectStat>();            
+            TeamStats = new List<TeamProjectStat>();
 
             foreach (var t in team)
             {
                 TeamProjectStat stat = new TeamProjectStat();
+
+                stat.Team = t.Name;
+                stat.TeamEventCount = 0;
+                stat.Projects = new List<String>();
+                stat.ProjectEventCounts = new List<int>();
+
+                foreach (var tp in teamproject.Where(m => m.Team == t.Name))
+                {
+                    var tp_evt = evt.Where(m => ("," + m.AffectedProjects + ",").Contains("," + tp.Project + ",")
+                                             && ("," + m.AffectedTeams + ",").Contains("," + t.Name + ","));
+
+                    stat.Projects.Add(tp.Project);
+                    stat.ProjectEventCounts.Add(tp_evt.Count());
+                    stat.TeamEventCount = stat.TeamEventCount + tp_evt.Count();
+                }                                                
+                TeamStats.Add(stat);
+            }
+
+            /*
+            foreach (var t in team)
+            {
+                TeamProjectStat stat = new TeamProjectStat();
                 
-                var team_evt = evt.Where(m => m.AffectedTeams.Contains(t.Name));
+                var team_evt = evt.Where(m => (","+m.AffectedTeams+",").Contains(","+t.Name+","));
 
                 stat.Team = t.Name;
                 stat.TeamEventCount = team_evt.Count();
@@ -56,13 +79,14 @@ namespace Calendar.Models.Services
 
                 foreach (var tp in teamproject.Where(m => m.Team == t.Name))
                 {
-                    var tp_evt = team_evt.Where(m => m.AffectedProjects.Contains(tp.Project));
+                    var tp_evt = team_evt.Where(m => (","+m.AffectedProjects+",").Contains(","+tp.Project+","));
                     
                     stat.Projects.Add(tp.Project);
                     stat.ProjectEventCounts.Add(tp_evt.Count());
                 }
                 TeamStats.Add(stat);
             }
+            */
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Calendar.Controllers
         }
 
 
-        // GET: Events/Edit/5
+        // GET: Events/Calendar
         public async Task<IActionResult> Calendar(int? year, int? month, string filterProject, string filterTeam)
         {
             DateTime now = System.DateTime.Now;
@@ -224,7 +224,11 @@ namespace Calendar.Controllers
                 if (redir != null && redir.StartsWith("Calendar"))
                 {
                     sredir = Uri.UnescapeDataString(redir);
-
+                    int qPos = sredir.IndexOf('?');
+                    if ( qPos >= 0)
+                    {
+                        sredir = sredir.Substring(qPos+1, sredir.Length - (qPos+1));
+                    }
                     string[] sparam = sredir.Split('&');
 
                     foreach (var p in sparam)

@@ -19,23 +19,27 @@
     const int DAYSINAWEEK = 7;
     const int MAX_GRIDEVENTROW = 5;
 
-    DateTime ViewDate = ViewBag.ViewDate;               // Point of View.
+    DateTime ViewDate = ViewBag.ViewDate;               // Point of View, POV.
     DateTime FirstDateofTheMonth, LastDateofTheMonth;
     DateTime FirstDateOfTheCalendar, LastDateOfTheCalendar;
 
     DateTime ViewDate_Prev = ViewDate.AddMonths(-1);    //Going backward "<"
     DateTime ViewDate_Next = ViewDate.AddMonths(1);     //Going forward  ">"
 
+
+    /* Initializing Values */
     FirstDateofTheMonth = new DateTime(ViewDate.Year, ViewDate.Month, 1);
     LastDateofTheMonth = new DateTime(ViewDate.Year, ViewDate.Month, 1).AddMonths(1).AddDays(-1).AddHours(23).AddMinutes(59).AddSeconds(59);
 
     FirstDateOfTheCalendar = FirstDateofTheMonth.AddDays((int)FirstDateofTheMonth.DayOfWeek * -1);
     LastDateOfTheCalendar = LastDateofTheMonth.Date.AddDays(DAYSINAWEEK - 1 - (int)LastDateofTheMonth.DayOfWeek).AddHours(23).AddMinutes(59).AddSeconds(59);
 
+    /* Number of rows in the calendar for current POV. */
     int NumOfCalRow = (int)Math.Ceiling(((LastDateOfTheCalendar.Date - FirstDateOfTheCalendar.Date).TotalDays + 1) / DAYSINAWEEK);
 
     /* Provide summary figures on Event,Team,Project */
-    EventStatsService.Initialize(FirstDateOfTheCalendar, LastDateofTheMonth);
+    EventStatsService.Initialize(FirstDateOfTheCalendar, LastDateOfTheCalendar);
+
     /*
     Dictionary<string, int> ProjectColorAssign = new Dictionary<string, int>();
 
@@ -54,8 +58,11 @@
     */
 }
 
+@* Local functions for this View *@
+
 @functions{
 
+    /* Retrieve the CSS class for 'Today' */
     public string GetTodayCSS(DateTime pFirstDateofTheMonth, int pDay, string pCssPrefix)
     {
         if (pFirstDateofTheMonth.AddDays(pDay - 1).Date == DateTime.Now.Date)
@@ -65,7 +72,7 @@
         return string.Empty;
     }
 
-    /* Retrieve the Next Event to be painted in the Calendar for a particualer day in a month */
+    /* Retrieve the Next Event to be painted in the Calendar for a given date */
     /* Version 2 which should be able to handler across month */
     public CalendarEvent GetNextEventByDate(DateTime pDate)
     {
@@ -81,6 +88,7 @@
         return null;
     }
 
+    /* Check if there is still event for a particular row in the calendar */
     public bool MonthRowEventExhausted(DateTime pRowStart)
     {
         var e = Model.Where(m => (m.MarkedInCalendar == false && m.e.StartDateTime.Date >= pRowStart.Date && m.e.StartDateTime.Date <= pRowStart.Date.AddDays(6)));
@@ -88,11 +96,13 @@
         return (e.Count() == 0);
     }
 
+    /* Return the Popover Content */
     public string GetPopoverContent(Event pEvt)
     {
         var content = "<table><tr><th valign=top>Subject </th><td>" + pEvt.Subject + "</td></tr>";
-        content += "<tr><th valign=top>Project(s) </th><td>" + pEvt.AffectedProjects + "</td></tr>";
-        content += "<tr><th valign=top>Host(s) </th><td>" + pEvt.AffectedHosts + "</td></tr>";
+        content += "<tr><th valign=top>Host(s) </th><td>" + pEvt.AffectedHosts.Replace(",", ", ") + "</td></tr>";
+        content += "<tr><th valign=top>Project(s) </th><td>" + pEvt.AffectedProjects.Replace(",", ", ") + "</td></tr>";
+        content += "<tr><th valign=top>Team(s) </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
         content += "<tr><th valign=top>Reference </th><td><a target=_blank href=http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp?i_CRN=" + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
         content += "<tr><th valign=top>Result </th><td>" + pEvt.Result + "</td></tr></table>";
         content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>Edit Event Details</a>";
@@ -103,9 +113,10 @@
 <div class="container-fluid">
     <div class="row" style="margin:2px"></div>
     <div class="row" >
-        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 nopadding">
+        <!-- navigator menu on the left -->
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 nopadding">            
             <div id="teamtree"></div>                
-        </div>
+        </div>        
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10" style="padding:0 0 0 15px">
           <div class="row">
             <div class="col-xs-4 col-sm-4 col-md-3 col-lg-4">
@@ -148,11 +159,10 @@
                             @{
                                 int offset = (int)FirstDateofTheMonth.DayOfWeek * -1 + 1;
                                 int lastday = LastDateofTheMonth.Day;
-                                //int NumOfCalRow = (int)Math.Ceiling(((int)FirstDateofTheMonth.DayOfWeek + lastday) / DAYSINAWEEK / 1.0);
-                                double RowHeightPCent, RowTop;
-                                DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar
 
-                                // Paint the background table first
+                                double RowHeightPCent, RowTop;
+                                DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar, starting from FirstDateOfTheCalendar. 
+
                                 RowHeightPCent = 100.0 / NumOfCalRow;
 
                                 <div id="mvEventContainer" class="mv-event-container" style="height:700px;">
@@ -160,6 +170,7 @@
                                     {
                                         RowTop = row * RowHeightPCent;
                                         <div class="month-row" style="top:@RowTop%;height:@RowHeightPCent%">
+                                            <!--Paint the background table first-->
                                             <table class="st-bg-table" cellpadding="0" cellspacing="0">
                                                 <tbody>
                                                     <tr>
@@ -178,6 +189,7 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
+                                            <!--Tehn, paint the events table-->
                                             <table class="st-grid" cellpadding="0" cellspacing="0">
                                                 <tbody>
                                                     <tr>
@@ -198,8 +210,9 @@
 
                                                     @for (var grid_row = 0; grid_row < MAX_GRIDEVENTROW; grid_row++)
                                                     {
-                                                        //There will be multiple events within the same day.
-                                                        //We now only display the first MAX_GRIDEVENTROW events on a single day.
+                                                        /* There will be multiple events within the same day.
+                                                         We only display the first MAX_GRIDEVENTROW events on a single day.
+                                                        */
                                                         DateTime caldate = FirstDateOfTheCalendar.AddDays(row * DAYSINAWEEK);
 
                                                         if (MonthRowEventExhausted(caldate))
@@ -209,22 +222,27 @@
                                                         <tr>
                                                             @for (var col = 0; col < DAYSINAWEEK; col++)
                                                             {
-                                                                //int d = col + row * DAYSINAWEEK + offset;
                                                                 int d = caldate.Day;
-                                                                //if (d >= 1 && d <= lastday)
-                                                                if (true)
                                                                 {
                                                                     int ColSpan = 1;
 
-                                                                    //var e = GetNextEvent(EventList, EventMarkedInCalList, d, out EventPosition);
+                                                                    /* Get the first event of the date */
                                                                     var ce = GetNextEventByDate(caldate);
                                                                     if (ce != null)
                                                                     {
                                                                         var e = ce.e;
 
-                                                                        //Now, calculate the colspan for the cell.
+                                                                        /* Now, calculate the colspan of event. 
+                                                                         * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0
+                                                                         *      1-Feb-2017 0:00 to 5-Feb-2017 3:00 => colspan=4,1
+                                                                         */
                                                                         //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
+
                                                                         int NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
+                                                                        if (e.EndDateTime == e.EndDateTime.Date) /* for those end date with timestamp 0:00, it should not be counted as one day */
+                                                                        {
+                                                                            NumOfDays -= 1;
+                                                                        }
                                                                         if (NumOfDays <= DAYSINAWEEK - (int)e.StartDateTime.DayOfWeek)
                                                                         {
                                                                             ColSpan = NumOfDays;
@@ -238,16 +256,16 @@
 
                                                                         var over_title = ((e.Severity == 1) ? "<span class='glyphicon glyphicon-exclamation-sign' style='color:red'></span>" : "") + ce.OriginalStart.ToString("dd-MMM h:mmtt") + " - " + ce.OriginalEnd.ToString("dd-MMM h:mmtt");
                                                                         var over_content = GetPopoverContent(e);
-                                                                        var over_placement = (row == 0) ? "bottom" : "top";
+                                                                        var over_placement = (row <= 1) ? "bottom" : "top";
 
                                                                         <td class="st-c" colspan="@ColSpan">
                                                                             <div class="st-c-pos">
-                                                                                @*
+                                                                         @*
                                                                             @if (!ce.Continue && e.Severity == 1)
                                                                             {
                                                                                 <span class="glyphicon glyphicon-exclamation-sign" style="color:red;position:absolute;top:-3px;left:-3px"></span>
                                                                             }
-                                                                                *@
+                                                                         *@
                                                                                 <div class="ca-evp-@e.ID rb-n cal-proj-color-severity-@e.Severity" data-placement=@over_placement data-toggle="popover" data-trigger="focus" data-container="body" data-title="@over_title" data-content="@over_content" data-html="true">
                                                                                     <div class="rb-ni">
                                                                                         <!--<a style="text-decoration:none; color:#ffffff;" asp-controller="Events" asp-action="Details" asp-route-id="@e.ID">-->
@@ -255,20 +273,21 @@
                                                                                             @if (!ce.Continue)
                                                                                             {
                                                                                             <span>@e.StartDateTime.ToString("h:mmt").ToLower()</span>
-}
-else
-{
-        <span>...</span>
-}
-        @e.TaskDescription
-        </a>
-        </div>
-        </div>
-        </div>
-        </td>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                    <span>...</span>
+                                                                                            }
+                                                                                                    @e.TaskDescription
+                                                                                                    </a>
+                                                                                     </div>
+                                                                                </div>
+                                                                             </div>
+                                                                          </td>
+
                                                                         if (NumOfDays <= DAYSINAWEEK - (int)e.StartDateTime.DayOfWeek)
                                                                         {
-                                                                            ce.MarkedInCalendar = true;                     // The whole event is marked in calendar
+                                                                            ce.MarkedInCalendar = true; /* The whole event is marked in calendar */
                                                                         }
                                                                         else
                                                                         {
@@ -280,10 +299,6 @@ else
                                                                     {
                                                                         <td class="st-c">&nbsp;</td>   @* ce is null*@
                                                                     }
-                                                                }
-                                                                else
-                                                                {
-                                                                    <td class="st-c">&nbsp;</td>
                                                                 }
                                                                 caldate = caldate.AddDays(1);
                                                             }   @* for-loop (var col = 0; col < DAYSINAWEEK; col++) *@
@@ -297,8 +312,6 @@ else
                             }
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
@@ -456,7 +469,7 @@ else
                 else
                     eids2hide.push(e.id);
             } else if (node.custom == "p") {
-                //find the parent. i.e. the team of the project
+                /* find the parent. i.e. the team of the project */
                 var pnode = $('#teamtree').treeview('getParent', node);
                 if (pnode) {
                     if ($.inArray(pnode.text.toUpperCase(), ce.teams) >= 0 && $.inArray(node.text.toUpperCase(), ce.projects) >= 0) 
@@ -476,8 +489,6 @@ else
 
         var proj = $('#idFilterProject').val().toUpperCase().trim();
         
-        //$('#idFilterProject').val(proj);
-
         if (proj == "") return;
 
         for (i = 0; i < calevents.length; i++) {
@@ -502,6 +513,7 @@ else
         $('#idFilterProject').focus();
     }
 
+    /* do the filter when user hit Enter */
     $("#idFilterProject").keypress(function(event) {
         if (event.which == 13) {
             doFilter();
