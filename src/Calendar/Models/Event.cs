@@ -23,7 +23,7 @@ namespace Calendar.Models
         public string AffectedHosts { get; set; }
         [Display(Name = "Projects"), StringLength(150, MinimumLength = 2), Required]
         public string AffectedProjects { get; set; }
-        [Display(Name = "Severity"), Required]
+        [Display(Name = "Risk Level"), Required]
         public int Severity { get; set; }
         [Display(Name = "Teams"), StringLength(150, MinimumLength = 2), Required]
         public string AffectedTeams { get; set; }
