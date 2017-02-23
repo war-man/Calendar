@@ -27,7 +27,7 @@
     DateTime ViewDate_Next = ViewDate.AddMonths(1);     //Going forward  ">"
 
 
-    /* Initializing Values */
+    /* Initializing the variables */
     FirstDateofTheMonth = new DateTime(ViewDate.Year, ViewDate.Month, 1);
     LastDateofTheMonth = new DateTime(ViewDate.Year, ViewDate.Month, 1).AddMonths(1).AddDays(-1).AddHours(23).AddMinutes(59).AddSeconds(59);
 
@@ -99,11 +99,19 @@
     /* Return the Popover Content */
     public string GetPopoverContent(Event pEvt)
     {
+        const String IA_URL = "http://ha4-sm-w03:8080/impact_analysis?q=";                                      /* Impact Analysis URL */
+        const String CM_URL = "http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp?i_CRN=";  /* Operation Team Change Management URL */
+
         var content = "<table><tr><th valign=top>Subject </th><td>" + pEvt.Subject + "</td></tr>";
-        content += "<tr><th valign=top>Host(s) </th><td>" + pEvt.AffectedHosts.Replace(",", ", ") + "</td></tr>";
-        content += "<tr><th valign=top>Project(s) </th><td>" + pEvt.AffectedProjects.Replace(",", ", ") + "</td></tr>";
+        //content += "<tr><th valign=top><a target=_blank href=" + IA_URL + pEvt.AffectedHosts + ">Host(s)</a> </th><td>" + pEvt.AffectedHosts.Replace(",", ", ") + "</td></tr>";
+        content += "<tr><th valign=top>Host(s) </th><td>" + pEvt.AffectedHosts.Replace(",", ", ")
+                + "<a target=_blank href=" + IA_URL + pEvt.AffectedHosts + ">"
+                + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
+        content += "<tr><th valign=top>Project(s) </th><td>" + pEvt.AffectedProjects.Replace(",", ", ")
+                + "<a target=_blank href=" + IA_URL + pEvt.AffectedProjects + ">"
+                + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
         content += "<tr><th valign=top>Team(s) </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
-        content += "<tr><th valign=top>Reference </th><td><a target=_blank href=http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp?i_CRN=" + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
+        content += "<tr><th valign=top>Reference </th><td><a target=_blank href=" + CM_URL + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
         content += "<tr><th valign=top>Result </th><td>" + pEvt.Result + "</td></tr></table>";
         content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>Edit Event Details</a>";
         return content;
@@ -265,6 +273,10 @@
                                                                             {
                                                                                 <span class="glyphicon glyphicon-exclamation-sign" style="color:red;position:absolute;top:-3px;left:-3px"></span>
                                                                             }
+
+                                                                             For Popover, 
+                                                                                data-trigger='hover'  => dismiss on mouse over
+                                                                                data-trigger='focus'  => one click dismiss
                                                                          *@
                                                                                 <div class="ca-evp-@e.ID rb-n cal-proj-color-severity-@e.Severity" data-placement=@over_placement data-toggle="popover" data-trigger="focus" data-container="body" data-title="@over_title" data-content="@over_content" data-html="true">
                                                                                     <div class="rb-ni">

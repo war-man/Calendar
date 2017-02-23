@@ -20,6 +20,11 @@ $(function () {
     $('[data-toggle="tooltip"]').tooltip();
 })
 
+/* the following function makes tooltip works inside popup */
+$(function(){
+    $('body').tooltip( {selector: '[data-toggle=tooltip]'} );
+});
+
 $(function () {
     $('[data-toggle="popover"]').popover();
 });
