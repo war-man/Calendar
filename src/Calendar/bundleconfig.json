@@ -44,5 +44,11 @@
     "inputFiles": [
       "wwwroot/css/calendar-common.css"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/js/event.min.js",
+    "inputFiles": [
+      "wwwroot/js/event.js"
+    ]
   }
 ]
