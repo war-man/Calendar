@@ -8,9 +8,10 @@ using Calendar.Data;
 namespace Calendar.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170227023614_mc170203a")]
+    partial class mc170203a
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -71,6 +72,7 @@ namespace Calendar.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("ActionBy")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 30);
 
                     b.Property<string>("AffectedHosts")
@@ -96,6 +98,7 @@ namespace Calendar.Data.Migrations
                         .HasAnnotation("MaxLength", 10);
 
                     b.Property<string>("HealthCheckBy")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 100);
 
                     b.Property<string>("Impact")
@@ -115,6 +118,8 @@ namespace Calendar.Data.Migrations
                     b.Property<string>("RiskLevel")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 10);
+
+                    b.Property<int>("Severity");
 
                     b.Property<DateTime>("StartDateTime");
 

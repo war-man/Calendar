@@ -1,4 +1,6 @@
 @model Calendar.Models.Event
+@using Calendar.Models.Services
+@inject StaticListOfValuesService LOVs
 
 @{
     ViewData["Title"] = "Details";
@@ -53,10 +55,17 @@
             @Html.DisplayFor(model => model.AffectedTeams)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Severity)
+            @Html.DisplayNameFor(model => model.RiskLevel)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Severity)
+            @foreach (var s in LOVs.ListRiskLevels())
+            {
+                if (Model.RiskLevel == s.Value)
+                {
+                    <span class="cal-risklevel-@s.Value" stylex="font-size:14px">@s.Name</span>
+                    break;
+                }
+            }
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Category)

@@ -29,6 +29,7 @@ $(function () {
     $('[data-toggle="popover"]').popover();
 });
 */
+/* keep event popover alive while the popover is being hovered */
 $(function () {
     $('[data-toggle="popover"]').popover({ trigger: "manual", html: true, animation: false })
         .on("mouseenter", function () {

@@ -141,7 +141,7 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,Severity")] Event @event)
+        public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact")] Event @event)
         {
             if (ModelState.IsValid)
             {
@@ -192,7 +192,7 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,Severity")] Event @event)
+        public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact")] Event @event)
         {
             if (id != @event.ID)
             {

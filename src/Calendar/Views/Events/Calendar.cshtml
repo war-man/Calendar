@@ -99,16 +99,16 @@
     /* Return the Popover Content */
     public string GetPopoverContent(Event pEvt)
     {
-        const String IA_URL = "http://ha4-sm-w03:8080/impact_analysis?q=";                                      /* Impact Analysis URL */
+        const String IA_URL = "http://ha4-sm-w03:8080/impact_analysis?";                                      /* Impact Analysis URL */
         const String CM_URL = "http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp?i_CRN=";  /* Operation Team Change Management URL */
 
         var content = "<table><tr><th valign=top>Subject </th><td>" + pEvt.Subject + "</td></tr>";
         //content += "<tr><th valign=top><a target=_blank href=" + IA_URL + pEvt.AffectedHosts + ">Host(s)</a> </th><td>" + pEvt.AffectedHosts.Replace(",", ", ") + "</td></tr>";
         content += "<tr><th valign=top>Host(s) </th><td>" + pEvt.AffectedHosts.Replace(",", ", ")
-                + "<a target=_blank href=" + IA_URL + pEvt.AffectedHosts + ">"
+                + "<a target=_blank href=" + IA_URL + "q=" + pEvt.AffectedHosts + ">"
                 + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
         content += "<tr><th valign=top>Project(s) </th><td>" + pEvt.AffectedProjects.Replace(",", ", ")
-                + "<a target=_blank href=" + IA_URL + pEvt.AffectedProjects + ">"
+                + "<a target=_blank href=" + IA_URL + "service=" + pEvt.AffectedProjects + ">"
                 + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
         content += "<tr><th valign=top>Team(s) </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
         content += "<tr><th valign=top>Reference </th><td><a target=_blank href=" + CM_URL + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
@@ -262,7 +262,7 @@
                                                                             col = DAYSINAWEEK;                              //Advance the col
                                                                         }
 
-                                                                        var over_title = ((e.Severity == 1) ? "<span class='glyphicon glyphicon-exclamation-sign' style='color:red'></span>" : "") + ce.OriginalStart.ToString("dd-MMM h:mmtt") + " - " + ce.OriginalEnd.ToString("dd-MMM h:mmtt");
+                                                                        var over_title = ((e.RiskLevel == "50") ? "<span class='glyphicon glyphicon-exclamation-sign' style='color:red'></span>" : "") + ce.OriginalStart.ToString("dd-MMM h:mmtt") + " - " + ce.OriginalEnd.ToString("dd-MMM h:mmtt");
                                                                         var over_content = GetPopoverContent(e);
                                                                         var over_placement = (row <= 1) ? "bottom" : "top";
 
@@ -278,7 +278,7 @@
                                                                                 data-trigger='hover'  => dismiss on mouse over
                                                                                 data-trigger='focus'  => one click dismiss
                                                                          *@
-                                                                                <div class="ca-evp-@e.ID rb-n cal-proj-color-severity-@e.Severity" data-placement=@over_placement data-toggle="popover" data-trigger="hover" data-container="body" data-title="@over_title" data-content="@over_content" data-html="true">
+                                                                                <div class="ca-evp-@e.ID rb-n cal-risklevel-@e.RiskLevel" data-placement=@over_placement data-toggle="popover" data-trigger="hover" data-container="body" data-title="@over_title" data-content="@over_content" data-html="true">
                                                                                     <div class="rb-ni">
                                                                                         <!--<a style="text-decoration:none; color:#ffffff;" asp-controller="Events" asp-action="Details" asp-route-id="@e.ID">-->
                                                                                         <a style="text-decoration:none; color:#ffffff;" href="#">

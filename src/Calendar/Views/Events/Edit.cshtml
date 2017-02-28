@@ -93,26 +93,94 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Severity" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="Severity" class="form-control">
-                    <option></option>
-                    @foreach (var s in LOVs.ListSeverities())
-                    {
-                        <option value=@s.Value>@s.Name</option>
-                    }
-                </select>
-
-                <span asp-validation-for="Severity" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
             <label asp-for="Category" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Category" class="form-control" />
                 <span asp-validation-for="Category" class="text-danger" />
             </div>
         </div>
+        <div class="form-group">
+            <label asp-for="Environment" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="Environment" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListEnvironments())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="Environment" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Likelihood" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="Likelihood" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListLikelihoods())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+
+                <span asp-validation-for="Likelihood" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Impact" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="Impact" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListImpacts())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+
+                <span asp-validation-for="Impact" class="text-danger" />
+            </div>
+        </div>
+
+        @* This is a hidden field. *@
+        <div class="form-group" hidden>
+            <label asp-for="RiskLevel" class="col-md-2 control-label" ></label>
+            <div class="col-md-10">
+                <select asp-for="RiskLevel" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListRiskLevels())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        @*This is a readonly makeup field. *@
+        <div class="form-group">
+            <label asp-for="RiskLevel" class="col-md-2 control-label"></label>
+            <div class="col-md-10">               
+               <span class="form-control" id="RiskLevelDisplay" style="font-size:14px">
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ActionBy" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ActionBy" class="form-control" />
+                <span asp-validation-for="ActionBy" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="HealthCheckBy" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="HealthCheckBy" class="form-control" />
+                <span asp-validation-for="HealthCheckBy" class="text-danger" />
+            </div>
+        </div>
+
         <div class="form-group">
             <label asp-for="Reference" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -162,12 +230,20 @@
                 return false;
             }
         });
+        UpdateRiskLevelWrapper();
     });
 
+    /* Please refer to event.js for the actual implementation. */
+    var riskmatrix = @Html.Raw(Json.Serialize(LOVs.RiskLevelMatrix));
+
+    /* We need to workout the RiskLevel When Likelihood or Impact chnages. */
+    $('#Likelihood').on('change', UpdateRiskLevelWrapper);
+    $('#Impact').on('change', UpdateRiskLevelWrapper);
+
+    /* Initialize AffectedHosts */
     $('#AffectedHosts').tagsinput({
         tagClass: 'label label-default'
     });
-
 
     /* JSON.parse doesn't work. Just use the for loop instead. */
     var p = @Html.Raw(Json.Serialize(Projects.ListAll()));

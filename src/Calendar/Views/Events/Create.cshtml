@@ -6,6 +6,11 @@
 
 @{
     ViewData["Title"] = "Create";
+
+    const string TIP_SHORTDESC  = "The <i>Short Description</i> will be displayed in Calendar view. It is recommended to make it short and precise.";
+    const string TIP_LIKELIHOOD = "Please assess how likely this maintenance fails to deliver the expected outcome. The <i>Likelihood</i>, togehter with the <i>Impact</i>, determines the <i>Risk Level</i>.";
+    const string TIP_IMPACT     = "Please assess the impact to services if this maintenance fails. The <i>Impact</i>, togehter with the <i>Likelihood</i>, determines the <i>Risk Level</i>.";
+    const string TIP_RISKLEVEL  = "The <i>Risk Level</i> is determined by the <i>Likelihood</i> and <i>Impact</i>.";
 }
 
 <h2>Create</h2>
@@ -22,10 +27,10 @@
                 <span asp-validation-for="Subject" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="TaskDescription" class="col-md-2 control-label"></label>
+        <div class="form-group">                       
+            <label asp-for="TaskDescription" class="col-md-2 control-label"  data-toggle="tooltip" data-placement="top" data-html="true" title="@TIP_SHORTDESC"></label>
             <div class="col-md-10">
-                <input asp-for="TaskDescription" class="form-control" />
+                <input asp-for="TaskDescription" class="form-control"/>
                 <span asp-validation-for="TaskDescription" class="text-danger" />
             </div>
         </div>
@@ -95,27 +100,94 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="Severity" class="col-md-2 control-label"></label>
-            <div class="col-md-10">                                
-                <select asp-for="Severity" class="form-control" >
-                    <option></option>
-                    @foreach (var s in LOVs.ListSeverities())
-                    {                                          
-                        <option value=@s.Value>@s.Name</option>
-                    }
-                </select>
-                <span asp-validation-for="Severity" class="text-danger" />
-            </div>
-        </div>
-        
-
-        <div class="form-group">
             <label asp-for="Category" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="Category" class="form-control" />
                 <span asp-validation-for="Category" class="text-danger" />
             </div>
         </div>
+
+        <div class="form-group">
+            <label asp-for="Environment" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="Environment" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListEnvironments())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="Environment" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Likelihood" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@TIP_LIKELIHOOD"></label>
+            <div class="col-md-10">
+                <select asp-for="Likelihood" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListLikelihoods())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="Likelihood" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Impact" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@TIP_IMPACT"></label>
+            <div class="col-md-10">
+                <select asp-for="Impact" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListImpacts())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="Impact" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            <label asp-for="RiskLevel" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="RiskLevel" class="form-control chosen-disabled">
+                    <option></option>
+                    @foreach (var s in LOVs.ListRiskLevels())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="RiskLevel" class="text-danger" />
+            </div>
+        </div>
+
+        @*This is a readonly makeup field. *@
+        <div class="form-group">
+            <label asp-for="RiskLevel" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@TIP_RISKLEVEL"></label>
+            <div class="col-md-10">
+                <span class="form-control" id="RiskLevelDisplay">
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ActionBy" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ActionBy" class="form-control" data-role="tagsinput" />
+                <span asp-validation-for="ActionBy" class="text-danger" />
+            </div>
+        </div>    
+
+        <div class="form-group">
+            <label asp-for="HealthCheckBy" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="HealthCheckBy" class="form-control" data-role="tagsinput" />
+                <span asp-validation-for="HealthCheckBy" class="text-danger" />
+            </div>
+        </div>          
+
         <div class="form-group">
             <label asp-for="Reference" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -146,7 +218,6 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
-
 <script type="text/javascript">
 
     /* prevent submit form by hitting Enter */
@@ -159,10 +230,17 @@
         });
     });
 
+    /* Please refer to event.js for the actual implementation. */
+    var riskmatrix = @Html.Raw(Json.Serialize(LOVs.RiskLevelMatrix));
+    
+    /* We need to workout the RiskLevel When Likelihood or Impact chnages. */
+    $('#Likelihood').on('change', UpdateRiskLevelWrapper);
+    $('#Impact').on('change', UpdateRiskLevelWrapper);
+
+    /* Initialize AffectedHosts */
     $('#AffectedHosts').tagsinput({
         tagClass: 'label label-default'
     });
-
 
     /* JSON.parse doesn't work. Just use the for loop instead. */
     var p = @Html.Raw(Json.Serialize(Projects.ListAll()));

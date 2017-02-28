@@ -23,13 +23,30 @@ namespace Calendar.Models
         public string AffectedHosts { get; set; }
         [Display(Name = "Projects"), StringLength(150, MinimumLength = 2), Required]
         public string AffectedProjects { get; set; }
-        [Display(Name = "Risk Level"), Required]
-        public int Severity { get; set; }
+        [Display(Name = "Risk Level"), StringLength(10), Required]
+        public string RiskLevel { get; set; }
         [Display(Name = "Teams"), StringLength(150, MinimumLength = 2), Required]
         public string AffectedTeams { get; set; }
         [Display(Name = "Reference"), StringLength(50)]
         public string Reference { get; set; }
-        [StringLength(100, MinimumLength = 3)]
-        public string Result { get; set; }        
+        [Display(Name = "Results"), StringLength(100, MinimumLength = 3)]
+        public string Result { get; set; }
+
+        [Display(Name = "Environment"), StringLength(10), Required]
+        public string Environment { get; set; }
+        [Display(Name = "Action By"), StringLength(30, MinimumLength = 3)]
+        public string ActionBy { get; set; }
+        [Display(Name = "Health Check By"), StringLength(100, MinimumLength = 3)]
+        public string HealthCheckBy { get; set; }
+        [Display(Name = "Likelihood"), StringLength(10), Required]
+        public string Likelihood { get; set; }
+        [Display(Name = "Impact"), StringLength(10), Required]
+        public string Impact { get; set; }
+
+        /* The Severity is to be obsolete */
+
+        //[Display(Name = "Severity")]
+        //public int Severity { get; set; }
+
     }
 }

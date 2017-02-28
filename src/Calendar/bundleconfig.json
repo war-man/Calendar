@@ -32,5 +32,17 @@
     "inputFiles": [
       "wwwroot/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"
     ]
+  },
+  {
+    "outputFileName": "wwwroot/css/event.min.css",
+    "inputFiles": [
+      "wwwroot/css/event.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/calendar-common.min.css",
+    "inputFiles": [
+      "wwwroot/css/calendar-common.css"
+    ]
   }
 ]

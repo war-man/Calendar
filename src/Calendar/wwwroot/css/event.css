@@ -1,0 +1,40 @@
+﻿body {
+}
+
+/* custom tooltip style: control the length of the tooltip. */
+.tooltip-inner {
+    max-width: 250px;
+    /* If max-width does not work, try using width instead */
+    width: 250px; 
+}
+
+.tooltip.top .tooltip-arrow {
+    left: 80% !important;
+}
+
+.cal-risklevel-1 {
+    font-size: 14px;
+}
+
+.cal-risklevel-2 {
+    font-size: 14px;
+}
+
+.cal-risklevel-3 {
+    font-size: 14px;
+}
+
+.cal-risklevel-4 {
+    font-size: 14px;
+}
+
+/*critical*/
+.cal-risklevel-5 {
+    font-size: 14px;
+}
+
+/*
+[disabled].form-control, [readonly].form-control, fieldset[disabled] .form-control {
+    background-color:#d81921;
+}
+*/

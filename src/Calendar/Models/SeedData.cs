@@ -28,7 +28,10 @@ namespace Calendar.Models
                              AffectedHosts = "DC6/WCDCIIS08S",
                              TaskDescription = "Perform IP Change Drill Test ",
                              Reference = "CR16112804",
-                             Severity = 0,
+                             Environment = "DEV",
+                             Likelihood = "10",
+                             Impact = "10",
+                             RiskLevel = "10",
                              Result = "Successfully completed on schedule"
                          },
                          new Event
@@ -42,7 +45,10 @@ namespace Calendar.Models
                              AffectedHosts = "DC7/erp77014",
                              TaskDescription = "Voltage Regulator Module replacement ",
                              Reference = "PR1855565",
-                             Severity = 1,
+                             Environment = "DEV",
+                             Likelihood = "10",
+                             Impact = "10",
+                             RiskLevel = "10",
                              Result = "Successfully completed on schedule"
                          }
                     );

@@ -8,9 +8,10 @@ using Calendar.Data;
 namespace Calendar.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170227015212_mc170203")]
+    partial class mc170203
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -71,7 +72,8 @@ namespace Calendar.Data.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("ActionBy")
-                        .HasAnnotation("MaxLength", 30);
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 10);
 
                     b.Property<string>("AffectedHosts")
                         .IsRequired()
@@ -96,15 +98,14 @@ namespace Calendar.Data.Migrations
                         .HasAnnotation("MaxLength", 10);
 
                     b.Property<string>("HealthCheckBy")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 100);
 
                     b.Property<string>("Impact")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 10);
+                        .IsRequired();
 
                     b.Property<string>("Likelihood")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 10);
+                        .IsRequired();
 
                     b.Property<string>("Reference")
                         .HasAnnotation("MaxLength", 50);
@@ -113,8 +114,9 @@ namespace Calendar.Data.Migrations
                         .HasAnnotation("MaxLength", 100);
 
                     b.Property<string>("RiskLevel")
-                        .IsRequired()
-                        .HasAnnotation("MaxLength", 10);
+                        .IsRequired();
+
+                    b.Property<int>("Severity");
 
                     b.Property<DateTime>("StartDateTime");
 
