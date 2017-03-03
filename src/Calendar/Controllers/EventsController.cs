@@ -114,14 +114,17 @@ namespace Calendar.Controllers
         }
 
         // GET: Events/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string redir = null)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
+            
             var @event = await _context.Event.SingleOrDefaultAsync(m => m.ID == id);
+
+            ViewBag.Redir = redir;
+
             if (@event == null)
             {
                 return NotFound();
@@ -133,7 +136,10 @@ namespace Calendar.Controllers
         // GET: Events/Create
         public IActionResult Create()
         {
-            return View();
+            if (User.IsInRole(Constants.ROLE_ADMIN))
+                return View();
+            else
+                return NotFound();
         }
 
         // POST: Events/Create
@@ -143,6 +149,9 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact")] Event @event)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (ModelState.IsValid)
             {
                 _context.Add(@event);
@@ -173,6 +182,9 @@ namespace Calendar.Controllers
         // GET: Events/Edit/5
         public async Task<IActionResult> Edit(int? id, string redir)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();
@@ -194,6 +206,9 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact")] Event @event)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id != @event.ID)
             {
                 return NotFound();
@@ -255,6 +270,9 @@ namespace Calendar.Controllers
         // GET: Events/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();

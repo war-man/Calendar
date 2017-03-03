@@ -38,7 +38,7 @@ namespace Calendar.Models
         public string ActionBy { get; set; }
         [Display(Name = "Health Check By"), StringLength(100, MinimumLength = 3)]
         public string HealthCheckBy { get; set; }
-        [Display(Name = "Likelihood"), StringLength(10), Required]
+        [Display(Name = "Failure Likelihood"), StringLength(10), Required]
         public string Likelihood { get; set; }
         [Display(Name = "Impact"), StringLength(10), Required]
         public string Impact { get; set; }

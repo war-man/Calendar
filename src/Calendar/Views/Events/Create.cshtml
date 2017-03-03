@@ -1,23 +1,18 @@
 @using Calendar.Models.Services
+@using Calendar.Helpers
 @model Calendar.Models.Event
 @inject StaticListOfValuesService LOVs
 @inject Calendar.Controllers.TeamsController Teams
 @inject Calendar.Controllers.ProjectsController Projects
 
 @{
-    ViewData["Title"] = "Create";
-
-    const string TIP_SHORTDESC  = "The <i>Short Description</i> will be displayed in Calendar view. It is recommended to make it short and precise.";
-    const string TIP_LIKELIHOOD = "Please assess how likely this maintenance fails to deliver the expected outcome. The <i>Likelihood</i>, togehter with the <i>Impact</i>, determines the <i>Risk Level</i>.";
-    const string TIP_IMPACT     = "Please assess the impact to services if this maintenance fails. The <i>Impact</i>, togehter with the <i>Likelihood</i>, determines the <i>Risk Level</i>.";
-    const string TIP_RISKLEVEL  = "The <i>Risk Level</i> is determined by the <i>Likelihood</i> and <i>Impact</i>.";
+    ViewData["Title"] = "Create Event";
 }
 
-<h2>Create</h2>
+<h2>@ViewData["Title"]</h2>
 
 <form asp-action="Create">
     <div class="form-horizontal">
-        <h4>Event</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
@@ -28,7 +23,7 @@
             </div>
         </div>
         <div class="form-group">                       
-            <label asp-for="TaskDescription" class="col-md-2 control-label"  data-toggle="tooltip" data-placement="top" data-html="true" title="@TIP_SHORTDESC"></label>
+            <label asp-for="TaskDescription" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_SHORTDESC"></label>
             <div class="col-md-10">
                 <input asp-for="TaskDescription" class="form-control"/>
                 <span asp-validation-for="TaskDescription" class="text-danger" />
@@ -122,8 +117,8 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="Likelihood" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@TIP_LIKELIHOOD"></label>
-            <div class="col-md-10">
+            <label asp-for="Likelihood" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_LIKELIHOOD"></label>
+            <div class="col-md-4">
                 <select asp-for="Likelihood" class="form-control">
                     <option></option>
                     @foreach (var s in LOVs.ListLikelihoods())
@@ -133,11 +128,8 @@
                 </select>
                 <span asp-validation-for="Likelihood" class="text-danger" />
             </div>
-        </div>
-
-        <div class="form-group">
-            <label asp-for="Impact" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@TIP_IMPACT"></label>
-            <div class="col-md-10">
+            <label asp-for="Impact" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_IMPACT"></label>
+            <div class="col-md-4">
                 <select asp-for="Impact" class="form-control">
                     <option></option>
                     @foreach (var s in LOVs.ListImpacts())
@@ -165,7 +157,7 @@
 
         @*This is a readonly makeup field. *@
         <div class="form-group">
-            <label asp-for="RiskLevel" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@TIP_RISKLEVEL"></label>
+            <label asp-for="RiskLevel" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_RISKLEVEL"></label>
             <div class="col-md-10">
                 <span class="form-control" id="RiskLevelDisplay">
                 </span>

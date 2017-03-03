@@ -13,11 +13,9 @@
     ViewData["Title"] = "Calendar";
 }
 
-<!--<h2>Calendar</h2>-->
-
 @{
     const int DAYSINAWEEK = 7;
-    const int MAX_GRIDEVENTROW = 5;
+    const int MAX_GRIDEVENTROW = 6;
 
     DateTime ViewDate = ViewBag.ViewDate;               // Point of View, POV.
     DateTime FirstDateofTheMonth, LastDateofTheMonth;
@@ -113,18 +111,27 @@
         content += "<tr><th valign=top>Team(s) </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
         content += "<tr><th valign=top>Reference </th><td><a target=_blank href=" + CM_URL + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
         content += "<tr><th valign=top>Result </th><td>" + pEvt.Result + "</td></tr></table>";
-        content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>Edit Event Details</a>";
+
+
+        if (User.IsInRole(Constants.ROLE_ADMIN))
+        {
+            content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>Edit Event Details</a>";
+        } else
+        {
+            content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Details?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>View Event Details</a>";
+        }
+
         return content;
     }
 }
 
 <div class="container-fluid">
-    <div class="row" style="margin:2px"></div>
+    <div class="row" style="margin:2px"></div>    
     <div class="row" >
         <!-- navigator menu on the left -->
-        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 nopadding">            
-            <div id="teamtree"></div>                
-        </div>        
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 nopadding">
+            <div id="teamtree"></div>
+        </div>
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10" style="padding:0 0 0 15px">
           <div class="row">
             <div class="col-xs-4 col-sm-4 col-md-3 col-lg-4">
@@ -166,12 +173,12 @@
                             </table>
                             @{
                                 int offset = (int)FirstDateofTheMonth.DayOfWeek * -1 + 1;
-                                int lastday = LastDateofTheMonth.Day;
+        int lastday = LastDateofTheMonth.Day;
 
-                                double RowHeightPCent, RowTop;
-                                DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar, starting from FirstDateOfTheCalendar. 
+        double RowHeightPCent, RowTop;
+        DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar, starting from FirstDateOfTheCalendar. 
 
-                                RowHeightPCent = 100.0 / NumOfCalRow;
+        RowHeightPCent = 100.0 / NumOfCalRow;
 
                                 <div id="mvEventContainer" class="mv-event-container" style="height:700px;">
                                     @for (var row = 0; row < NumOfCalRow; row++)
@@ -234,19 +241,19 @@
                                                                 {
                                                                     int ColSpan = 1;
 
-                                                                    /* Get the first event of the date */
-                                                                    var ce = GetNextEventByDate(caldate);
+    /* Get the first event of the date */
+    var ce = GetNextEventByDate(caldate);
                                                                     if (ce != null)
                                                                     {
                                                                         var e = ce.e;
 
-                                                                        /* Now, calculate the colspan of event. 
-                                                                         * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0
-                                                                         *      1-Feb-2017 0:00 to 5-Feb-2017 3:00 => colspan=4,1
-                                                                         */
-                                                                        //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
+    /* Now, calculate the colspan of event. 
+     * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0
+     *      1-Feb-2017 0:00 to 5-Feb-2017 3:00 => colspan=4,1
+     */
+    //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
 
-                                                                        int NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
+    int NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
                                                                         if (e.EndDateTime == e.EndDateTime.Date) /* for those end date with timestamp 0:00, it should not be counted as one day */
                                                                         {
                                                                             NumOfDays -= 1;
@@ -263,18 +270,18 @@
                                                                         }
 
                                                                         var over_title = ((e.RiskLevel == "50") ? "<span class='glyphicon glyphicon-exclamation-sign' style='color:red'></span>" : "") + ce.OriginalStart.ToString("dd-MMM h:mmtt") + " - " + ce.OriginalEnd.ToString("dd-MMM h:mmtt");
-                                                                        var over_content = GetPopoverContent(e);
-                                                                        var over_placement = (row <= 1) ? "bottom" : "top";
+    var over_content = GetPopoverContent(e);
+    var over_placement = (row <= 1) ? "bottom" : "top";
 
                                                                         <td class="st-c" colspan="@ColSpan">
                                                                             <div class="st-c-pos">
                                                                          @*
                                                                             @if (!ce.Continue && e.Severity == 1)
-                                                                            {
+    {
                                                                                 <span class="glyphicon glyphicon-exclamation-sign" style="color:red;position:absolute;top:-3px;left:-3px"></span>
                                                                             }
 
-                                                                             For Popover, 
+                                                                             For Popover,
                                                                                 data-trigger='hover'  => dismiss on mouse over
                                                                                 data-trigger='focus'  => one click dismiss
                                                                          *@
@@ -283,7 +290,7 @@
                                                                                         <!--<a style="text-decoration:none; color:#ffffff;" asp-controller="Events" asp-action="Details" asp-route-id="@e.ID">-->
                                                                                         <a style="text-decoration:none; color:#ffffff;" href="#">
                                                                                             @if (!ce.Continue)
-                                                                                            {
+    {
                                                                                             <span>@e.StartDateTime.ToString("h:mmt").ToLower()</span>
                                                                                             }
                                                                                             else
@@ -328,10 +335,29 @@
             </div>
         </div>
     </div>
+    <div class="row" hidden>
+        <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 nopadding">
+            <div style="overflow:hidden;">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div id="datetimepicker12"></div>
+                        </div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                $(function () {
+                    $('#datetimepicker12').datetimepicker({
+                        format: 'lt',
+                        inline: true
+                    });
+                });
+                </script>
+            </div>
+        </div>
+    </div>
 </div>
-
-
-    
+   
     @*
     <div class="container-fluid">
      <div class="row" style="display:none1">
@@ -355,7 +381,7 @@
                                  var cnt = t.TeamEventCount;
                                  <li class="list-group-item" style="border:0px solid;padding:0;">
                                      @if (@cnt == 0)
-                                     {
+    {
                                          <a class="btn btn-default btn-s disabled" href="#" role="button" style="border:0;padding-bottom:3px;padding-top:3px;">
                                              @t.Team
                                              &nbsp;&nbsp;&nbsp;&nbsp;<span class="badge badge-grey">@cnt</span>
@@ -395,9 +421,9 @@
     //alert(JSON.stringify(teams));
     for (i = 0; i < teams.length; i++) {
         var teamnode    = {};                  /* object for each team */
-        var projs       = teams[i].projects;   /* array list of projects */
-        var projevtcnts = teams[i].projectEventCounts;
-        var projnode    = [];                  /* array of object (project node) */
+    var projs       = teams[i].projects;   /* array list of projects */
+    var projevtcnts = teams[i].projectEventCounts;
+    var projnode    = [];                  /* array of object (project node) */
 
         for (j = 0; j < projs.length; j++) {
             if (projevtcnts[j] == 0)
@@ -424,7 +450,7 @@
 
     // Some logic to retrieve, or generate tree structure
     $('#teamtree').treeview({
-        showTags: true,
+    showTags: true,
         enableLinks: false,
         color: "#337ab7",
         selectedBackColor: "#337ab7",
@@ -437,7 +463,7 @@
         //alert(JSON.stringify(data));
         $('#idFilterProject').val("");
         // if 'HA Section ', simply show all events.
-        if (data.text == "HA Section") 
+        if (data.text == "HA Section")
             $('div[class*=ca-evp-]').show();
         else {
             var eids = GetCalEventIDs(data);
@@ -463,7 +489,7 @@
             $.each(eids, function(index, value) {
                 var cls = 'ca-evp-' + value;
                 $('.' + cls).hide();
-            });        
+            });
         }
     });
 
@@ -480,7 +506,7 @@
                     eids2show.push(e.id);
                 else
                     eids2hide.push(e.id);
-            } else if (node.custom == "p") {
+    } else if (node.custom == "p") {
                 /* find the parent. i.e. the team of the project */
                 var pnode = $('#teamtree').treeview('getParent', node);
                 if (pnode) {
@@ -500,7 +526,7 @@
         var eids2show = [];     // Event Ids to show in calendar
 
         var proj = $('#idFilterProject').val().toUpperCase().trim();
-        
+
         if (proj == "") return;
 
         for (i = 0; i < calevents.length; i++) {
@@ -508,15 +534,15 @@
             var e  = ce.e;
 
             if ($.inArray(proj, ce.projects) >= 0) 
-                eids2show.push(e.id);                        
-        }
+                eids2show.push(e.id);
+    }
         
         $('div[class*=ca-evp-]').hide();
 
         $.each(eids2show, function(index, value) {
-            var cls = 'ca-evp-' + value;
+        var cls = 'ca-evp-' + value;
             $('.' + cls).show();
-        });       
+    });       
         
         var nodes = $('#teamtree').treeview('getSelected');
         for (i=0; i < nodes.length; i++) {
