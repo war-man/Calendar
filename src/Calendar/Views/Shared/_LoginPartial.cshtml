@@ -27,7 +27,9 @@ else
     <ul class="nav navbar-nav navbar-right">
         @if (Context.Request.Path != "/User/Login")
         {
-            <li><a asp-area="" asp-controller="User" asp-action="Login" asp-route-returnUrl="@Context.Request.Path@Context.Request.QueryString">Log in</a></li>        
+            <li><a asp-area="" asp-controller="User" asp-action="Login" asp-route-returnUrl="@Context.Request.PathBase@Context.Request.Path@Context.Request.QueryString">Log in</a></li>        
         }
     </ul>
 }
+
+

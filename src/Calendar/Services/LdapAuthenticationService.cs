@@ -53,9 +53,9 @@ namespace Calendar.Services
                 _connection.Bind(_config.BindDn, _config.BindCredentials);
                 
             }
-            catch
+            catch (LdapException e)
             {
-                throw new Exception("LDAP Server Connection failed.");
+                throw new Exception("LDAP Server Connection failed." + e.LdapErrorMessage);
             }
 
             var searchFilter = string.Format(_config.SearchFilter, username);

@@ -535,14 +535,14 @@
 
             if ($.inArray(proj, ce.projects) >= 0) 
                 eids2show.push(e.id);
-    }
+        }
         
         $('div[class*=ca-evp-]').hide();
 
         $.each(eids2show, function(index, value) {
         var cls = 'ca-evp-' + value;
             $('.' + cls).show();
-    });       
+        });       
         
         var nodes = $('#teamtree').treeview('getSelected');
         for (i=0; i < nodes.length; i++) {

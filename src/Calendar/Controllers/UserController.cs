@@ -60,7 +60,7 @@ namespace Calendar.Controllers
                             "CalendarApp",
                             principal);
                         if (returnUrl == null)
-                            return Redirect("/Events");
+                            return RedirectToAction("Calendar", "Events");
                         else
                             return Redirect(returnUrl);
                     }
@@ -78,7 +78,7 @@ namespace Calendar.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.Authentication.SignOutAsync("CalendarApp");
-            return Redirect("/Events");
+            return RedirectToAction("Calendar", "Events");
         }
     }
 }
