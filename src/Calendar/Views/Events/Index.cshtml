@@ -3,7 +3,7 @@
 
 @model IEnumerable<Calendar.Models.Event>
 
-@inject SignInManager<ApplicationUser> SignInManager
+@inject Calendar.Controllers.AppSettingsController appsettings
 
 @{
     ViewData["Title"] = "Event List";
@@ -96,7 +96,7 @@
             <td>                
                 @if (!String.IsNullOrEmpty(item.Reference))
                 {
-                    <a href="http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp?i_CRN=@item.Reference">@item.Reference</a>
+                    <a href="@appsettings.CM_Url?i_CRN=@item.Reference">@item.Reference</a>
                 }
             </td>
             <td>

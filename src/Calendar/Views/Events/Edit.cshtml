@@ -172,7 +172,7 @@
         <div class="form-group">
             <label asp-for="HealthCheckBy" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="HealthCheckBy" class="form-control" />
+                <input asp-for="HealthCheckBy" class="form-control" data-role="tagsinput"/>
                 <span asp-validation-for="HealthCheckBy" class="text-danger" />
             </div>
         </div>
@@ -294,6 +294,10 @@
             source: bloodHoundObj.ttAdapter(),
             limit: 10
         }
+    });
+
+    $('#HealthCheckBy').tagsinput({
+        tagClass: 'label label-default',
     });
 
 </script>

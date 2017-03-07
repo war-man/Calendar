@@ -69,6 +69,9 @@ namespace Calendar
             /* Ldap Auth */
             services.Configure<LdapConfig>(Configuration.GetSection("ldap"));
             services.AddScoped<IAuthenticationService, LdapAuthenticationService>();
+            /* appsetting */
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddSingleton<Calendar.Controllers.AppSettingsController>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

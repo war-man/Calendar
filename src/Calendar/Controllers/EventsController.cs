@@ -16,10 +16,12 @@ namespace Calendar.Controllers
         const int DAYSINAWEEK = 7;
         private readonly ApplicationDbContext _context;
 
+
         public EventsController(ApplicationDbContext context)
         {
             _context = context;    
         }
+
 
         // GET: Events
         public async Task<IActionResult> Index()

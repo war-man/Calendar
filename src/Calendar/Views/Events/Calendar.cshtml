@@ -3,10 +3,11 @@
 *@
 
 @using Calendar.Helpers
-@using Calendar.Models.Services
+@using Calendar.Services
 
 @model IEnumerable<Calendar.Helpers.CalendarEvent>
-@inject Calendar.Models.Services.EventStatisticsService EventStatsService
+@inject Calendar.Models.Services.EventStatisticsService EventStatsService   /* want to find sometime to tidy this up */
+@inject Calendar.Controllers.AppSettingsController appsettings
 
 @{
     Layout = "_LayoutCalendar";
@@ -97,19 +98,19 @@
     /* Return the Popover Content */
     public string GetPopoverContent(Event pEvt)
     {
-        const String IA_URL = "http://ha4-sm-w03:8080/impact_analysis?";                                      /* Impact Analysis URL */
-        const String CM_URL = "http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp?i_CRN=";  /* Operation Team Change Management URL */
+        string IA_URL = appsettings.IA_Url; /* Impact Analysis URL */
+        string CM_URL = appsettings.CM_Url; /* Operation Team Change Management URL */
 
         var content = "<table><tr><th valign=top>Subject </th><td>" + pEvt.Subject + "</td></tr>";
         //content += "<tr><th valign=top><a target=_blank href=" + IA_URL + pEvt.AffectedHosts + ">Host(s)</a> </th><td>" + pEvt.AffectedHosts.Replace(",", ", ") + "</td></tr>";
         content += "<tr><th valign=top>Host(s) </th><td>" + pEvt.AffectedHosts.Replace(",", ", ")
-                + "<a target=_blank href=" + IA_URL + "q=" + pEvt.AffectedHosts + ">"
+                + "<a target=_blank href=" + IA_URL + "?q=" + pEvt.AffectedHosts + ">"
                 + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
         content += "<tr><th valign=top>Project(s) </th><td>" + pEvt.AffectedProjects.Replace(",", ", ")
-                + "<a target=_blank href=" + IA_URL + "service=" + pEvt.AffectedProjects + ">"
+                + "<a target=_blank href=" + IA_URL + "?system=" + pEvt.AffectedProjects + ">"
                 + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
         content += "<tr><th valign=top>Team(s) </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
-        content += "<tr><th valign=top>Reference </th><td><a target=_blank href=" + CM_URL + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
+        content += "<tr><th valign=top>Reference </th><td><a target=_blank href=" + CM_URL + "?i_CRN=" + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
         content += "<tr><th valign=top>Result </th><td>" + pEvt.Result + "</td></tr></table>";
 
 
@@ -130,7 +131,9 @@
     <div class="row" >
         <!-- navigator menu on the left -->
         <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2 nopadding">
-            <div id="teamtree"></div>
+            <div class="navbar-collapse collapse">
+                <div id="teamtree"></div>
+            </div>
         </div>
         <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10" style="padding:0 0 0 15px">
           <div class="row">

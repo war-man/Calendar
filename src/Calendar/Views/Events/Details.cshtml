@@ -1,6 +1,7 @@
 @model Calendar.Models.Event
-@using Calendar.Models.Services
-@inject StaticListOfValuesService LOVs
+
+@inject Calendar.Models.Services.StaticListOfValuesService LOVs
+@inject Calendar.Controllers.AppSettingsController appsettings
 
 @{
     ViewData["Title"] = "Event Details";
@@ -54,6 +55,18 @@
             @Html.DisplayFor(model => model.AffectedTeams)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Category)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Environment)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Environment)
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.RiskLevel)
         </dt>
         <dd>
@@ -67,16 +80,25 @@
             }
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Category)
+            @Html.DisplayNameFor(model => model.ActionBy)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Category)
+            @Html.DisplayFor(model => model.ActionBy)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.HealthCheckBy)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.HealthCheckBy)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Reference)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Reference)
+            @if (!System.String.IsNullOrEmpty(Model.Reference))
+            {
+                <a target=_blank href="@appsettings.CM_Url?i_CRN=@Model.Reference">@Html.DisplayFor(model => model.Reference)</a>
+            }            
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Result)
