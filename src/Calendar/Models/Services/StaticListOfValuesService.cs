@@ -94,6 +94,17 @@ namespace Calendar.Models.Services
                                  {RISK_LOW, RISK_MODERATE, RISK_MODERATE, RISK_HIGH, RISK_CRITICAL,},
                                  {RISK_MODERATE, RISK_MODERATE, RISK_HIGH, RISK_CRITICAL, RISK_CRITICAL,}
                                  };
+
+        public List<LOV> ListEventStatus()
+        {
+            return new List<LOV>()
+            {
+                new LOV("EventStatus", "Completed", "CMP"),
+                new LOV("EventStatus", "Schedule Confirmed", "SC"),
+                new LOV("EventStatus", "RFQ in progress", "RIP"),
+                new LOV("EventStatus", "Tentative", "T")
+            };
+        }
     }
 
 

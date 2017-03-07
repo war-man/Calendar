@@ -5,12 +5,17 @@
 
 @{
     ViewData["Title"] = "Event Details";
+
+    var RiskLevel = LOVs.ListRiskLevels().Where(m => m.Value == Model.RiskLevel);
+    var EventStatus = LOVs.ListEventStatus().Where(m => m.Value == Model.EventStatus);
+
 }
 
 <h2>@ViewData["Title"]</h2>
 
 <div>
     <hr />
+
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Subject)
@@ -25,16 +30,11 @@
             @Html.DisplayFor(model => model.TaskDescription)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.StartDateTime)
+            @*@Html.DisplayNameFor(model => model.StartDateTime)*@
+            Duration
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.StartDateTime)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.EndDateTime)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.EndDateTime)
+            @Html.DisplayFor(model => model.StartDateTime) - @Html.DisplayFor(model => model.EndDateTime)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.AffectedHosts)
@@ -67,29 +67,72 @@
             @Html.DisplayFor(model => model.Environment)
         </dd>
         <dt>
+            @Html.DisplayNameFor(model => model.ImpactAnalysis)
+        </dt>
+        <dd>
+            @Html.TextAreaFor(model => model.ImpactAnalysis,5,200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" } )
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.RiskLevel)
         </dt>
         <dd>
-            @foreach (var s in LOVs.ListRiskLevels())
+            @if (RiskLevel.Count() == 1)
             {
-                if (Model.RiskLevel == s.Value)
-                {
-                    <span class="cal-risklevel-@s.Value" stylex="font-size:14px">@s.Name</span>
-                    break;
-                }
+                var s = RiskLevel.First();
+                <span class="cal-risklevel-@s.Value" stylex="font-size:14px">@s.Name</span>            
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.RiskLevel)
             }
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.ActionBy)
+            @Html.DisplayNameFor(model => model.MaintProcedure)
         </dt>
+        <dd>
+            @Html.TextAreaFor(model => model.MaintProcedure, 5, 200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" })
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ActionBy)
+        </dt>        
         <dd>
             @Html.DisplayFor(model => model.ActionBy)
         </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.VerificationStep)
+        </dt>
+        <dd>
+            @Html.TextAreaFor(model => model.VerificationStep, 5, 200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" })
+        </dd>
+
         <dt>
             @Html.DisplayNameFor(model => model.HealthCheckBy)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.HealthCheckBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FallbackProcedure)
+        </dt>
+        <dd>
+            @Html.TextAreaFor(model => model.FallbackProcedure, 5, 200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" })
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EventStatus)
+        </dt>
+        <dd>                                       
+            @if (EventStatus.Count() == 1)
+            {
+                var s = EventStatus.First();
+                @s.Name;
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.EventStatus)
+            }
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Reference)

@@ -92,14 +92,12 @@
         </div>
         <div class="form-group">
             <label asp-for="Category" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="col-md-4">
                 <input asp-for="Category" class="form-control" />
                 <span asp-validation-for="Category" class="text-danger" />
             </div>
-        </div>
-        <div class="form-group">
             <label asp-for="Environment" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="col-md-4">
                 <select asp-for="Environment" class="form-control">
                     <option></option>
                     @foreach (var s in LOVs.ListEnvironments())
@@ -110,6 +108,16 @@
                 <span asp-validation-for="Environment" class="text-danger" />
             </div>
         </div>
+
+
+        <div class="form-group">
+            <label asp-for="ImpactAnalysis" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea rows="5" asp-for="ImpactAnalysis" class="form-control"></textarea>
+                <span asp-validation-for="ImpactAnalysis" class="text-danger" />
+            </div>
+        </div>
+
 
         <div class="form-group">
             <label asp-for="Likelihood" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_LIKELIHOOD"></label>
@@ -162,10 +170,26 @@
         </div>
 
         <div class="form-group">
+            <label asp-for="MaintProcedure" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea rows="5" asp-for="MaintProcedure" class="form-control"></textarea>
+                <span asp-validation-for="MaintProcedure" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
             <label asp-for="ActionBy" class="col-md-2 control-label"></label>
             <div class="col-md-10">
                 <input asp-for="ActionBy" class="form-control" />
                 <span asp-validation-for="ActionBy" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="VerificationStep" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea rows="5" asp-for="VerificationStep" class="form-control"></textarea>
+                <span asp-validation-for="VerificationStep" class="text-danger" />
             </div>
         </div>
 
@@ -178,8 +202,26 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="Reference" class="col-md-2 control-label"></label>
+            <label asp-for="FallbackProcedure" class="col-md-2 control-label"></label>
             <div class="col-md-10">
+                <textarea rows="5" asp-for="FallbackProcedure" class="form-control"></textarea>
+                <span asp-validation-for="FallbackProcedure" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="EventStatus" class="col-md-2 control-label"></label>
+            <div class="col-md-4">
+                <select asp-for="EventStatus" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListEventStatus())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+            </div>
+            <label asp-for="Reference" class="col-md-2 control-label"></label>
+            <div class="col-md-4">
                 <input asp-for="Reference" class="form-control" />
                 <span asp-validation-for="Reference" class="text-danger" />
             </div>
@@ -221,7 +263,7 @@
     /* prevent submit form by hitting Enter */
     $(document).ready(function() {
         $(window).keydown(function(event){
-            if(event.keyCode == 13) {
+            if(event.keyCode == 13 && event.target.type != "textarea") {
                 event.preventDefault();
                 return false;
             }

@@ -43,8 +43,18 @@ namespace Calendar.Models
         [Display(Name = "Impact"), StringLength(10), Required]
         public string Impact { get; set; }
 
-        /* The Severity is to be obsolete */
+        [Display(Name = "Status"), StringLength(5)]
+        public string EventStatus { get; set; }        
+        [Display(Name = "Impact Analysis"), StringLength(1000), DataType(DataType.MultilineText)]
+        public string ImpactAnalysis { get; set; }
+        [Display(Name = "Maintenance Procedure"), StringLength(1000)]
+        public string MaintProcedure { get; set; }
+        [Display(Name = "Verification Step"), StringLength(1000)]
+        public string VerificationStep { get; set; }
+        [Display(Name = "Fallback Procedure"), StringLength(1000)]
+        public string FallbackProcedure { get; set; }
 
+        /* The Severity is to be obsolete. Once commented, EF will drop the column when execute "dotnet ef database update" */
         //[Display(Name = "Severity")]
         //public int Severity { get; set; }
 
