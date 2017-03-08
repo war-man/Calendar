@@ -34,7 +34,7 @@ namespace Calendar.Models
 
         [Display(Name = "Environment"), StringLength(10), Required]
         public string Environment { get; set; }
-        [Display(Name = "Action By"), StringLength(30, MinimumLength = 2)]
+        [Display(Name = "Action By"), StringLength(100, MinimumLength = 2)]
         public string ActionBy { get; set; }
         [Display(Name = "Health Check By"), StringLength(100, MinimumLength = 2)]
         public string HealthCheckBy { get; set; }
@@ -47,9 +47,9 @@ namespace Calendar.Models
         public string EventStatus { get; set; }        
         [Display(Name = "Impact Analysis"), StringLength(1000), DataType(DataType.MultilineText)]
         public string ImpactAnalysis { get; set; }
-        [Display(Name = "Maintenance Procedure"), StringLength(1000)]
+        [Display(Name = "Procedure"), StringLength(1000)]
         public string MaintProcedure { get; set; }
-        [Display(Name = "Verification Step"), StringLength(1000)]
+        [Display(Name = "Verification Steps"), StringLength(1000)]
         public string VerificationStep { get; set; }
         [Display(Name = "Fallback Procedure"), StringLength(1000)]
         public string FallbackProcedure { get; set; }

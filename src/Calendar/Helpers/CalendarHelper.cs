@@ -16,29 +16,8 @@ namespace Calendar.Helpers
     }
 
 
-    /* CalendarEvent Class provided the data object used in the Calendar View */
-    public class CalendarEvent
-    {
-        public Event e { get; set; }
-        public DateTime OriginalStart { get; set; }
-        public DateTime OriginalEnd { get; set; }
-        public bool Continue { get; set; }
-        public bool MarkedInCalendar { get; set; }
-        public int ColorIdx { get; set; }
-        public List<String> Projects { get; set; }
-        public List<String> Teams { get; set; }
-        public List<String> Servers { get; set; }
-        
-        // Constructor
-        public CalendarEvent(Event e)
-        {
-            this.e = e;
-            this.OriginalStart = e.StartDateTime;
-            this.OriginalEnd = e.EndDateTime;
-            this.Continue = false;
-            this.MarkedInCalendar = false;
-        }
-    }
+    /* CalendarEvent Class provided the data object used in the Calendar View */    
+    /* Moved to CalendarEventViewModel !!! */
 
     /* Provide a single place to define all the Constants */
     public static class Constants

@@ -1,7 +1,8 @@
-@using Calendar.Models.Services
 @using Calendar.Helpers
+
 @model Calendar.Models.Event
-@inject StaticListOfValuesService LOVs
+
+@inject Calendar.Models.Services.StaticListOfValuesService LOVs
 @inject Calendar.Controllers.TeamsController Teams
 @inject Calendar.Controllers.ProjectsController Projects
 
@@ -180,7 +181,7 @@
         <div class="form-group">
             <label asp-for="ActionBy" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="ActionBy" class="form-control" />
+                <input asp-for="ActionBy" class="form-control" data-role="tagsinput" />
                 <span asp-validation-for="ActionBy" class="text-danger" />
             </div>
         </div>
@@ -336,6 +337,10 @@
             source: bloodHoundObj.ttAdapter(),
             limit: 10
         }
+    });
+
+    $('#ActionBy').tagsinput({
+        tagClass: 'label label-default',
     });
 
     $('#HealthCheckBy').tagsinput({

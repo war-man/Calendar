@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Calendar.Data;
 using Calendar.Models;
+using Calendar.Models.CalendarViewModels;
 using Calendar.Helpers;
 
 namespace Calendar.Controllers
@@ -87,11 +88,11 @@ namespace Calendar.Controllers
             }
 
             /* To maintain separation of concerns in mvc. */
-            List<CalendarEvent> CalEvents = new List<CalendarEvent>();
+            List<CalendarEventViewModel> CalEvents = new List<CalendarEventViewModel>();
 
             foreach (var item in @events)
             {
-                CalendarEvent ce = new CalendarEvent(item);
+                CalendarEventViewModel ce = new CalendarEventViewModel(item);
 
                 ce.Servers = item.AffectedHosts.Split(',').Select(p => p.Trim().ToUpper()).ToList();
                 ce.Projects = item.AffectedProjects.Split(',').Select(p => p.Trim().ToUpper()).ToList();

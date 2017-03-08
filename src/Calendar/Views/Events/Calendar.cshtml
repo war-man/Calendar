@@ -1,11 +1,12 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
 *@
-
+@using Calendar.Models.CalendarViewModels
 @using Calendar.Helpers
 @using Calendar.Services
 
-@model IEnumerable<Calendar.Helpers.CalendarEvent>
+@model IEnumerable<CalendarEventViewModel>
+
 @inject Calendar.Models.Services.EventStatisticsService EventStatsService   /* want to find sometime to tidy this up */
 @inject Calendar.Controllers.AppSettingsController appsettings
 
@@ -73,7 +74,7 @@
 
     /* Retrieve the Next Event to be painted in the Calendar for a given date */
     /* Version 2 which should be able to handler across month */
-    public CalendarEvent GetNextEventByDate(DateTime pDate)
+    public CalendarEventViewModel GetNextEventByDate(DateTime pDate)
     {
         foreach (var item in Model)
         {
@@ -96,32 +97,36 @@
     }
 
     /* Return the Popover Content */
-    public string GetPopoverContent(Event pEvt)
+    public string GetPopoverContent(CalendarEventViewModel pCalEvt)
     {
+        Event pEvt = pCalEvt.e;
+
         string IA_URL = appsettings.IA_Url; /* Impact Analysis URL */
         string CM_URL = appsettings.CM_Url; /* Operation Team Change Management URL */
 
-        var content = "<table><tr><th valign=top>Subject </th><td>" + pEvt.Subject + "</td></tr>";
-        //content += "<tr><th valign=top><a target=_blank href=" + IA_URL + pEvt.AffectedHosts + ">Host(s)</a> </th><td>" + pEvt.AffectedHosts.Replace(",", ", ") + "</td></tr>";
-        content += "<tr><th valign=top>Host(s) </th><td>" + pEvt.AffectedHosts.Replace(",", ", ")
+        var content = "<table>";
+        content += "<tr><th valign=top>Subject </th><td>" + pEvt.Subject + "</td></tr>";
+        content += "<tr><th valign=top>Hosts </th><td>" + pEvt.AffectedHosts.Replace(",", ", ")
                 + "<a target=_blank href=" + IA_URL + "?q=" + pEvt.AffectedHosts + ">"
                 + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
-        content += "<tr><th valign=top>Project(s) </th><td>" + pEvt.AffectedProjects.Replace(",", ", ")
+        content += "<tr><th valign=top>Projects </th><td>" + pEvt.AffectedProjects.Replace(",", ", ")
                 + "<a target=_blank href=" + IA_URL + "?system=" + pEvt.AffectedProjects + ">"
                 + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
-        content += "<tr><th valign=top>Team(s) </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
+        content += "<tr><th valign=top>Teams </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
+        content += "<tr><th valign=top>Risk </th><td><span class='cal-risklevel-" + pEvt.RiskLevel + "'>" + pCalEvt.RiskLevel + "</span></td></tr>";
+        content += "<tr><th valign=top>Status </th><td>" + pCalEvt.EventStatus + "</td></tr>";
         content += "<tr><th valign=top>Reference </th><td><a target=_blank href=" + CM_URL + "?i_CRN=" + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
-        content += "<tr><th valign=top>Result </th><td>" + pEvt.Result + "</td></tr></table>";
-
-
-        if (User.IsInRole(Constants.ROLE_ADMIN))
-        {
-            content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>Edit Event Details</a>";
-        } else
-        {
-            content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Details?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>View Event Details</a>";
-        }
-
+        content += "<tr><th valign=top>Results </th><td>" + pEvt.Result + "</td></tr></table>";
+        content += "<hr>";
+        /*
+                if (User.IsInRole(Constants.ROLE_ADMIN))
+                {
+                    content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>Edit Event Details</a>";
+                } else
+                {
+                    content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Details?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>View Event Details</a>";
+                }
+        */
         return content;
     }
 }
@@ -176,12 +181,12 @@
                             </table>
                             @{
                                 int offset = (int)FirstDateofTheMonth.DayOfWeek * -1 + 1;
-        int lastday = LastDateofTheMonth.Day;
+                                int lastday = LastDateofTheMonth.Day;
 
-        double RowHeightPCent, RowTop;
-        DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar, starting from FirstDateOfTheCalendar. 
+                                double RowHeightPCent, RowTop;
+                                DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar, starting from FirstDateOfTheCalendar. 
 
-        RowHeightPCent = 100.0 / NumOfCalRow;
+                                RowHeightPCent = 100.0 / NumOfCalRow;
 
                                 <div id="mvEventContainer" class="mv-event-container" style="height:700px;">
                                     @for (var row = 0; row < NumOfCalRow; row++)
@@ -244,19 +249,19 @@
                                                                 {
                                                                     int ColSpan = 1;
 
-    /* Get the first event of the date */
-    var ce = GetNextEventByDate(caldate);
+                                                                    /* Get the first event of the date */
+                                                                    var ce = GetNextEventByDate(caldate);
                                                                     if (ce != null)
                                                                     {
                                                                         var e = ce.e;
 
-    /* Now, calculate the colspan of event. 
-     * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0
-     *      1-Feb-2017 0:00 to 5-Feb-2017 3:00 => colspan=4,1
-     */
-    //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
+                                                                        /* Now, calculate the colspan of event. 
+                                                                         * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0
+                                                                         *      1-Feb-2017 0:00 to 5-Feb-2017 3:00 => colspan=4,1
+                                                                         */
+                                                                        //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
 
-    int NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
+                                                                        int NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
                                                                         if (e.EndDateTime == e.EndDateTime.Date) /* for those end date with timestamp 0:00, it should not be counted as one day */
                                                                         {
                                                                             NumOfDays -= 1;
@@ -273,14 +278,14 @@
                                                                         }
 
                                                                         var over_title = ((e.RiskLevel == "50") ? "<span class='glyphicon glyphicon-exclamation-sign' style='color:red'></span>" : "") + ce.OriginalStart.ToString("dd-MMM h:mmtt") + " - " + ce.OriginalEnd.ToString("dd-MMM h:mmtt");
-    var over_content = GetPopoverContent(e);
-    var over_placement = (row <= 1) ? "bottom" : "top";
+                                                                        var over_content = GetPopoverContent(ce);
+                                                                        var over_placement = (row <= 1) ? "bottom" : "top";
 
                                                                         <td class="st-c" colspan="@ColSpan">
                                                                             <div class="st-c-pos">
                                                                          @*
                                                                             @if (!ce.Continue && e.Severity == 1)
-    {
+                                                                            {
                                                                                 <span class="glyphicon glyphicon-exclamation-sign" style="color:red;position:absolute;top:-3px;left:-3px"></span>
                                                                             }
 
@@ -289,19 +294,19 @@
                                                                                 data-trigger='focus'  => one click dismiss
                                                                          *@
                                                                                 <div class="ca-evp-@e.ID rb-n cal-risklevel-@e.RiskLevel" data-placement=@over_placement data-toggle="popover" data-trigger="hover" data-container="body" data-title="@over_title" data-content="@over_content" data-html="true">
-                                                                                    <div class="rb-ni">
+                                                                                    <div class="rb-ni" onclick="doOpenEvent(@e.ID);">
                                                                                         <!--<a style="text-decoration:none; color:#ffffff;" asp-controller="Events" asp-action="Details" asp-route-id="@e.ID">-->
                                                                                         <a style="text-decoration:none; color:#ffffff;" href="#">
                                                                                             @if (!ce.Continue)
-    {
-                                                                                            <span>@e.StartDateTime.ToString("h:mmt").ToLower()</span>
+                                                                                            {
+                                                                                                <span>@e.StartDateTime.ToString("h:mmt").ToLower()</span>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                                    <span>...</span>
+                                                                                                <span>...</span>
                                                                                             }
-                                                                                                    @e.TaskDescription
-                                                                                                    </a>
+                                                                                            @e.TaskDescription
+                                                                                        </a>
                                                                                      </div>
                                                                                 </div>
                                                                              </div>
@@ -470,7 +475,7 @@
             $('div[class*=ca-evp-]').show();
         else {
             var eids = GetCalEventIDs(data);
-        
+
             //alert(eids);
             $('div[class*=ca-evp-]').hide();
 
@@ -480,7 +485,7 @@
             });
         }
     });
-    
+
     // Unselected will be triggered first. Then, Selected.
     $('#teamtree').on('nodeUnselected', function(event, data) {
         $('#idFilterProject').val("");
@@ -513,11 +518,11 @@
                 /* find the parent. i.e. the team of the project */
                 var pnode = $('#teamtree').treeview('getParent', node);
                 if (pnode) {
-                    if ($.inArray(pnode.text.toUpperCase(), ce.teams) >= 0 && $.inArray(node.text.toUpperCase(), ce.projects) >= 0) 
+                    if ($.inArray(pnode.text.toUpperCase(), ce.teams) >= 0 && $.inArray(node.text.toUpperCase(), ce.projects) >= 0)
                         eids2show.push(e.id);
                     else
                         eids2hide.push(e.id);
-                }    
+                }
             }
         }
         //alert ('Show: ' + eids2show + ', Hide: ' + eids2hide);
@@ -536,17 +541,17 @@
             var ce = calevents[i];
             var e  = ce.e;
 
-            if ($.inArray(proj, ce.projects) >= 0) 
+            if ($.inArray(proj, ce.projects) >= 0)
                 eids2show.push(e.id);
         }
-        
+
         $('div[class*=ca-evp-]').hide();
 
         $.each(eids2show, function(index, value) {
         var cls = 'ca-evp-' + value;
             $('.' + cls).show();
-        });       
-        
+        });
+
         var nodes = $('#teamtree').treeview('getSelected');
         for (i=0; i < nodes.length; i++) {
             $('#teamtree').treeview('unselectNode', [ nodes[i].nodeId, { silent: true} ]);
@@ -560,4 +565,13 @@
             doFilter();
         }
     });
+
+    //$("div[class=rb-ni").click( function() {});
+
+    function doOpenEvent(id) {
+
+        var url = "@((User.IsInRole(Constants.ROLE_ADMIN))? "Edit": "Details")" + "?id=" + id + "&redir=" + encodeURIComponent("Calendar?year=@ViewBag.ViewDate.Year&month=@ViewBag.ViewDate.Month");
+
+        location.href = url;
+    };
 </script>
