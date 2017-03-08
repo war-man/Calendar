@@ -35,7 +35,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.AffectedHosts)
             </th>
-            <th>
+            <th width="10%">
                 @Html.DisplayNameFor(model => model.AffectedProjects)
             </th>
             <th>
@@ -79,12 +79,14 @@
                 @{
                     String affectedhosts = item.AffectedHosts.Replace(",", ", ");
                     @affectedhosts
+                    <a target=_blank href="@appsettings.IA_Url?q=@item.AffectedHosts" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></a>
                 }
             </td>
             <td>
                 @{
                     String affectedprojects = item.AffectedProjects.Replace(",", ", ");
                     @affectedprojects
+                    <a target=_blank href="@appsettings.IA_Url?system=@item.AffectedProjects" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></a>
                 }
             </td>
             <td>

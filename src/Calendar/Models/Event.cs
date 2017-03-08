@@ -47,7 +47,7 @@ namespace Calendar.Models
         public string EventStatus { get; set; }        
         [Display(Name = "Impact Analysis"), StringLength(1000), DataType(DataType.MultilineText)]
         public string ImpactAnalysis { get; set; }
-        [Display(Name = "Procedure"), StringLength(1000)]
+        [Display(Name = "Action Plan"), StringLength(1000)]
         public string MaintProcedure { get; set; }
         [Display(Name = "Verification Steps"), StringLength(1000)]
         public string VerificationStep { get; set; }
