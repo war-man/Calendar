@@ -101,7 +101,7 @@ namespace Calendar.Models.Services
             {
                 new LOV("EventStatus", "Completed", "CMP"),
                 new LOV("EventStatus", "Schedule Confirmed", "SC"),
-                new LOV("EventStatus", "RFQ in progress", "RIP"),
+                new LOV("EventStatus", "RFC in Progress", "RFC"),
                 new LOV("EventStatus", "Tentative", "T")
             };
         }

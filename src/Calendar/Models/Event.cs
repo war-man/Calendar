@@ -34,9 +34,9 @@ namespace Calendar.Models
 
         [Display(Name = "Environment"), StringLength(10), Required]
         public string Environment { get; set; }
-        [Display(Name = "Action By"), StringLength(30, MinimumLength = 3)]
+        [Display(Name = "Action By"), StringLength(30, MinimumLength = 2)]
         public string ActionBy { get; set; }
-        [Display(Name = "Health Check By"), StringLength(100, MinimumLength = 3)]
+        [Display(Name = "Health Check By"), StringLength(100, MinimumLength = 2)]
         public string HealthCheckBy { get; set; }
         [Display(Name = "Failure Likelihood"), StringLength(10), Required]
         public string Likelihood { get; set; }
