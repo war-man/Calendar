@@ -25,9 +25,33 @@ namespace Calendar.Controllers
 
 
         // GET: Events
-        public async Task<IActionResult> Index()
+        //startdate_desc, startdate_asce, creation_desc, creation_asce
+        public async Task<IActionResult> Index(string sort)
         {
-            return View(await _context.Event.OrderByDescending(m => m.StartDateTime).ToListAsync());
+
+            //ViewBag.SortParm = String.IsNullOrEmpty(sort) ? "creation_desc" : "";
+            
+            var events = from e in _context.Event
+                           select e;
+
+            switch (sort)
+            {
+                case "creation_asc":
+                    events = events.OrderBy(e => e.CreatedDate);
+                    break;
+                case "creation_desc":
+                    events = events.OrderByDescending(e => e.CreatedDate);
+                    break;
+                case "startdate_asc":
+                    events = events.OrderBy(e => e.StartDateTime);
+                    break;
+                default:   // startdate_desc                    
+                    events = events.OrderByDescending(e => e.StartDateTime);
+                    break;
+            }
+
+            return View(await events.AsNoTracking().ToListAsync());
+            //return View(await _context.Event.OrderByDescending(m => m.StartDateTime).ToListAsync());
         }
 
 
@@ -157,6 +181,19 @@ namespace Calendar.Controllers
 
             if (ModelState.IsValid)
             {
+                /* Audit Fields */
+                var username = "anonymous";
+                var u = User.Claims.Where(m => m.Type == "username");
+                if (u.Count() == 1) { username = u.First().Value; }
+                var displayname = "anonymous";
+                var d = User.Claims.Where(m => m.Type == "displayName");
+                if (d.Count() == 1) { displayname = d.First().Value; }
+                @event.CreatedDate = DateTime.Now;
+                @event.CreatedBy = username;
+                @event.CreatedByDisplayName = displayname;
+                @event.UpdatedDate = @event.CreatedDate;
+                @event.UpdatedBy = username;
+                @event.UpdatedByDisplayName = displayname;
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -207,7 +244,7 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus")] Event @event)
+        public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,CreatedDate,CreatedBy,CreatedByDisplayName")] Event @event)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
@@ -221,7 +258,23 @@ namespace Calendar.Controllers
             {
                 try
                 {
+                    /* Audit Fields */
+                    var username = "anonymous";
+                    var u = User.Claims.Where(m => m.Type == "username");
+                    if (u.Count() == 1) { username = u.First().Value; }
+                    var displayname = "anonymous";
+                    var d = User.Claims.Where(m => m.Type == "displayName");
+                    if (d.Count() == 1) { displayname = d.First().Value; }
+                    @event.UpdatedDate = DateTime.Now;
+                    @event.UpdatedBy = username;
+                    @event.UpdatedByDisplayName = displayname;
+                    //The IsModified doesn't work!
+                    //_context.Entry(@event).Property("CreatedBy").IsModified = false;
+                    //_context.Entry(@event).Property("CreatedByDisplayName").IsModified = false;
+                    //_context.Entry(@event).Property("CreatedDate").IsModified = false;
+                    
                     _context.Update(@event);
+                    
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

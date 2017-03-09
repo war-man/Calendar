@@ -54,6 +54,19 @@ namespace Calendar.Models
         [Display(Name = "Fallback Procedure"), StringLength(1000)]
         public string FallbackProcedure { get; set; }
 
+        [Display(Name = "Creation Date"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy}", ApplyFormatInEditMode = false), DataType(DataType.DateTime)]
+        public DateTime CreatedDate { get; set; }
+        [Display(Name = "Created By"), StringLength(50)]
+        public string CreatedBy { get; set; }
+        [Display(Name = "Created By"), StringLength(50)]
+        public string CreatedByDisplayName { get; set; }
+        [Display(Name = "Updated Date"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy}", ApplyFormatInEditMode = false), DataType(DataType.DateTime)]
+        public DateTime UpdatedDate { get; set; }
+        [Display(Name = "Updated By"), StringLength(50)]
+        public string UpdatedBy { get; set; }
+        [Display(Name = "Updated By"), StringLength(50)]
+        public string UpdatedByDisplayName { get; set; }
+
         /* The Severity is to be obsolete. Once commented, EF will drop the column when execute "dotnet ef database update" */
         //[Display(Name = "Severity")]
         //public int Severity { get; set; }

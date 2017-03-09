@@ -237,6 +237,9 @@
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="hidden" name="Redir" value="@ViewBag.Redir"/>
+                <input type="hidden" asp-for="CreatedDate" class="form-control" />
+                <input type="hidden" asp-for="CreatedBy" class="form-control" />
+                <input type="hidden" asp-for="CreatedByDisplayName" class="form-control" />
                 <input type="submit" value="Save" class="btn btn-default" />
             </div>
         </div>

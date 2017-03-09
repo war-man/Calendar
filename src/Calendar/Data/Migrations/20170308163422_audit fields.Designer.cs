@@ -8,9 +8,10 @@ using Calendar.Data;
 namespace Calendar.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170308163422_audit fields")]
+    partial class auditfields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -90,9 +91,7 @@ namespace Calendar.Data.Migrations
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<string>("CreatedBy")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("CreatedByDisplayName")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<DateTime>("CreatedDate");
@@ -147,9 +146,7 @@ namespace Calendar.Data.Migrations
                         .HasAnnotation("MaxLength", 500);
 
                     b.Property<string>("UpdatedBy")
-                        .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("UpdatedByDisplayName")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
                     b.Property<DateTime>("UpdatedDate");
