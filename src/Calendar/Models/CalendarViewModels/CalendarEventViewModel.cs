@@ -37,11 +37,8 @@ namespace Calendar.Models.CalendarViewModels
 
 
             var es = LOVs.ListEventStatus().Where(m => m.Value == e.EventStatus);
-
             if (es.Count() == 1) { this.EventStatus = es.First().Name; } else { this.EventStatus = e.EventStatus; }
-
             var rl = LOVs.ListRiskLevels().Where(m => m.Value == e.RiskLevel);
-
             if (rl.Count() == 1) { this.RiskLevel = rl.First().Name; } else { this.RiskLevel = e.RiskLevel; }
         }
     }

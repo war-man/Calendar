@@ -110,58 +110,11 @@
                 <span asp-validation-for="Environment" class="text-danger" />
             </div>
         </div>
-        <div class="form-group">
-            <label asp-for="ImpactAnalysis" class="col-md-2 control-label"></label>
+        <div class="form-group">            
+            <label asp-for="ImpactAnalysis" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_IMPACTANALYSIS"></label>
             <div class="col-md-10">
                 <textarea rows="5" asp-for="ImpactAnalysis" class="form-control"></textarea>
                 <span asp-validation-for="ImpactAnalysis" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Likelihood" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_LIKELIHOOD"></label>
-            <div class="col-md-4">
-                <select asp-for="Likelihood" class="form-control">
-                    <option></option>
-                    @foreach (var s in LOVs.ListLikelihoods())
-                    {
-                        <option value=@s.Value>@s.Name</option>
-                    }
-                </select>
-                <span asp-validation-for="Likelihood" class="text-danger" />
-            </div>
-            <label asp-for="Impact" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_IMPACT"></label>
-            <div class="col-md-4">
-                <select asp-for="Impact" class="form-control">
-                    <option></option>
-                    @foreach (var s in LOVs.ListImpacts())
-                    {
-                        <option value=@s.Value>@s.Name</option>
-                    }
-                </select>
-                <span asp-validation-for="Impact" class="text-danger" />
-            </div>
-        </div>
-
-        <div class="form-group" hidden>
-            <label asp-for="RiskLevel" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="RiskLevel" class="form-control chosen-disabled">
-                    <option></option>
-                    @foreach (var s in LOVs.ListRiskLevels())
-                    {
-                        <option value=@s.Value>@s.Name</option>
-                    }
-                </select>
-                <span asp-validation-for="RiskLevel" class="text-danger" />
-            </div>
-        </div>
-
-        @*This is a readonly makeup field. *@
-        <div class="form-group">
-            <label asp-for="RiskLevel" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_RISKLEVEL"></label>
-            <div class="col-md-10">
-                <span class="form-control" id="RiskLevelDisplay">
-                </span>
             </div>
         </div>
 
@@ -230,6 +183,56 @@
                 <span asp-validation-for="Result" class="text-danger" />
             </div>
         </div>
+
+        <div class="form-group">
+            <label asp-for="Likelihood" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_LIKELIHOOD"></label>
+            <div class="col-md-4">
+                <select asp-for="Likelihood" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListLikelihoods())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="Likelihood" class="text-danger" />
+            </div>
+            <label asp-for="Impact" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_IMPACT"></label>
+            <div class="col-md-4">
+                <select asp-for="Impact" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListImpacts())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="Impact" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group" hidden>
+            <label asp-for="RiskLevel" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="RiskLevel" class="form-control chosen-disabled">
+                    <option></option>
+                    @foreach (var s in LOVs.ListRiskLevels())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="RiskLevel" class="text-danger" />
+            </div>
+        </div>
+
+        @*This is a readonly makeup field. *@
+        <div class="form-group">
+            <label asp-for="RiskLevel" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_RISKLEVEL"></label>
+            <div class="col-md-10">
+                <span class="form-control" id="RiskLevelDisplay">
+                </span>
+            </div>
+        </div>
+
+
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <input type="submit" value="Create" class="btn btn-default" />

@@ -3,6 +3,7 @@
 
 @model IEnumerable<Calendar.Models.Event>
 
+@inject Calendar.Models.Services.StaticListOfValuesService LOVs
 @inject Calendar.Controllers.AppSettingsController appsettings
 
 @{
@@ -23,10 +24,10 @@
     <thead class="thead-inverse" style="color:#eceeef;background-color:#373a3c">
         <tr>
             <th></th>
-            <th width="15%">
+            <th width="12%">
                 @Html.DisplayNameFor(model => model.StartDateTime)                
-                <a asp-action="Index" asp-route-sort="sd_a" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="sd_a")?"dodgerblue": "white")'></span></a>
-                <a asp-action="Index" asp-route-sort="sd_d" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="sd_d") ?"dodgerblue": "white")'></span></a>
+                <a asp-action="Index" asp-route-sort="sd_a" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="sd_a")?"black": "white")'></span></a>
+                <a asp-action="Index" asp-route-sort="sd_d" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="sd_d") ?"black": "white")'></span></a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Category)
@@ -44,15 +45,18 @@
                 @Html.DisplayNameFor(model => model.AffectedTeams)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Reference)
+                @Html.DisplayNameFor(model => model.EventStatus)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Result)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Reference)
+            </th>
             <th width="10%">
                 @Html.DisplayNameFor(model => model.CreatedDate)
-                <a asp-action="Index" asp-route-sort="cd_a" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="cd_a")?"dodgerblue":"white")'></span></a>
-                <a asp-action="Index" asp-route-sort="cd_d" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="cd_d")?"dodgerblue": "white")'></span></a>
+                <a asp-action="Index" asp-route-sort="cd_a" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="cd_a")?"black":"white")'></span></a>
+                <a asp-action="Index" asp-route-sort="cd_d" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="cd_d")?"black": "white")'></span></a>
             </th>
         </tr>
     </thead>
@@ -61,7 +65,8 @@
 {
         <tr>
             <td>
-                @if (User.IsInRole("Admins")) {
+                @if (User.IsInRole("Admins"))
+                {
                     <a class="btn btn-default btn-xs glyphicon glyphicon-trash" role="button" asp-action="Delete" asp-route-id="@item.ID"></a>
                 }
             </td>
@@ -86,7 +91,7 @@
                 @{
                     String affectedhosts = item.AffectedHosts.Replace(",", ", ");
                     @affectedhosts
-                    <a target=_blank href="@appsettings.IA_Url?q=@item.AffectedHosts"><span class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></span></a>
+                    <a target=_blank href="@appsettings.IA_Url?broken=true&server=@item.AffectedHosts"><span class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></span></a>
                 }
             </td>
             <td>
@@ -102,14 +107,27 @@
                     @affectedteams
                 }
             </td>
-            <td>                
-                @if (!String.IsNullOrEmpty(item.Reference))
-                {
-                    <a href="@appsettings.CM_Url?i_CRN=@item.Reference">@item.Reference</a>
+            <td>
+                @{
+                    // It wounld be better to do it using CalendarEventViewModel
+                    var s = LOVs.ListEventStatus().Where(m => m.Value == item.EventStatus);                    
+                    @if (s.Count() == 1)
+                    {
+                        @Html.DisplayFor(modelItem => s.First().Name);
+                    }
+                    else { 
+                        @Html.DisplayFor(modelItem => item.EventStatus);
+                    }
                 }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Result)                
+            </td>
+            <td>
+                @if (!String.IsNullOrEmpty(item.Reference))
+                {
+                    <a href="@appsettings.CM_Url?i_CRN=@item.Reference">@item.Reference</a>
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CreatedDate)

@@ -45,7 +45,7 @@ namespace Calendar.Models
 
         [Display(Name = "Status"), StringLength(5)]
         public string EventStatus { get; set; }        
-        [Display(Name = "Impact Analysis"), StringLength(1000), DataType(DataType.MultilineText)]
+        [Display(Name = "Impact"), StringLength(1000), DataType(DataType.MultilineText)]
         public string ImpactAnalysis { get; set; }
         [Display(Name = "Action Plan"), StringLength(1000)]
         public string MaintProcedure { get; set; }
@@ -60,7 +60,7 @@ namespace Calendar.Models
         public string CreatedBy { get; set; }
         [Display(Name = "Created By"), StringLength(50)]
         public string CreatedByDisplayName { get; set; }
-        [Display(Name = "Updated Date"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy}", ApplyFormatInEditMode = false), DataType(DataType.DateTime)]
+        [Display(Name = "Updated Date"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy h:mm tt}", ApplyFormatInEditMode = false), DataType(DataType.DateTime)]
         public DateTime UpdatedDate { get; set; }
         [Display(Name = "Updated By"), StringLength(50)]
         public string UpdatedBy { get; set; }

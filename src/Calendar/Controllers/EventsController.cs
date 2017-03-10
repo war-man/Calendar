@@ -96,13 +96,15 @@ namespace Calendar.Controllers
             if (!String.IsNullOrEmpty(filterProject))
             {
                 ViewBag.FilterProject = filterProject.ToUpper();
-                e = e.Where(m => m.AffectedProjects.Contains(filterProject.ToUpper()));                                             
+                /* filter will be done in View */
+                //e = e.Where(m => m.AffectedProjects.Contains(filterProject.ToUpper()));                                             
             }
 
             if (!String.IsNullOrEmpty(filterTeam))
             {
                 ViewBag.FilterTeam = filterTeam.ToUpper();
-                e = e.Where(m => m.AffectedTeams.Contains(filterTeam.ToUpper()));
+                /* filter will be done in View */
+                //e = e.Where(m => m.AffectedTeams.Contains(filterTeam.ToUpper()));
             }
 
             var @events = await e.OrderBy(m => m.StartDateTime).ToListAsync();

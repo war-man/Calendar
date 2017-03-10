@@ -73,20 +73,6 @@
             @Html.TextAreaFor(model => model.ImpactAnalysis,5,200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" } )
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.RiskLevel)
-        </dt>
-        <dd>
-            @if (RiskLevel.Count() == 1)
-            {
-                var s = RiskLevel.First();
-                <span class="cal-risklevel-@s.Value" stylex="font-size:14px">@s.Name</span>            
-            }
-            else
-            {
-                @Html.DisplayFor(model => model.RiskLevel)
-            }
-        </dd>
-        <dt>
             @Html.DisplayNameFor(model => model.MaintProcedure)
         </dt>
         <dd>
@@ -149,7 +135,28 @@
         <dd>
             @Html.DisplayFor(model => model.Result)
         </dd>
-    </dl>
+        <dt>
+            @Html.DisplayNameFor(model => model.RiskLevel)
+        </dt>
+        <dd>
+            @if (RiskLevel.Count() == 1)
+            {
+                var s = RiskLevel.First();
+                <span class="cal-risklevel-@s.Value" stylex="font-size:14px">@s.Name</span>
+            }
+            else
+            {
+                @Html.DisplayFor(model => model.RiskLevel)
+            }
+        </dd>
+        
+        <dt>Last Updated
+        </dt>
+        <dd>
+           <i>@Html.DisplayFor(model => model.UpdatedDate)</i>
+        </dd>
+</dl>
+     
 </div>
 <div>
     @if (@ViewBag.Redir != null)
