@@ -25,8 +25,8 @@
             <th></th>
             <th width="15%">
                 @Html.DisplayNameFor(model => model.StartDateTime)                
-                <a class='glyphicon glyphicon-chevron-up' style="color:white" asp-action="Index" asp-route-sort="startdate_asc"></a>
-                <a class='glyphicon glyphicon-chevron-down' style="color:white" asp-action="Index" asp-route-sort="startdate_desc"></a>
+                <a asp-action="Index" asp-route-sort="sd_a" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="sd_a")?"dodgerblue": "white")'></span></a>
+                <a asp-action="Index" asp-route-sort="sd_d" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="sd_d") ?"dodgerblue": "white")'></span></a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Category)
@@ -51,8 +51,8 @@
             </th>
             <th width="10%">
                 @Html.DisplayNameFor(model => model.CreatedDate)
-                <a class='glyphicon glyphicon-chevron-up' style="color:white" asp-action="Index" asp-route-sort="creation_asc"></a>
-                <a class='glyphicon glyphicon-chevron-down' style="color:white" asp-action="Index" asp-route-sort="creation_desc"></a>
+                <a asp-action="Index" asp-route-sort="cd_a" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="cd_a")?"dodgerblue":"white")'></span></a>
+                <a asp-action="Index" asp-route-sort="cd_d" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="cd_d")?"dodgerblue": "white")'></span></a>
             </th>
         </tr>
     </thead>

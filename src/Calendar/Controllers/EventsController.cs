@@ -29,23 +29,23 @@ namespace Calendar.Controllers
         public async Task<IActionResult> Index(string sort)
         {
 
-            //ViewBag.SortParm = String.IsNullOrEmpty(sort) ? "creation_desc" : "";
+            ViewBag.SortParm = String.IsNullOrEmpty(sort) ? "" : sort;
             
             var events = from e in _context.Event
                            select e;
 
             switch (sort)
             {
-                case "creation_asc":
+                case "cd_a":
                     events = events.OrderBy(e => e.CreatedDate);
                     break;
-                case "creation_desc":
+                case "cd_d":
                     events = events.OrderByDescending(e => e.CreatedDate);
                     break;
-                case "startdate_asc":
+                case "sd_a":
                     events = events.OrderBy(e => e.StartDateTime);
                     break;
-                default:   // startdate_desc                    
+                default:   // sd_d
                     events = events.OrderByDescending(e => e.StartDateTime);
                     break;
             }
