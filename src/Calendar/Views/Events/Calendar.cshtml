@@ -106,11 +106,12 @@
 
         var content = "<table>";
         content += "<tr><th valign=top>Subject </th><td>" + pEvt.Subject + "</td></tr>";
+        content += "<tr><th nowrap valign=top>Short Desc. </th><td>" + pEvt.TaskDescription + "</td></tr>";
         content += "<tr><th valign=top>Hosts </th><td>" + pEvt.AffectedHosts.Replace(",", ", ")
-                + "<a target=_blank href=" + IA_URL + "?broken=true&server=" + pEvt.AffectedHosts + ">"
-                + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
+            + "<a target=_blank href=" + IA_URL + "?broken=true&server=" + Uri.EscapeDataString(pEvt.AffectedHosts) + ">"
+            + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
         content += "<tr><th valign=top>Projects </th><td>" + pEvt.AffectedProjects.Replace(",", ", ")
-                + "<a target=_blank href=" + IA_URL + "?system=" + pEvt.AffectedProjects + ">"
+                + "<a target=_blank href=" + IA_URL + "?system=" + Uri.EscapeDataString(pEvt.AffectedProjects) + ">"
                 + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
         content += "<tr><th valign=top>Teams </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
         content += "<tr><th valign=top>Risk </th><td><span class='cal-risklevel-" + pEvt.RiskLevel + "'>" + pCalEvt.RiskLevel + "</span></td></tr>";

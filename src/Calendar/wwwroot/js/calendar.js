@@ -45,7 +45,7 @@ $(function () {
                 if (!$(".popover:hover").length) {
                     $(_this).popover("hide");
                 }
-            }, 300);
+            }, 100);
         });
 });
 $(document).ready(jqUpdateSize);    // When the page first loads

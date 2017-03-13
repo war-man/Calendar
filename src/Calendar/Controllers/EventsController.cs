@@ -176,7 +176,7 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus")] Event @event)
+        public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,RiskAnalysis")] Event @event)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
@@ -196,6 +196,7 @@ namespace Calendar.Controllers
                 @event.UpdatedDate = @event.CreatedDate;
                 @event.UpdatedBy = username;
                 @event.UpdatedByDisplayName = displayname;
+
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -246,7 +247,7 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,CreatedDate,CreatedBy,CreatedByDisplayName")] Event @event)
+        public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,CreatedDate,CreatedBy,CreatedByDisplayName,RiskAnalysis")] Event @event)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
@@ -270,11 +271,15 @@ namespace Calendar.Controllers
                     @event.UpdatedDate = DateTime.Now;
                     @event.UpdatedBy = username;
                     @event.UpdatedByDisplayName = displayname;
+                    //replace all the spaces in Hosts and Projects
+                    //@event.AffectedHosts = @event.AffectedHosts.Replace(" ", "");
+                    //@event.AffectedHosts = @event.AffectedProjects.Replace(" ", "");
+
                     //The IsModified doesn't work!
                     //_context.Entry(@event).Property("CreatedBy").IsModified = false;
                     //_context.Entry(@event).Property("CreatedByDisplayName").IsModified = false;
                     //_context.Entry(@event).Property("CreatedDate").IsModified = false;
-                    
+
                     _context.Update(@event);
                     
                     await _context.SaveChangesAsync();

@@ -34,9 +34,9 @@ namespace Calendar.Models
 
         [Display(Name = "Environment"), StringLength(10), Required]
         public string Environment { get; set; }
-        [Display(Name = "Action By"), StringLength(100, MinimumLength = 2)]
+        [Display(Name = "Action By"), StringLength(100)]
         public string ActionBy { get; set; }
-        [Display(Name = "Health Check By"), StringLength(100, MinimumLength = 2)]
+        [Display(Name = "Health Check By"), StringLength(100)]
         public string HealthCheckBy { get; set; }
         [Display(Name = "Failure Likelihood"), StringLength(10), Required]
         public string Likelihood { get; set; }
@@ -45,7 +45,7 @@ namespace Calendar.Models
 
         [Display(Name = "Status"), StringLength(5)]
         public string EventStatus { get; set; }        
-        [Display(Name = "Impact"), StringLength(1000), DataType(DataType.MultilineText)]
+        [Display(Name = "Service Impact"), StringLength(1000), DataType(DataType.MultilineText)]
         public string ImpactAnalysis { get; set; }
         [Display(Name = "Action Plan"), StringLength(1000)]
         public string MaintProcedure { get; set; }
@@ -66,6 +66,9 @@ namespace Calendar.Models
         public string UpdatedBy { get; set; }
         [Display(Name = "Updated By"), StringLength(50)]
         public string UpdatedByDisplayName { get; set; }
+
+        [Display(Name = "Risk Analysis"), StringLength(1000), DataType(DataType.MultilineText)]
+        public string RiskAnalysis { get; set; }
 
         /* The Severity is to be obsolete. Once commented, EF will drop the column when execute "dotnet ef database update" */
         //[Display(Name = "Severity")]

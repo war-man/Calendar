@@ -70,14 +70,18 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="AffectedHosts" class="col-md-2 control-label"></label>
+            <label asp-for="AffectedHosts" class="col-md-2 control-label">
+                Hosts<span role="button" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis' onclick="doIA('hosts')"></span>
+            </label>
             <div class="col-md-10">
                 <input asp-for="AffectedHosts" class="form-control" data-role="tagsinput" />
                 <span asp-validation-for="AffectedHosts" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="AffectedProjects" class="col-md-2 control-label"></label>
+            <label asp-for="AffectedProjects" class="col-md-2 control-label">
+                Projects<span role="button" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis' onclick="doIA('projects')"></span>
+            </label>
             <div class="col-md-10">
                 <input asp-for="AffectedProjects" class="form-control" data-role="tagsinput" />
                 <span asp-validation-for="AffectedProjects" class="text-danger" />
@@ -232,6 +236,13 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label asp-for="RiskAnalysis" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_RISKANALYSIS"></label>
+            <div class="col-md-10">
+                <textarea rows="5" asp-for="RiskAnalysis" class="form-control"></textarea>
+                <span asp-validation-for="RiskAnalysis" class="text-danger" />
+            </div>
+        </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">

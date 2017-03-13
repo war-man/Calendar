@@ -5,7 +5,8 @@
 
 @{
     ViewData["Title"] = "Event Details";
-
+   
+    // this to be put into CalendarEventViewModel
     var RiskLevel = LOVs.ListRiskLevels().Where(m => m.Value == Model.RiskLevel);
     var EventStatus = LOVs.ListEventStatus().Where(m => m.Value == Model.EventStatus);
 
@@ -41,12 +42,14 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.AffectedHosts)
+            <a target=_blank href="@appsettings.IA_Url?broken=true&server=@Uri.EscapeDataString(Model.AffectedHosts)"><span class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></span></a>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.AffectedProjects)
         </dt>
         <dd>
             @Html.DisplayFor(model => model.AffectedProjects)
+            <a target=_blank href="@appsettings.IA_Url?system=@Uri.EscapeDataString(Model.AffectedProjects)"><span class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></span></a>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.AffectedTeams)
@@ -149,9 +152,14 @@
                 @Html.DisplayFor(model => model.RiskLevel)
             }
         </dd>
-        
-        <dt>Last Updated
+        <dt>
+            @Html.DisplayNameFor(model => model.RiskAnalysis)
         </dt>
+        <dd>            
+            @Html.TextAreaFor(model => model.RiskAnalysis, 5, 200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" })
+        </dd>        
+
+        <dt>Last Updated</dt>
         <dd>
            <i>@Html.DisplayFor(model => model.UpdatedDate)</i>
         </dd>
