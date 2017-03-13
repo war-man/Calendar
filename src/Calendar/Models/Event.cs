@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Calendar.Models
 {
-    public class Event
+    public class Event : IValidatableObject
     {
         public int ID { get; set; }
         [Display(Name = "Start Time"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy h:mm tt}", ApplyFormatInEditMode = true), DataType(DataType.DateTime), Required]
@@ -71,5 +71,10 @@ namespace Calendar.Models
         //[Display(Name = "Severity")]
         //public int Severity { get; set; }
 
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (StartDateTime > EndDateTime)
+                yield return new ValidationResult("Start Time cannot be later than End Time.", new[] { "StartDateTime", "EndDateTime" });
+        }
     }
 }
