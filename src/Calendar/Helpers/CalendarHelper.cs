@@ -26,7 +26,7 @@ namespace Calendar.Helpers
         public const string TIP_LIKELIHOOD = "Please assess how likely this maintenance fails to deliver the expected outcome. The <i>Likelihood</i>, togehter with the <i>Impact</i>, determines the <i>Risk Level</i>.";
         public const string TIP_IMPACT     = "Please assess the impact to services if this maintenance fails. The <i>Impact</i>, togehter with the <i>Likelihood</i>, determines the <i>Risk Level</i>.";
         public const string TIP_RISKLEVEL  = "The <i>Risk Level</i> is determined by the <i>Likelihood</i> and <i>Impact</i>.";
-        public const string TIP_IMPACTANALYSIS = "Please provide details on what and how the system functions will be affected.";
+        public const string TIP_IMPACTANALYSIS = "Please provide details on what and how the system functions and availablity will be affected.";
         public const string ROLE_ADMIN = "Admins";
     }
 }
