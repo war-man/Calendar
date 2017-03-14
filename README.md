@@ -1,3 +1,2 @@
-# Simple Mainteance Event Calendar
-Calendar View of Maintenance Events
-Team and Project Relationship
+# Simple Maintenance Event Calendar using ASP.Net Core
+Calendar View of Maintenance Events with Team and Project Relationship
