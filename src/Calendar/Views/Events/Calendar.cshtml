@@ -79,7 +79,7 @@
         foreach (var item in Model)
         {
             {
-                if (item.e.StartDateTime.Date == pDate.Date && !item.MarkedInCalendar)
+                if (item.Event.StartDateTime.Date == pDate.Date && !item.MarkedInCalendar)
                 {
                     return item;
                 }
@@ -91,7 +91,7 @@
     /* Check if there is still event for a particular row in the calendar */
     public bool MonthRowEventExhausted(DateTime pRowStart)
     {
-        var e = Model.Where(m => (m.MarkedInCalendar == false && m.e.StartDateTime.Date >= pRowStart.Date && m.e.StartDateTime.Date <= pRowStart.Date.AddDays(6)));
+        var e = Model.Where(m => (m.MarkedInCalendar == false && m.Event.StartDateTime.Date >= pRowStart.Date && m.Event.StartDateTime.Date <= pRowStart.Date.AddDays(6)));
 
         return (e.Count() == 0);
     }
@@ -99,7 +99,7 @@
     /* Return the Popover Content */
     public string GetPopoverContent(CalendarEventViewModel pCalEvt)
     {
-        Event pEvt = pCalEvt.e;
+        Event pEvt = pCalEvt.Event;
 
         string IA_URL = appsettings.IA_Url; /* Impact Analysis URL */
         string CM_URL = appsettings.CM_Url; /* Operation Team Change Management URL */
@@ -272,7 +272,7 @@
                                                                     var ce = GetNextEventByDate(caldate);
                                                                     if (ce != null)
                                                                     {
-                                                                        var e = ce.e;
+                                                                        var e = ce.Event;
 
                                                                         /* Now, calculate the colspan of event. 
                                                                          * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0

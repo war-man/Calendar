@@ -125,15 +125,15 @@ namespace Calendar.Controllers
                 ce.Teams = item.AffectedTeams.Split(',').Select(p => p.Trim().ToUpper()).ToList();
 
                 /* we need to trim the startdate and enddate */
-                if (ce.e.StartDateTime < FirstDateOfTheCalendar)
+                if (ce.Event.StartDateTime < FirstDateOfTheCalendar)
                 {
-                    ce.e.StartDateTime = FirstDateOfTheCalendar;
+                    ce.Event.StartDateTime = FirstDateOfTheCalendar;
                     ce.Continue = true;
                 }
 
-                if (ce.e.EndDateTime > LastDateOfTheCalendar)
+                if (ce.Event.EndDateTime > LastDateOfTheCalendar)
                 {
-                    ce.e.EndDateTime = LastDateOfTheCalendar;
+                    ce.Event.EndDateTime = LastDateOfTheCalendar;
                 }
 
                 CalEvents.Add(ce);
@@ -159,7 +159,9 @@ namespace Calendar.Controllers
                 return NotFound();
             }
 
-            return View(@event);
+            CalendarEventViewModel CalendarEvent = new CalendarEventViewModel(@event);
+
+            return View(CalendarEvent);
         }
 
         // GET: Events/Create

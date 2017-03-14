@@ -10,7 +10,7 @@ namespace Calendar.Models.CalendarViewModels
     /* CalendarEvent Class provided the data object used in the Calendar View */
     public class CalendarEventViewModel
     {
-        public Event e { get; set; }
+        public Event Event { get; set; }
         public DateTime OriginalStart { get; set; }
         public DateTime OriginalEnd { get; set; }
         public bool Continue { get; set; }
@@ -25,7 +25,7 @@ namespace Calendar.Models.CalendarViewModels
         // Constructor
         public CalendarEventViewModel(Event e)
         {
-            this.e = e;
+            this.Event = e;
             this.OriginalStart = e.StartDateTime;
             this.OriginalEnd = e.EndDateTime;
             this.Continue = false;
