@@ -372,7 +372,7 @@
 
         if (mode == "hosts") {
             param = $('#AffectedHosts').val();
-            url = "@appsettings.IA_Url?borken=true&server=" + encodeURIComponent(param);
+            url = "@appsettings.IA_Url?broken=true&server=" + encodeURIComponent(param);
         } else {
             param = $('#AffectedProjects').val();
             url = "@appsettings.IA_Url?system=" + encodeURIComponent(param);

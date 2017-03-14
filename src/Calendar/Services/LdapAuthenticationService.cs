@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Novell.Directory.Ldap;
+using Microsoft.AspNetCore.Hosting;
 
 
 // Reference: https://nicolas.guelpa.me/blog/2017/02/15/dotnet-core-ldap-authentication.html
@@ -19,6 +20,7 @@ namespace Calendar.Services
     public class LdapConfig
     {
         public string Url { get; set; }
+        public int Port { get; set; }
         public string BindDn { get; set; }
         public string BindCredentials { get; set; }
         public string SearchBase { get; set; }
@@ -49,7 +51,8 @@ namespace Calendar.Services
 
             try
             {
-                _connection.Connect(_config.Url, LdapConnection.DEFAULT_SSL_PORT);
+                //_connection.Connect(_config.Url, LdapConnection.DEFAULT_SSL_PORT);
+                _connection.Connect(_config.Url, _config.Port);
                 _connection.Bind(_config.BindDn, _config.BindCredentials);
                 
             }
