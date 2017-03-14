@@ -66,6 +66,7 @@ namespace Calendar.Models
                          new Team { Name = "HA5", Description = "Enterprise Resource Planning Project Team 5" },
                          new Team { Name = "HA6", Description = "Enterprise Resource Planning Project Team 6" },
                          new Team { Name = "HA7", Description = "Enterprise Resource Planning Project Team 7" },
+                         new Team { Name = "HA8", Description = "Enterprise Resource Planning Project Team 8" },
                          new Team { Name = "HA9", Description = "Enterprise Resource Planning Project Team 9" },
                          new Team { Name = "HAS", Description = "HAS" }
                          );

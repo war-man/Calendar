@@ -118,7 +118,7 @@
         content += "<tr><th valign=top>Status </th><td>" + pCalEvt.EventStatus + "</td></tr>";
         content += "<tr><th valign=top>Reference </th><td><a target=_blank href=" + CM_URL + "?i_CRN=" + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
         content += "<tr><th valign=top>Results </th><td>" + pEvt.Result + "</td></tr></table>";
-        content += "<hr>";
+        content += "<div class='small'><i>Last Updated " + pEvt.UpdatedDate + "</i></div>";
         /*
                 if (User.IsInRole(Constants.ROLE_ADMIN))
                 {

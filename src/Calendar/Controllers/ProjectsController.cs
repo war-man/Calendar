@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Calendar.Data;
 using Calendar.Models;
+using Calendar.Helpers;
 
 namespace Calendar.Controllers
 {
@@ -50,6 +51,9 @@ namespace Calendar.Controllers
         // GET: Projects/Create
         public IActionResult Create()
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             return View();
         }
 
@@ -60,6 +64,10 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Description,Name,Administrator")] Project project)
         {
+
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (ModelState.IsValid)
             {
                 _context.Add(project);
@@ -72,6 +80,9 @@ namespace Calendar.Controllers
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();
@@ -92,6 +103,9 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Description,Name,Administrator")] Project project)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id != project.ID)
             {
                 return NotFound();
@@ -123,6 +137,9 @@ namespace Calendar.Controllers
         // GET: Projects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();
@@ -142,6 +159,9 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             var project = await _context.Project.SingleOrDefaultAsync(m => m.ID == id);
             _context.Project.Remove(project);
             await _context.SaveChangesAsync();

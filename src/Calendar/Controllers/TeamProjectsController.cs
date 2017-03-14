@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Calendar.Data;
 using Calendar.Models;
+using Calendar.Helpers;
 
 namespace Calendar.Controllers
 {
@@ -28,6 +29,9 @@ namespace Calendar.Controllers
         // GET: TeamProjects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();
@@ -45,6 +49,9 @@ namespace Calendar.Controllers
         // GET: TeamProjects/Create
         public IActionResult Create()
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             return View();
         }
 
@@ -55,6 +62,9 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Project,Team")] TeamProject teamProject)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (ModelState.IsValid)
             {
                 _context.Add(teamProject);
@@ -67,6 +77,9 @@ namespace Calendar.Controllers
         // GET: TeamProjects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();
@@ -87,6 +100,9 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Project,Team")] TeamProject teamProject)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id != teamProject.ID)
             {
                 return NotFound();
@@ -118,6 +134,9 @@ namespace Calendar.Controllers
         // GET: TeamProjects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();
@@ -137,6 +156,9 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             var teamProject = await _context.TeamProject.SingleOrDefaultAsync(m => m.ID == id);
             _context.TeamProject.Remove(teamProject);
             await _context.SaveChangesAsync();
