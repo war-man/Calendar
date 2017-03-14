@@ -70,19 +70,61 @@ namespace Calendar.Data.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("ActionBy")
+                        .HasAnnotation("MaxLength", 100);
+
                     b.Property<string>("AffectedHosts")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 150);
 
                     b.Property<string>("AffectedProjects")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 150);
 
                     b.Property<string>("AffectedTeams")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 150);
 
                     b.Property<string>("Category")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 50);
 
+                    b.Property<string>("CreatedBy")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("CreatedByDisplayName")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime>("CreatedDate");
+
                     b.Property<DateTime>("EndDateTime");
+
+                    b.Property<string>("Environment")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 10);
+
+                    b.Property<string>("EventStatus")
+                        .HasAnnotation("MaxLength", 5);
+
+                    b.Property<string>("FallbackProcedure")
+                        .HasAnnotation("MaxLength", 1000);
+
+                    b.Property<string>("HealthCheckBy")
+                        .HasAnnotation("MaxLength", 100);
+
+                    b.Property<string>("Impact")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 10);
+
+                    b.Property<string>("ImpactAnalysis")
+                        .HasAnnotation("MaxLength", 1000);
+
+                    b.Property<string>("Likelihood")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 10);
+
+                    b.Property<string>("MaintProcedure")
+                        .HasAnnotation("MaxLength", 1000);
 
                     b.Property<string>("Reference")
                         .HasAnnotation("MaxLength", 50);
@@ -90,15 +132,33 @@ namespace Calendar.Data.Migrations
                     b.Property<string>("Result")
                         .HasAnnotation("MaxLength", 100);
 
-                    b.Property<int>("Severity");
+                    b.Property<string>("RiskAnalysis")
+                        .HasAnnotation("MaxLength", 1000);
+
+                    b.Property<string>("RiskLevel")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 10);
 
                     b.Property<DateTime>("StartDateTime");
 
                     b.Property<string>("Subject")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 500);
 
                     b.Property<string>("TaskDescription")
+                        .IsRequired()
                         .HasAnnotation("MaxLength", 500);
+
+                    b.Property<string>("UpdatedBy")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("UpdatedByDisplayName")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime>("UpdatedDate");
+
+                    b.Property<string>("VerificationStep")
+                        .HasAnnotation("MaxLength", 1000);
 
                     b.HasKey("ID");
 
@@ -112,15 +172,18 @@ namespace Calendar.Data.Migrations
 
                     b.Property<string>("Administrator")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 5);
+                        .HasAnnotation("MaxLength", 15);
+
+                    b.Property<string>("CalendarStyle")
+                        .HasAnnotation("MaxLength", 15);
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 50);
+                        .HasAnnotation("MaxLength", 250);
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 5);
+                        .HasAnnotation("MaxLength", 15);
 
                     b.HasKey("ID");
 
@@ -141,7 +204,7 @@ namespace Calendar.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 5);
+                        .HasAnnotation("MaxLength", 15);
 
                     b.HasKey("ID");
 
@@ -155,11 +218,11 @@ namespace Calendar.Data.Migrations
 
                     b.Property<string>("Project")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 5);
+                        .HasAnnotation("MaxLength", 15);
 
                     b.Property<string>("Team")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 5);
+                        .HasAnnotation("MaxLength", 15);
 
                     b.HasKey("ID");
 

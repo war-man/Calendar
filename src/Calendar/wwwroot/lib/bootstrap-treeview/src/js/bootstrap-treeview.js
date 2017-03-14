@@ -516,11 +516,24 @@
 				.addClass(node.state.checked ? 'node-checked' : '')
 				.addClass(node.state.disabled ? 'node-disabled': '')
 				.addClass(node.state.selected ? 'node-selected' : '')
-				.addClass(node.searchResult ? 'search-result' : '') 
+				.addClass(node.searchResult ? 'search-result' : '')
+                .addClass(node.customClass ? node.customClass : '')    /* add custom style class */
 				.attr('data-nodeid', node.nodeId)
 				.attr('style', _this.buildStyleOverride(node));
 
-			// Add indent/spacer to mimic tree structure
+			// Added data-custom attribute into <li> elements  
+            // to be used for custom events by adding/remove item  
+            if(node.custom){  
+			    treeItem  
+			    .attr('data-custom', node.custom);  
+			}  
+
+            if (node.eventids) {
+                treeItem
+			    .attr('data-eventids', node.eventids);
+            }
+
+		    // Add indent/spacer to mimic tree structure
 			for (var i = 0; i < (level - 1); i++) {
 				treeItem.append(_this.template.indent);
 			}

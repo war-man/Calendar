@@ -13,6 +13,11 @@ using Calendar.Data;
 using Calendar.Models;
 using Calendar.Services;
 
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Net;
+using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Http;
+
 namespace Calendar
 {
     public class Startup
@@ -43,6 +48,7 @@ namespace Calendar
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
+            /* This service is added when you create the project with "Authentiation: Individual User Accounts" */
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
@@ -50,11 +56,22 @@ namespace Calendar
             services.AddMvc();
 
             // Add application services.
-            services.AddTransient<Calendar.Models.Services.EventStatisticsService>();
+            /* Statistics on Events by Team/Project used in the navigation menu in LHS. */
+            services.AddTransient<Calendar.Models.Services.EventStatisticsService>();     
+            /* Provides LOV/constants type of things */  
             services.AddTransient<Calendar.Models.Services.StaticListOfValuesService>();
+            /* Expose the Project List */
+            services.AddTransient<Calendar.Controllers.ProjectsController>();
+            /* Expose the Team List */
             services.AddTransient<Calendar.Controllers.TeamsController>();
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+            /* Ldap Auth */
+            services.Configure<LdapConfig>(Configuration.GetSection("ldap"));
+            services.AddScoped<IAuthenticationService, LdapAuthenticationService>();
+            /* appsetting */
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.AddSingleton<Calendar.Controllers.AppSettingsController>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,13 +97,44 @@ namespace Calendar
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
 
+            /* Begin external auth */
+            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            {
+                Events = new CookieAuthenticationEvents
+                {
+                    // You will need this only if you use Ajax calls with a library not compatible with IsAjaxRequest
+                    // More info here: https://github.com/aspnet/Security/issues/1056
+                    OnRedirectToAccessDenied = context =>
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                        return TaskCache.CompletedTask;
+                    }
+                },
+                AuthenticationScheme = "CalendarApp",
+                LoginPath = new PathString("/login"),
+                AutomaticAuthenticate = true,
+                AutomaticChallenge = true
+            });
+            /* End external auth */
+
+
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
-            });
 
+                routes.MapRoute(
+                    name: "login",
+                    template: "login",
+                    defaults: new { controller = "User", action = "Login" }
+                );
+                routes.MapRoute(
+                    name: "logout",
+                    template: "logout",
+                    defaults: new { controller = "User", action = "Logout" }
+                );
+            });
 
             SeedData.Initialize(app.ApplicationServices);
 

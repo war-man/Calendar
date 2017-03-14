@@ -50,6 +50,7 @@
     table-layout: fixed;
     top: 0;
     width: 100%;
+    /*border-collapse: unset;*/
 }
 
 .st-bg {
@@ -129,7 +130,7 @@
     padding: 0 5px 0 0;
 }
 
-
+/* style for severity is obsoleted and should be replaced by risklevel. */
 .cal-proj-color-severity-1 {
     font-size: 12px;
     border:1px solid #f59b95;
@@ -151,41 +152,7 @@
     background-color:#2bc406;
 }
 
-.cal-proj-color-0 {
-    font-size: 11px;
-    border:1px solid #f59b95;
-    color:#777777;
-    background-color:#f0d0ce;
-}
-
-.cal-proj-color-1 {
-    font-size: 11px;
-    border:1px solid #f0d0ce;
-    color:#777777;
-    background-color:#f39c12;
-}
-
-.cal-proj-color-2 {
-    font-size: 11px;
-    border:1px solid #f39c12;
-    color:#777777;
-    background-color:#00c0ef;
-}
-
-.cal-proj-color-3 {
-    font-size: 12px;    
-    border:1px solid #0b8724;
-    color:#EAEAEA;
-    background-color:#2bc406;
-}
-
-.cal-proj-color-4 {
-    font-size: 11px;
-    border:1px solid #3c8dbc;
-    color:#777777;
-    background-color:#605ca8;
-}
-
+/*Begin of Project Style.*/
 .cal-proj-color-5 {
     font-size: 11px;
     border:1px solid #605ca8;
@@ -219,4 +186,29 @@
     border:1px solid #01ff70;
     color:#777777;
     background-color:#f0d0ce;
+}
+/*End of Project Style.*/
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+.section-node {
+    font-weight: bold;
+}
+
+.team-node {
+    /*font-size: 1.1vw;*/
+}
+
+.project-node {
+    font-size: 0.85em;
+    /*font-size: 0.9vw;*/
+    padding: 5px 15px;
+    color: #428bca;
+}
+
+.popover{
+    max-width: 25%; /* Max Width of the popover (depending on the container!) */
 }

@@ -1,84 +1,159 @@
-@model Calendar.Models.Event
+@model Calendar.Models.CalendarViewModels.CalendarEventViewModel
+
+@inject Calendar.Controllers.AppSettingsController appsettings
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Event Details";
 }
 
-<h2>Details</h2>
+<h2>@ViewData["Title"]</h2>
 
 <div>
-    <h4>Event</h4>
     <hr />
+
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Subject)
+            @Html.DisplayNameFor(model => model.Event.Subject)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Subject)
+            @Html.DisplayFor(model => model.Event.Subject)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.TaskDescription)
+            @Html.DisplayNameFor(model => model.Event.TaskDescription)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.TaskDescription)
+            @Html.DisplayFor(model => model.Event.TaskDescription)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.StartDateTime)
+            @*@Html.DisplayNameFor(model => model.StartDateTime)*@
+            Duration
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.StartDateTime)
+            @Html.DisplayFor(model => model.Event.StartDateTime) - @Html.DisplayFor(model => model.Event.EndDateTime)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.EndDateTime)
+            @Html.DisplayNameFor(model => model.Event.AffectedHosts)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.EndDateTime)
+            @Html.DisplayFor(model => model.Event.AffectedHosts)
+            <a target=_blank href="@appsettings.IA_Url?broken=true&server=@Uri.EscapeDataString(Model.Event.AffectedHosts)"><span class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></span></a>
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.AffectedHosts)
+            @Html.DisplayNameFor(model => model.Event.AffectedProjects)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AffectedHosts)
+            @Html.DisplayFor(model => model.Event.AffectedProjects)
+            <a target=_blank href="@appsettings.IA_Url?system=@Uri.EscapeDataString(Model.Event.AffectedProjects)"><span class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></span></a>
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.AffectedProjects)
+            @Html.DisplayNameFor(model => model.Event.AffectedTeams)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AffectedProjects)
+            @Html.DisplayFor(model => model.Event.AffectedTeams)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.AffectedTeams)
+            @Html.DisplayNameFor(model => model.Event.Category)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.AffectedTeams)
+            @Html.DisplayFor(model => model.Event.Category)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Severity)
+            @Html.DisplayNameFor(model => model.Event.Environment)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Severity)
+            @Html.DisplayFor(model => model.Event.Environment)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Category)
+            @Html.DisplayNameFor(model => model.Event.ImpactAnalysis)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Category)
+            @Html.TextAreaFor(model => model.Event.ImpactAnalysis,5,200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" } )
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Reference)
+            @Html.DisplayNameFor(model => model.Event.MaintProcedure)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Reference)
+            @Html.TextAreaFor(model => model.Event.MaintProcedure, 5, 200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" })
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.ActionBy)
+        </dt>        
+        <dd>
+            @Html.DisplayFor(model => model.Event.ActionBy)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Result)
+            @Html.DisplayNameFor(model => model.Event.VerificationStep)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Result)
+            @Html.TextAreaFor(model => model.Event.VerificationStep, 5, 200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" })
         </dd>
-    </dl>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.HealthCheckBy)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Event.HealthCheckBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.FallbackProcedure)
+        </dt>
+        <dd>
+            @Html.TextAreaFor(model => model.Event.FallbackProcedure, 5, 200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" })
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.EventStatus)
+        </dt>
+        <dd>                                       
+            @Html.DisplayFor(model => model.EventStatus)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.Reference)
+        </dt>
+        <dd>
+            @if (!System.String.IsNullOrEmpty(Model.Event.Reference))
+            {
+                <a target=_blank href="@appsettings.CM_Url?i_CRN=@Model.Event.Reference">@Html.DisplayFor(model => model.Event.Reference)</a>
+            }            
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.Result)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Event.Result)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.RiskLevel)
+        </dt>
+        <dd>
+            <span class="cal-risklevel-@Model.Event.RiskLevel" stylex="font-size:14px">@Model.RiskLevel</span>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.RiskAnalysis)
+        </dt>
+        <dd>            
+            @Html.TextAreaFor(model => model.Event.RiskAnalysis, 5, 200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" })
+        </dd>        
+
+        <dt>Last Updated</dt>
+        <dd>
+           <i>@Html.DisplayFor(model => model.Event.UpdatedDate)</i>
+        </dd>
+</dl>
+     
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if (@ViewBag.Redir != null)
+    {
+        <span @(User.IsInRole("Admins") ? "" : "hidden")><a asp-action="Edit" asp-route-id="@Model.Event.ID" asp-route-redir="@Uri.UnescapeDataString(ViewBag.Redir)">Edit</a> |</span>
+        <a href="@Uri.UnescapeDataString(ViewBag.Redir)">Back</a>
+    }
+    else
+    {
+        <span @(User.IsInRole("Admins") ? "" : "hidden")><a asp-action="Edit" asp-route-id="@Model.Event.ID" asp-route-redir="">Edit</a> |</span>
+        <a asp-action="Index">Back</a>
+    }
+    
 </div>

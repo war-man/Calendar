@@ -5,9 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Calendar</title>
 
-    <environment names="Development">
+    <environment names="Development">        
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-typeahead.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" />                
+        <link rel="stylesheet" href="~/css/calendar-common.css" />
+        <link rel="stylesheet" href="~/css/event.css" />
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
     <environment names="Staging,Production">
@@ -15,6 +19,10 @@
               asp-fallback-href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/lib/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput-typeahead.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.css" />
+        <link rel="stylesheet" href="~/css/calendar-common.min.css" />
+        <link rel="stylesheet" href="~/css/event.min.css" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
     </environment>
 
@@ -23,7 +31,10 @@
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/lib/moment/min/moment-with-locales.min.js"></script>
-        <script src="~/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="~/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>        
+        <script src="~/lib/typeahead.js/dist/typeahead.bundle.js"></script>
+        <script src="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.js"></script>
+        <script src="~/js/event.js" asp-append-version="true"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     </environment>
     <environment names="Staging,Production">
@@ -37,9 +48,12 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"
                 asp-fallback-src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.6/bootstrap.min.js"
                 asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
-        </script>
+        </script>        
         <script src="~/lib/moment/min/moment-with-locales.min.js"></script>
         <script src="~/lib/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="~/lib/typeahead.js/dist/typeahead.bundle.min.js"></script>
+        <script src="~/lib/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js"></script>
+        <script src="~/js/event.min.js" asp-append-version="true"></script>
         <script src="~/js/site.min.js" asp-append-version="true"></script>
     </environment>
 
@@ -49,11 +63,9 @@
         /* IE only. Prompt message when Compatibility Mode is turned on.*/
         var ie = IeVersion();
 
-        if (ie.CompatibilityMode) {
+        if (ie.CompatibilityMode)
             alert("This Calendar does't support Compatibility Mode. Please turn it off and retry.");
-        }
     </script>
-
 
 </head>
 <body>
@@ -66,22 +78,29 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a asp-area="" asp-controller="Events" asp-action="Index" class="navbar-brand">Calendar</a>
+                <environment names="Staging,Development">
+                    <a asp-area="" asp-controller="Events" asp-action="Index" class="navbar-brand">Calendar (Non-Prod)</a>
+                </environment>
+
+                <environment names="Production">
+                    <a asp-area="" asp-controller="Events" asp-action="Index" class="navbar-brand">Calendar</a>
+                </environment>
+
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a asp-area="" asp-controller="Events" asp-action="Index">List</a></li>
-                    <li><a asp-area="" asp-controller="Events" asp-action="Calendar">Month</a></li>                    
+                    <li><a asp-area="" asp-controller="Events" asp-action="Calendar">Month</a></li>
                 </ul>
-                @await Html.PartialAsync("_LoginPartial")
+                @await Html.PartialAsync("_LoginPartial")                
             </div>
         </div>
     </div>
-    <div class="container body-content" >
+    <div class="container body-content">
         @RenderBody()
-        <hr />
+        <hr hidden />
         <footer>
-            <p>&copy; 2016 - Calendar</p>
+            <p hidden>&copy; 2016 - Calendar</p>
         </footer>
     </div>   
 </body>

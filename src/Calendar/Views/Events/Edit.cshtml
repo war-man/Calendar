@@ -1,20 +1,23 @@
-@using Calendar.Models.Services
+@using Calendar.Helpers
 
 @model Calendar.Models.Event
-@inject StaticListOfValuesService LOVs
+
+@inject Calendar.Models.Services.StaticListOfValuesService LOVs
+@inject Calendar.Controllers.TeamsController Teams
+@inject Calendar.Controllers.ProjectsController Projects
+@inject Calendar.Controllers.AppSettingsController appsettings
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Event";
 }
 
-<h2>Edit</h2>
+<h2>@ViewData["Title"]</h2>
 
 <form asp-action="Edit">
     <div class="form-horizontal">
-        <h4>Event</h4>
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <input type="hidden" asp-for="ID" />
+        <input type="hidden" asp-for="ID" />
         <div class="form-group">
             <label asp-for="Subject" class="col-md-2 control-label"></label>
             <div class="col-md-10">
@@ -23,7 +26,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="TaskDescription" class="col-md-2 control-label"></label>
+            <label asp-for="TaskDescription" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_SHORTDESC"></label>
             <div class="col-md-10">
                 <input asp-for="TaskDescription" class="form-control" />
                 <span asp-validation-for="TaskDescription" class="text-danger" />
@@ -36,8 +39,7 @@
                 <div class='input-group date' id='dtpickerStart'>
                     <input asp-for="StartDateTime" class="form-control" />                    
                     <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                        <span asp-validation-for="StartDateTime" class="text-danger" />
+                        <span class="glyphicon glyphicon-calendar"></span>                 
                     </span>
                 </div>
                 <script type="text/javascript">
@@ -47,7 +49,8 @@
                             sideBySide: true
                         });
                     });
-                </script>
+                </script>      
+                <span asp-validation-for="StartDateTime" class="text-danger"></span>          
             </div>
             <label asp-for="EndDateTime" class="col-md-2 control-label"></label>
             <div class="col-md-4">
@@ -55,7 +58,6 @@
                     <input asp-for="EndDateTime" class="form-control" />
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
-                        <span asp-validation-for="EndDateTime" class="text-danger" />
                     </span>
                 </div>
                 <script type="text/javascript">
@@ -66,53 +68,114 @@
                         });
                     });
                 </script>
+                <span asp-validation-for="EndDateTime" class="text-danger"></span>
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="AffectedHosts" class="col-md-2 control-label"></label>
+            <label asp-for="AffectedHosts" class="col-md-2 control-label">
+                Hosts<span role="button" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis' onclick="doIA('hosts')"></span>
+            </label>
             <div class="col-md-10">
-                <input asp-for="AffectedHosts" class="form-control" />
+                <input asp-for="AffectedHosts" class="form-control" data-role="tagsinput" />                
                 <span asp-validation-for="AffectedHosts" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="AffectedProjects" class="col-md-2 control-label"></label>
+            <label asp-for="AffectedProjects" class="col-md-2 control-label">
+                Projects<span role="button" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis' onclick="doIA('projects')"></span>
+            </label>
             <div class="col-md-10">
-                <input asp-for="AffectedProjects" class="form-control" />
+                <input asp-for="AffectedProjects" class="form-control" data-role="tagsinput" />
                 <span asp-validation-for="AffectedProjects" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
             <label asp-for="AffectedTeams" class="col-md-2 control-label"></label>
             <div class="col-md-10">
-                <input asp-for="AffectedTeams" class="form-control" />
+                <input asp-for="AffectedTeams" class="form-control" data-role="tagsinput" />
                 <span asp-validation-for="AffectedTeams" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Severity" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
-                <select asp-for="Severity" class="form-control">
+            <label asp-for="Category" class="col-md-2 control-label"></label>
+            <div class="col-md-4">
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger" />
+            </div>
+            <label asp-for="Environment" class="col-md-2 control-label"></label>
+            <div class="col-md-4">
+                <select asp-for="Environment" class="form-control">
                     <option></option>
-                    @foreach (var s in LOVs.ListSeverities())
+                    @foreach (var s in LOVs.ListEnvironments())
                     {
                         <option value=@s.Value>@s.Name</option>
                     }
                 </select>
+                <span asp-validation-for="Environment" class="text-danger" />
+            </div>
+        </div>
 
-                <span asp-validation-for="Severity" class="text-danger" />
-            </div>
-        </div>
         <div class="form-group">
-            <label asp-for="Category" class="col-md-2 control-label"></label>
+            <label asp-for="ImpactAnalysis" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_IMPACTANALYSIS"></label>
             <div class="col-md-10">
-                <input asp-for="Category" class="form-control" />
-                <span asp-validation-for="Category" class="text-danger" />
+                <textarea rows="5" asp-for="ImpactAnalysis" class="form-control"></textarea>
+                <span asp-validation-for="ImpactAnalysis" class="text-danger" />
             </div>
         </div>
+
         <div class="form-group">
+            <label asp-for="MaintProcedure" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea rows="5" asp-for="MaintProcedure" class="form-control"></textarea>
+                <span asp-validation-for="MaintProcedure" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ActionBy" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="ActionBy" class="form-control" data-role="tagsinput" />
+                <span asp-validation-for="ActionBy" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="VerificationStep" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea rows="5" asp-for="VerificationStep" class="form-control"></textarea>
+                <span asp-validation-for="VerificationStep" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="HealthCheckBy" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="HealthCheckBy" class="form-control" data-role="tagsinput"/>
+                <span asp-validation-for="HealthCheckBy" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="FallbackProcedure" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <textarea rows="5" asp-for="FallbackProcedure" class="form-control"></textarea>
+                <span asp-validation-for="FallbackProcedure" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="EventStatus" class="col-md-2 control-label"></label>
+            <div class="col-md-4">
+                <select asp-for="EventStatus" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListEventStatus())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+            </div>
             <label asp-for="Reference" class="col-md-2 control-label"></label>
-            <div class="col-md-10">
+            <div class="col-md-4">
                 <input asp-for="Reference" class="form-control" />
                 <span asp-validation-for="Reference" class="text-danger" />
             </div>
@@ -124,18 +187,197 @@
                 <span asp-validation-for="Result" class="text-danger" />
             </div>
         </div>
+
         <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+            <label asp-for="Likelihood" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_LIKELIHOOD"></label>
+            <div class="col-md-4">
+                <select asp-for="Likelihood" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListLikelihoods())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+
+                <span asp-validation-for="Likelihood" class="text-danger" />
+            </div>
+            <label asp-for="Impact" class="col-md-2 control-label"  data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_IMPACT"></label>
+            <div class="col-md-4">
+                <select asp-for="Impact" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListImpacts())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+
+                <span asp-validation-for="Impact" class="text-danger" />
             </div>
         </div>
-    </div>
+
+        @*This is a readonly makeup field. *@
+        <div class="form-group">
+            <label asp-for="RiskLevel" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_RISKLEVEL"></label>
+            <div class="col-md-10">
+                <span class="form-control" id="RiskLevelDisplay" style="font-size:14px">
+                </span>
+            </div>
+        </div>
+
+
+        @* This is a hidden field. *@
+        <div class="form-group" hidden>
+            <label asp-for="RiskLevel" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <select asp-for="RiskLevel" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListRiskLevels())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="RiskAnalysis" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_RISKANALYSIS"></label>
+            <div class="col-md-10">
+                <textarea rows="5" asp-for="RiskAnalysis" class="form-control"></textarea>
+                <span asp-validation-for="RiskAnalysis" class="text-danger" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-5">
+                <input type="hidden" name="Redir" value="@ViewBag.Redir"/>
+                <input type="hidden" asp-for="CreatedDate" class="form-control" />
+                <input type="hidden" asp-for="CreatedBy" class="form-control" />
+                <input type="hidden" asp-for="CreatedByDisplayName" class="form-control" />
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+            <div class="col-md-5 text-right">
+                <small>Last Updated: <i>@Html.DisplayFor(model => model.UpdatedDate)</i></small>
+            </div>
+        </div>
+</div>
 </form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div>    
+
+    @if (@ViewBag.Redir != null && @ViewBag.Redir.StartsWith("Calendar"))
+    {
+        <a href="@Uri.UnescapeDataString(ViewBag.Redir)">Back to Calendar</a>                
+    }
+    else
+    {
+        <a asp-action="Index">Back to List</a>
+    }
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script type="text/javascript">
+
+    /* prevent submit form by hitting Enter */
+    $(document).ready(function() {
+        $(window).keydown(function(event){
+            if(event.keyCode == 13 && event.target.type != "textarea") {
+                event.preventDefault();
+                return false;
+            }
+        });
+        UpdateRiskLevelWrapper();
+    });
+
+    /* Please refer to event.js for the actual implementation. */
+    var riskmatrix = @Html.Raw(Json.Serialize(LOVs.RiskLevelMatrix));
+
+    /* We need to workout the RiskLevel When Likelihood or Impact chnages. */
+    $('#Likelihood').on('change', UpdateRiskLevelWrapper);
+    $('#Impact').on('change', UpdateRiskLevelWrapper);
+
+    /* Initialize AffectedHosts */
+    $('#AffectedHosts').tagsinput({
+        tagClass: 'label label-default'
+    });
+
+    /* JSON.parse doesn't work. Just use the for loop instead. */
+    var p = @Html.Raw(Json.Serialize(Projects.ListAll()));
+    var projects = [];
+
+    for (i = 0; i < p.length; i++) {
+        projects[i] = p[i].name;
+    }
+
+    //alert(JSON.stringify(p));
+    //alert(projects);
+
+    var bobjProj = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        // url points to a json file that contains an array of country names, see
+        // https://github.com/twitter/typeahead.js/blob/gh-pages/data/countries.json
+        local: projects
+    });
+    bobjProj.initialize();
+
+    $('#AffectedProjects').tagsinput({
+        tagClass: 'label label-default',
+        typeaheadjs: {
+            source: bobjProj.ttAdapter(),
+            limit: 10
+        }
+    });
+
+    /* JSON.parse doesn't work. Just use the for loop instead. */
+    var t = @Html.Raw(Json.Serialize(Teams.ListAll()));
+    var teams = [];
+
+    for (i = 0; i < t.length; i++) {
+        teams[i] = t[i].name;
+    }
+
+    //alert(JSON.stringify(t));
+    //alert(teams);
+    var bloodHoundObj = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        // url points to a json file that contains an array of country names, see
+        // https://github.com/twitter/typeahead.js/blob/gh-pages/data/countries.json
+        local: teams
+    });
+    bloodHoundObj.initialize();
+
+    $('#AffectedTeams').tagsinput({
+        tagClass: 'label label-default',
+        typeaheadjs: {
+            source: bloodHoundObj.ttAdapter(),
+            limit: 10
+        }
+    });
+
+    $('#ActionBy').tagsinput({
+        tagClass: 'label label-default',
+    });
+
+    $('#HealthCheckBy').tagsinput({
+        tagClass: 'label label-default',
+    });
+
+    function doIA(mode) {
+        var url = "";
+        var param = "";
+
+        if (mode == "hosts") {
+            param = $('#AffectedHosts').val();
+            url = "@appsettings.IA_Url?broken=true&server=" + encodeURIComponent(param);
+        } else {
+            param = $('#AffectedProjects').val();
+            url = "@appsettings.IA_Url?system=" + encodeURIComponent(param);
+        }
+       
+        window.open(url, '_blank');
+    };
+</script>

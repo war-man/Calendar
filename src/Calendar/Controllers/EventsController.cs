@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Calendar.Data;
 using Calendar.Models;
+using Calendar.Models.CalendarViewModels;
 using Calendar.Helpers;
 
 namespace Calendar.Controllers
@@ -16,19 +17,45 @@ namespace Calendar.Controllers
         const int DAYSINAWEEK = 7;
         private readonly ApplicationDbContext _context;
 
+
         public EventsController(ApplicationDbContext context)
         {
             _context = context;    
         }
 
+
         // GET: Events
-        public async Task<IActionResult> Index()
+        //startdate_desc, startdate_asce, creation_desc, creation_asce
+        public async Task<IActionResult> Index(string sort)
         {
-            return View(await _context.Event.OrderByDescending(m => m.StartDateTime).ToListAsync());
+
+            ViewBag.SortParm = String.IsNullOrEmpty(sort) ? "" : sort;
+            
+            var events = from e in _context.Event
+                           select e;
+
+            switch (sort)
+            {
+                case "cd_a":
+                    events = events.OrderBy(e => e.CreatedDate);
+                    break;
+                case "cd_d":
+                    events = events.OrderByDescending(e => e.CreatedDate);
+                    break;
+                case "sd_a":
+                    events = events.OrderBy(e => e.StartDateTime);
+                    break;
+                default:   // sd_d
+                    events = events.OrderByDescending(e => e.StartDateTime);
+                    break;
+            }
+
+            return View(await events.AsNoTracking().ToListAsync());
+            //return View(await _context.Event.OrderByDescending(m => m.StartDateTime).ToListAsync());
         }
 
 
-        // GET: Events/Edit/5
+        // GET: Events/Calendar
         public async Task<IActionResult> Calendar(int? year, int? month, string filterProject, string filterTeam)
         {
             DateTime now = System.DateTime.Now;
@@ -69,13 +96,15 @@ namespace Calendar.Controllers
             if (!String.IsNullOrEmpty(filterProject))
             {
                 ViewBag.FilterProject = filterProject.ToUpper();
-                e = e.Where(m => m.AffectedProjects.Contains(filterProject.ToUpper()));                                             
+                /* filter will be done in View */
+                //e = e.Where(m => m.AffectedProjects.Contains(filterProject.ToUpper()));                                             
             }
 
             if (!String.IsNullOrEmpty(filterTeam))
             {
                 ViewBag.FilterTeam = filterTeam.ToUpper();
-                e = e.Where(m => m.AffectedTeams.Contains(filterTeam.ToUpper()));
+                /* filter will be done in View */
+                //e = e.Where(m => m.AffectedTeams.Contains(filterTeam.ToUpper()));
             }
 
             var @events = await e.OrderBy(m => m.StartDateTime).ToListAsync();
@@ -85,26 +114,26 @@ namespace Calendar.Controllers
             }
 
             /* To maintain separation of concerns in mvc. */
-            List<CalendarEvent> CalEvents = new List<CalendarEvent>();
+            List<CalendarEventViewModel> CalEvents = new List<CalendarEventViewModel>();
 
             foreach (var item in @events)
             {
-                CalendarEvent ce = new CalendarEvent(item);
+                CalendarEventViewModel ce = new CalendarEventViewModel(item);
 
-                ce.Servers = item.AffectedHosts.Split(',').Select(p => p.Trim()).ToList();
-                ce.Projects = item.AffectedProjects.Split(',').Select(p => p.Trim()).ToList();
-                ce.Teams = item.AffectedTeams.Split(',').Select(p => p.Trim()).ToList();
+                ce.Servers = item.AffectedHosts.Split(',').Select(p => p.Trim().ToUpper()).ToList();
+                ce.Projects = item.AffectedProjects.Split(',').Select(p => p.Trim().ToUpper()).ToList();
+                ce.Teams = item.AffectedTeams.Split(',').Select(p => p.Trim().ToUpper()).ToList();
 
                 /* we need to trim the startdate and enddate */
-                if (ce.e.StartDateTime < FirstDateOfTheCalendar)
+                if (ce.Event.StartDateTime < FirstDateOfTheCalendar)
                 {
-                    ce.e.StartDateTime = FirstDateOfTheCalendar;
+                    ce.Event.StartDateTime = FirstDateOfTheCalendar;
                     ce.Continue = true;
                 }
 
-                if (ce.e.EndDateTime > LastDateOfTheCalendar)
+                if (ce.Event.EndDateTime > LastDateOfTheCalendar)
                 {
-                    ce.e.EndDateTime = LastDateOfTheCalendar;
+                    ce.Event.EndDateTime = LastDateOfTheCalendar;
                 }
 
                 CalEvents.Add(ce);
@@ -114,26 +143,34 @@ namespace Calendar.Controllers
         }
 
         // GET: Events/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string redir = null)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
+            
             var @event = await _context.Event.SingleOrDefaultAsync(m => m.ID == id);
+
+            ViewBag.Redir = redir;
+
             if (@event == null)
             {
                 return NotFound();
             }
 
-            return View(@event);
+            CalendarEventViewModel CalendarEvent = new CalendarEventViewModel(@event);
+
+            return View(CalendarEvent);
         }
 
         // GET: Events/Create
         public IActionResult Create()
         {
-            return View();
+            if (User.IsInRole(Constants.ROLE_ADMIN))
+                return View();
+            else
+                return NotFound();
         }
 
         // POST: Events/Create
@@ -141,10 +178,27 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,Severity")] Event @event)
+        public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,RiskAnalysis")] Event @event)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (ModelState.IsValid)
             {
+                /* Audit Fields */
+                var username = "anonymous";
+                var u = User.Claims.Where(m => m.Type == "username");
+                if (u.Count() == 1) { username = u.First().Value; }
+                var displayname = "anonymous";
+                var d = User.Claims.Where(m => m.Type == "displayName");
+                if (d.Count() == 1) { displayname = d.First().Value; }
+                @event.CreatedDate = DateTime.Now;
+                @event.CreatedBy = username;
+                @event.CreatedByDisplayName = displayname;
+                @event.UpdatedDate = @event.CreatedDate;
+                @event.UpdatedBy = username;
+                @event.UpdatedByDisplayName = displayname;
+
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -153,6 +207,7 @@ namespace Calendar.Controllers
         }
 
         // GET: Events/Edit/5
+        /*
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -167,14 +222,38 @@ namespace Calendar.Controllers
             }
             return View(@event);
         }
+        */
+
+        // GET: Events/Edit/5
+        public async Task<IActionResult> Edit(int? id, string redir)
+        {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var @event = await _context.Event.SingleOrDefaultAsync(m => m.ID == id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Redir = redir;
+            return View(@event);
+        }
 
         // POST: Events/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,Severity")] Event @event)
+        public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,CreatedDate,CreatedBy,CreatedByDisplayName,RiskAnalysis")] Event @event)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id != @event.ID)
             {
                 return NotFound();
@@ -184,7 +263,27 @@ namespace Calendar.Controllers
             {
                 try
                 {
+                    /* Audit Fields */
+                    var username = "anonymous";
+                    var u = User.Claims.Where(m => m.Type == "username");
+                    if (u.Count() == 1) { username = u.First().Value; }
+                    var displayname = "anonymous";
+                    var d = User.Claims.Where(m => m.Type == "displayName");
+                    if (d.Count() == 1) { displayname = d.First().Value; }
+                    @event.UpdatedDate = DateTime.Now;
+                    @event.UpdatedBy = username;
+                    @event.UpdatedByDisplayName = displayname;
+                    //replace all the spaces in Hosts and Projects
+                    //@event.AffectedHosts = @event.AffectedHosts.Replace(" ", "");
+                    //@event.AffectedHosts = @event.AffectedProjects.Replace(" ", "");
+
+                    //The IsModified doesn't work!
+                    //_context.Entry(@event).Property("CreatedBy").IsModified = false;
+                    //_context.Entry(@event).Property("CreatedByDisplayName").IsModified = false;
+                    //_context.Entry(@event).Property("CreatedDate").IsModified = false;
+
                     _context.Update(@event);
+                    
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -198,7 +297,37 @@ namespace Calendar.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Index");
+                //string sredir = redir.Replace("%3F", "?").Replace("%3D","=").Replace("%26","&");
+                string sredir;
+                string pYear = "", pMonth = "";
+
+                if (redir != null && redir.StartsWith("Calendar"))
+                {
+                    sredir = Uri.UnescapeDataString(redir);
+                    int qPos = sredir.IndexOf('?');
+                    if ( qPos >= 0)
+                    {
+                        sredir = sredir.Substring(qPos+1, sredir.Length - (qPos+1));
+                    }
+                    string[] sparam = sredir.Split('&');
+
+                    foreach (var p in sparam)
+                    {
+                        string[] svalue = p.Split('=');
+
+                        if (svalue[0].ToLower() == "year")
+                            pYear = svalue[1];
+                        if (svalue[0].ToLower() == "month")
+                            pMonth = svalue[1];
+                    }
+
+                    RedirectToActionResult redirectResult = new RedirectToActionResult("Calendar", "Events", new { @year = pYear, @month = pMonth });
+                    //return RedirectToAction(Uri.UnescapeDataString(redir));
+                    //return RedirectToAction(sredir);                
+                    return redirectResult;
+                }
+                else
+                    return RedirectToAction("Index");
             }
             return View(@event);
         }
@@ -206,6 +335,9 @@ namespace Calendar.Controllers
         // GET: Events/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();
