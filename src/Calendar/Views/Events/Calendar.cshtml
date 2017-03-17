@@ -315,16 +315,16 @@
                                                                                 <div class="ca-evp-@e.ID rb-n cal-risklevel-@e.RiskLevel" data-placement=@over_placement data-toggle="popover" data-trigger="hover" data-container="body" data-title="@over_title" data-content="@over_content" data-html="true">
                                                                                     <div class="rb-ni" onclick="doOpenEvent(@e.ID);">
                                                                                         <!--<a style="text-decoration:none; color:#ffffff;" asp-controller="Events" asp-action="Details" asp-route-id="@e.ID">-->
-                                                                                        <a style="text-decoration:none; color:#ffffff;" href="#">
-                                                                                            @if (!ce.Continue)
-                                                                                            {
-                                                                                                <span>@e.StartDateTime.ToString("h:mmt").ToLower()</span>
-                                                                                            }
-                                                                                            else
-                                                                                            {
-                                                                                                <span>...</span>
-                                                                                            }
-                                                                                            @e.TaskDescription
+                                                                                        <a style="text-decoration:@((e.EventStatus == Constants.STATUS_CANCELLED)? "line-through": "none"); color:#ffffff;" href="#">                                                                                            
+                                                                                                @if (!ce.Continue)
+                                                                                                {
+                                                                                                    <span>@e.StartDateTime.ToString("h:mmt").ToLower()</span>
+                                                                                                }
+                                                                                                else
+                                                                                                {
+                                                                                                    <span>...</span>
+                                                                                                }
+                                                                                                @e.TaskDescription                                                                                                                                                                                        
                                                                                         </a>
                                                                                      </div>
                                                                                 </div>

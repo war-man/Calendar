@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Calendar.Helpers;
 
 /* All the static List of Values will be provied by this Services */
 namespace Calendar.Models.Services
@@ -99,13 +100,12 @@ namespace Calendar.Models.Services
         {
             return new List<LOV>()
             {
-                new LOV("EventStatus", "Cancelled", "CL"),
-                new LOV("EventStatus", "Completed", "CMP"),
-                new LOV("EventStatus", "Incomplete", "ICM"),
-                new LOV("EventStatus", "RFC in Progress", "RFC"),
-                new LOV("EventStatus", "Schedule Confirmed", "SC"),
-                new LOV("EventStatus", "Tentative", "T")
-                
+                new LOV("EventStatus", "Cancelled", Constants.STATUS_CANCELLED),
+                new LOV("EventStatus", "Completed", Constants.STATUS_COMPLETED),
+                new LOV("EventStatus", "Incomplete", Constants.STATUS_INCOMPLETE),
+                new LOV("EventStatus", "RFC in Progress", Constants.STATUS_RFC),
+                new LOV("EventStatus", "Schedule Confirmed", Constants.STATUS_SCHDCONFIRMED),
+                new LOV("EventStatus", "Tentative", Constants.STATUS_TENTATIVE)                
             };
         }
     }

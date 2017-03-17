@@ -63,6 +63,14 @@ namespace Calendar.Helpers
 
         public const string TIP_RISKANALYSIS = "Please review the risk assoicated with the change and provide actions or options to mitigate the risks to a minimium acceptable level.";
         public const string PHD_RISKANALYSIS = TIP_RISKANALYSIS;
+
         public const string ROLE_ADMIN = "Admins";
+
+        public const string STATUS_CANCELLED = "CL";
+        public const string STATUS_COMPLETED = "CMP";
+        public const string STATUS_INCOMPLETE = "ICM";
+        public const string STATUS_RFC = "RFC";
+        public const string STATUS_SCHDCONFIRMED = "SC";
+        public const string STATUS_TENTATIVE = "T";
     }
 }
