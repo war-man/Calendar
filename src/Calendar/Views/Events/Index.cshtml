@@ -82,8 +82,8 @@
             <td>
                 @if (User.IsInRole("Admins"))
                 {
-                    <a class="btn btn-default btn-xs glyphicon glyphicon-trash" role="button" asp-action="Delete" asp-route-id="@item.ID"></a>
-                    <a class="btn btn-default btn-xs glyphicon glyphicon-duplicate" role="button" asp-action="Copy" asp-route-id="@item.ID"></a>
+                    <a class="btn btn-default btn-xs glyphicon glyphicon-trash" role="button" asp-action="Delete" asp-route-id="@item.ID" title="Delete the event"></a>
+                    <a class="btn btn-default btn-xs glyphicon glyphicon-duplicate" role="button" asp-action="Copy" asp-route-id="@item.ID" title="Make a copy of the event"></a>
                 }
             </td>
             <td>
