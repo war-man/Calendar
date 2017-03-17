@@ -42,6 +42,12 @@ namespace Calendar.Controllers
                 case "cd_d":
                     events = events.OrderByDescending(e => e.CreatedDate);
                     break;
+                case "ud_a":
+                    events = events.OrderBy(e => e.UpdatedDate);
+                    break;
+                case "ud_d":
+                    events = events.OrderByDescending(e => e.UpdatedDate);
+                    break;
                 case "sd_a":
                     events = events.OrderBy(e => e.StartDateTime);
                     break;
