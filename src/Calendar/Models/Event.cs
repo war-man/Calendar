@@ -54,13 +54,13 @@ namespace Calendar.Models
         [Display(Name = "Fallback Procedure"), StringLength(1000)]
         public string FallbackProcedure { get; set; }
 
-        [Display(Name = "Creation Date"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy}", ApplyFormatInEditMode = false), DataType(DataType.DateTime)]
+        [Display(Name = "Creation Date"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy h:mm tt}", ApplyFormatInEditMode = false), DataType(DataType.DateTime)]
         public DateTime CreatedDate { get; set; }
         [Display(Name = "Created By"), StringLength(50)]
         public string CreatedBy { get; set; }
         [Display(Name = "Created By"), StringLength(50)]
         public string CreatedByDisplayName { get; set; }
-        [Display(Name = "Updated Date"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy h:mm tt}", ApplyFormatInEditMode = false), DataType(DataType.DateTime)]
+        [Display(Name = "Last Updated"), DisplayFormat(DataFormatString = "{0:MMM d, yyyy h:mm tt}", ApplyFormatInEditMode = false), DataType(DataType.DateTime)]
         public DateTime UpdatedDate { get; set; }
         [Display(Name = "Updated By"), StringLength(50)]
         public string UpdatedBy { get; set; }
