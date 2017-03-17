@@ -6,7 +6,7 @@
     ViewData["Title"] = "Event Details";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2>@ViewData["Title"] - @Html.DisplayFor(model => model.EventStatus)</h2>
 
 <div>
     <hr />
@@ -24,6 +24,7 @@
         <dd>
             @Html.DisplayFor(model => model.Event.TaskDescription)
         </dd>
+
         <dt>
             @*@Html.DisplayNameFor(model => model.StartDateTime)*@
             Duration
@@ -31,6 +32,16 @@
         <dd>
             @Html.DisplayFor(model => model.Event.StartDateTime) - @Html.DisplayFor(model => model.Event.EndDateTime)
         </dd>
+
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Event.EventStatus)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.EventStatus)
+        </dd>
+
+
         <dt>
             @Html.DisplayNameFor(model => model.Event.AffectedHosts)
         </dt>
@@ -101,13 +112,6 @@
         </dt>
         <dd>
             @Html.TextAreaFor(model => model.Event.FallbackProcedure, 5, 200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" })
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Event.EventStatus)
-        </dt>
-        <dd>                                       
-            @Html.DisplayFor(model => model.EventStatus)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Event.Reference)
