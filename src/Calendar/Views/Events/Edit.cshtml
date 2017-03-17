@@ -19,7 +19,7 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <input type="hidden" asp-for="ID" />
         <div class="form-group">
-            <label asp-for="Subject" class="col-md-2 control-label"></label>
+            <label asp-for="Subject" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_SUBJECT"></label>
             <div class="col-md-10">
                 <input asp-for="Subject" class="form-control" />
                 <span asp-validation-for="Subject" class="text-danger" />
@@ -72,6 +72,23 @@
             </div>
         </div>
         <div class="form-group">
+            <label asp-for="EventStatus" class="col-md-2 control-label"></label>
+            <div class="col-md-4">
+                <select asp-for="EventStatus" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListEventStatus())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+            </div>
+            <label asp-for="Reference" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_REFERENCE"></label>
+            <div class="col-md-4">
+                <input asp-for="Reference" class="form-control" />
+                <span asp-validation-for="Reference" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
             <label asp-for="AffectedHosts" class="col-md-2 control-label">
                 Hosts<span role="button" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis' onclick="doIA('hosts')"></span>
             </label>
@@ -97,7 +114,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label asp-for="Category" class="col-md-2 control-label"></label>
+            <label asp-for="Category" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_CATEGORY"></label>
             <div class="col-md-4">
                 <input asp-for="Category" class="form-control" />
                 <span asp-validation-for="Category" class="text-danger" />
@@ -124,7 +141,7 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="MaintProcedure" class="col-md-2 control-label"></label>
+            <label asp-for="MaintProcedure" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_ACTIONPLAN"></label>
             <div class="col-md-10">
                 <textarea rows="5" asp-for="MaintProcedure" class="form-control"></textarea>
                 <span asp-validation-for="MaintProcedure" class="text-danger" />
@@ -140,7 +157,7 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="VerificationStep" class="col-md-2 control-label"></label>
+            <label asp-for="VerificationStep" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_VERIFICATIONSTEPS"></label>
             <div class="col-md-10">
                 <textarea rows="5" asp-for="VerificationStep" class="form-control"></textarea>
                 <span asp-validation-for="VerificationStep" class="text-danger" />
@@ -156,7 +173,7 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="FallbackProcedure" class="col-md-2 control-label"></label>
+            <label asp-for="FallbackProcedure" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_FALLBACKPROC"></label>
             <div class="col-md-10">
                 <textarea rows="5" asp-for="FallbackProcedure" class="form-control"></textarea>
                 <span asp-validation-for="FallbackProcedure" class="text-danger" />
@@ -164,24 +181,7 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="EventStatus" class="col-md-2 control-label"></label>
-            <div class="col-md-4">
-                <select asp-for="EventStatus" class="form-control">
-                    <option></option>
-                    @foreach (var s in LOVs.ListEventStatus())
-                    {
-                        <option value=@s.Value>@s.Name</option>
-                    }
-                </select>
-            </div>
-            <label asp-for="Reference" class="col-md-2 control-label"></label>
-            <div class="col-md-4">
-                <input asp-for="Reference" class="form-control" />
-                <span asp-validation-for="Reference" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Result" class="col-md-2 control-label"></label>
+            <label asp-for="Result" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_RESULTS"></label>
             <div class="col-md-10">
                 <input asp-for="Result" class="form-control" />
                 <span asp-validation-for="Result" class="text-danger" />

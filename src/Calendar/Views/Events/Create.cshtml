@@ -7,7 +7,7 @@
 @inject Calendar.Controllers.ProjectsController Projects
 
 @{
-    ViewData["Title"] = "Create Event";
+    ViewData["Title"] = ViewBag.title;
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -17,7 +17,7 @@
         <hr />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
-            <label asp-for="Subject" class="col-md-2 control-label"></label>
+            <label asp-for="Subject" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_SUBJECT"></label>
             <div class="col-md-10">
                 <input asp-for="Subject" class="form-control" />
                 <span asp-validation-for="Subject" class="text-danger" />
@@ -26,7 +26,7 @@
         <div class="form-group">                       
             <label asp-for="TaskDescription" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_SHORTDESC"></label>
             <div class="col-md-10">
-                <input asp-for="TaskDescription" class="form-control"/>
+                <input asp-for="TaskDescription" class="form-control" />
                 <span asp-validation-for="TaskDescription" class="text-danger" />
             </div>
         </div>
@@ -35,7 +35,13 @@
             <label asp-for="StartDateTime" class="col-md-2 control-label"></label>
             <div class="col-md-4">
                 <div class='input-group date' id='dtpickerStart'>
-                    <input type1="datetime-local" asp-for="StartDateTime" class="form-control" />
+                    @if (ViewData["Title"].ToString().Equals("Copy Event")) { 
+                    <input asp-for="StartDateTime" class="form-control" value=""/>
+                    }
+                    else
+                    {
+                        <input asp-for="StartDateTime" class="form-control" />
+                    }
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -53,7 +59,14 @@
             <label asp-for="EndDateTime" class="col-md-2 control-label"></label>
             <div class="col-md-4">
                 <div class='input-group date' id='dtpickerEnd'>
-                    <input asp-for="EndDateTime" class="form-control" />
+                    @if (ViewData["Title"].ToString().Equals("Copy Event"))
+                    {
+                        <input asp-for="EndDateTime" class="form-control" value="" />
+                    }
+                    else
+                    {
+                        <input asp-for="EndDateTime" class="form-control" />
+                    }
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -67,6 +80,24 @@
                     });
                 </script>
                 <span asp-validation-for="EndDateTime" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="EventStatus" class="col-md-2 control-label"></label>
+            <div class="col-md-4">
+                <select asp-for="EventStatus" class="form-control">
+                    <option></option>
+                    @foreach (var s in LOVs.ListEventStatus())
+                    {
+                        <option value=@s.Value>@s.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="EventStatus" class="text-danger" />
+            </div>
+            <label asp-for="Reference" class="col-md-2 control-label"  data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_REFERENCE"></label>
+            <div class="col-md-4">
+                <input asp-for="Reference" class="form-control" />
+                <span asp-validation-for="Reference" class="text-danger" />
             </div>
         </div>
         <div class="form-group">
@@ -97,7 +128,7 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="Category" class="col-md-2 control-label"></label>
+            <label asp-for="Category" class="col-md-2 control-label"  data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_CATEGORY"></label>
             <div class="col-md-4">
                 <input asp-for="Category" class="form-control" />
                 <span asp-validation-for="Category" class="text-danger" />
@@ -123,7 +154,7 @@
         </div>
 
         <div class="form-group">
-            <label asp-for="MaintProcedure" class="col-md-2 control-label"></label>
+            <label asp-for="MaintProcedure" class="col-md-2 control-label"  data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_ACTIONPLAN"></label>
             <div class="col-md-10">
                 <textarea rows="5" asp-for="MaintProcedure" class="form-control"></textarea>
                 <span asp-validation-for="MaintProcedure" class="text-danger" />
@@ -139,7 +170,7 @@
         </div>    
 
         <div class="form-group">
-            <label asp-for="VerificationStep" class="col-md-2 control-label"></label>
+            <label asp-for="VerificationStep" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_VERIFICATIONSTEPS"></label>
             <div class="col-md-10">
                 <textarea rows="5" asp-for="VerificationStep" class="form-control"></textarea>
                 <span asp-validation-for="VerificationStep" class="text-danger" />
@@ -155,33 +186,14 @@
         </div>          
 
         <div class="form-group">
-            <label asp-for="FallbackProcedure" class="col-md-2 control-label"></label>
+            <label asp-for="FallbackProcedure" class="col-md-2 control-label" data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_FALLBACKPROC"></label>
             <div class="col-md-10">
                 <textarea rows="5" asp-for="FallbackProcedure" class="form-control"></textarea>
                 <span asp-validation-for="FallbackProcedure" class="text-danger" />
             </div>
         </div>
-
         <div class="form-group">
-            <label asp-for="EventStatus" class="col-md-2 control-label"></label>
-            <div class="col-md-4">
-                <select asp-for="EventStatus" class="form-control">
-                    <option></option>
-                    @foreach (var s in LOVs.ListEventStatus())
-                    {
-                        <option value=@s.Value>@s.Name</option>
-                    }
-                </select>
-                <span asp-validation-for="EventStatus" class="text-danger" />
-            </div>
-            <label asp-for="Reference" class="col-md-2 control-label"></label>
-            <div class="col-md-4">
-                <input asp-for="Reference" class="form-control" />
-                <span asp-validation-for="Reference" class="text-danger" />
-            </div>
-        </div>
-        <div class="form-group">
-            <label asp-for="Result" class="col-md-2 control-label"></label>
+            <label asp-for="Result" class="col-md-2 control-label"  data-toggle="tooltip" data-placement="top" data-html="true" title="@Constants.TIP_RESULTS"></label>
             <div class="col-md-10">
                 <input asp-for="Result" class="form-control" />
                 <span asp-validation-for="Result" class="text-danger" />
@@ -270,6 +282,7 @@
                 return false;
             }
         });
+        UpdateRiskLevelWrapper();
     });
 
     /* Please refer to event.js for the actual implementation. */
