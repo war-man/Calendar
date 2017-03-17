@@ -7,7 +7,7 @@
 @inject Calendar.Controllers.ProjectsController Projects
 
 @{
-    ViewData["Title"] = "Create Event";
+    ViewData["Title"] = ViewBag.title;
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -35,7 +35,13 @@
             <label asp-for="StartDateTime" class="col-md-2 control-label"></label>
             <div class="col-md-4">
                 <div class='input-group date' id='dtpickerStart'>
-                    <input asp-for="StartDateTime" class="form-control" />
+                    @if (ViewData["Title"].ToString().Equals("Copy Event")) { 
+                    <input asp-for="StartDateTime" class="form-control" value=""/>
+                    }
+                    else
+                    {
+                        <input asp-for="StartDateTime" class="form-control" />
+                    }
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>
@@ -53,7 +59,14 @@
             <label asp-for="EndDateTime" class="col-md-2 control-label"></label>
             <div class="col-md-4">
                 <div class='input-group date' id='dtpickerEnd'>
-                    <input asp-for="EndDateTime" class="form-control" />
+                    @if (ViewData["Title"].ToString().Equals("Copy Event"))
+                    {
+                        <input asp-for="EndDateTime" class="form-control" value="" />
+                    }
+                    else
+                    {
+                        <input asp-for="EndDateTime" class="form-control" />
+                    }
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                     </span>

@@ -23,7 +23,14 @@
 <table class="table table-striped table-bordered table-hover">
     <thead class="thead-inverse" style="color:#eceeef;background-color:#373a3c">
         <tr>
+        @if (User.IsInRole("Admins"))
+        {
+            <th width="8%"></th>
+        }
+        else
+        {
             <th></th>
+        }
             <th width="12%">
                 @Html.DisplayNameFor(model => model.StartDateTime)
                 <span class="text-nowrap">
@@ -76,6 +83,7 @@
                 @if (User.IsInRole("Admins"))
                 {
                     <a class="btn btn-default btn-xs glyphicon glyphicon-trash" role="button" asp-action="Delete" asp-route-id="@item.ID"></a>
+                    <a class="btn btn-default btn-xs glyphicon glyphicon-duplicate" role="button" asp-action="Copy" asp-route-id="@item.ID"></a>
                 }
             </td>
             <td>

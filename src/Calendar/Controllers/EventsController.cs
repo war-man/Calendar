@@ -173,6 +173,7 @@ namespace Calendar.Controllers
         // GET: Events/Create
         public IActionResult Create()
         {
+            ViewBag.Title = "Create Event";
             if (User.IsInRole(Constants.ROLE_ADMIN))
                 return View();
             else
@@ -186,6 +187,7 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,RiskAnalysis")] Event @event)
         {
+            ViewBag.Title = "Create Event";
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
 
@@ -372,6 +374,27 @@ namespace Calendar.Controllers
         private bool EventExists(int id)
         {
             return _context.Event.Any(e => e.ID == id);
+        }
+
+        // GET: Events/Copy/5
+        public async Task<IActionResult> Copy(int? id, string redir)
+        {
+            ViewBag.Title = "Copy Event";
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var @event = await _context.Event.SingleOrDefaultAsync(m => m.ID == id);
+            if (@event == null)
+            {
+                return NotFound();
+            }
+            ViewBag.Redir = redir;
+            return View("Create", @event);
         }
     }
 }
