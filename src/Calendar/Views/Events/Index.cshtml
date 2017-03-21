@@ -23,14 +23,10 @@
 <table class="table table-striped table-bordered table-hover">
     <thead class="thead-inverse" style="color:#eceeef;background-color:#373a3c">
         <tr>
-        @if (User.IsInRole("Admins"))
-        {
-            <th width="8%"></th>
-        }
-        else
-        {
             <th></th>
-        }
+            <th>
+                @Html.DisplayNameFor(model => model.ID)
+            </th>
             <th width="12%">
                 @Html.DisplayNameFor(model => model.StartDateTime)
                 <span class="text-nowrap">
@@ -82,9 +78,14 @@
             <td>
                 @if (User.IsInRole("Admins"))
                 {
-                    <a class="btn btn-default btn-xs glyphicon glyphicon-trash" role="button" asp-action="Delete" asp-route-id="@item.ID" title="Delete the event"></a>
-                    <a class="btn btn-default btn-xs glyphicon glyphicon-duplicate" role="button" asp-action="Copy" asp-route-id="@item.ID" title="Make a copy of the event"></a>
+                    <span class="text-nowrap">
+                        <a class="btn btn-default btn-xs glyphicon glyphicon-trash" role="button" asp-action="Delete" asp-route-id="@item.ID" title="Delete the event"></a>
+                        <a class="btn btn-default btn-xs glyphicon glyphicon-duplicate" role="button" asp-action="Copy" asp-route-id="@item.ID" title="Make a copy of the event"></a>
+                    </span>
                 }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.StartDateTime)
