@@ -44,40 +44,42 @@ namespace Calendar.Models.Services
             TeamStats = new List<TeamProjectStat>();
 
             /* let's count the number of all ***UNIQUE*** maintenance events for all levels */
-            foreach (var t in team)
-            {
-                TeamProjectStat stat = new TeamProjectStat();
+            
+//            foreach (var t in team)
+//            {
+//                TeamProjectStat stat = new TeamProjectStat();
+//
+//                stat.Team = t.Name;
+//                stat.TeamEventCount = 0;
+//                stat.Projects = new List<String>();
+//                stat.ProjectEventCounts = new List<int>();
+//
+//                /* make use of dictionary object to get the unique event ids for each team*/
+//                Dictionary<int, int> teamevent_ids = new Dictionary<int, int>();
+//
+//                foreach (var tp in teamproject.Where(m => m.Team == t.Name))
+//                {
+//                    var tp_evt = evt.Where(m => ("," + m.AffectedProjects + ",").Contains("," + tp.Project + ",")
+//                                             && ("," + m.AffectedTeams + ",").Contains("," + t.Name + ","));
 
-                stat.Team = t.Name;
-                stat.TeamEventCount = 0;
-                stat.Projects = new List<String>();
-                stat.ProjectEventCounts = new List<int>();
+//                    stat.Projects.Add(tp.Project);
+//                    stat.ProjectEventCounts.Add(tp_evt.Count());
+//                    //stat.TeamEventCount = stat.TeamEventCount + tp_evt.Count();
 
-                /* make use of dictionary object to get the unique event ids for each team*/
-                Dictionary<int, int> teamevent_ids = new Dictionary<int, int>();
+//                    foreach (var e in tp_evt)
+//                    {
+//                        if (!teamevent_ids.ContainsKey(e.ID))
+//                        {
+//                            teamevent_ids.Add(e.ID, e.ID);
+//                        }
+//                    }
+//                }
+//                stat.TeamEventCount = teamevent_ids.Count();
+//                TeamStats.Add(stat);
+//            }
+            
 
-                foreach (var tp in teamproject.Where(m => m.Team == t.Name))
-                {
-                    var tp_evt = evt.Where(m => ("," + m.AffectedProjects + ",").Contains("," + tp.Project + ",")
-                                             && ("," + m.AffectedTeams + ",").Contains("," + t.Name + ","));
-
-                    stat.Projects.Add(tp.Project);
-                    stat.ProjectEventCounts.Add(tp_evt.Count());
-                    //stat.TeamEventCount = stat.TeamEventCount + tp_evt.Count();
-
-                    foreach (var e in tp_evt)
-                    {
-                        if (!teamevent_ids.ContainsKey(e.ID))
-                        {
-                            teamevent_ids.Add(e.ID, e.ID);
-                        }
-                    }
-                }
-                stat.TeamEventCount = teamevent_ids.Count();
-                TeamStats.Add(stat);
-            }
-
-            /*
+            
             foreach (var t in team)
             {
                 TeamProjectStat stat = new TeamProjectStat();
@@ -99,7 +101,6 @@ namespace Calendar.Models.Services
                 }
                 TeamStats.Add(stat);
             }
-            */
         }
     }
 }
