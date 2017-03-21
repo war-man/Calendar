@@ -530,8 +530,8 @@
         var eids2hide = [];     // Event Ids to hdie from calendar
 
         for (i = 0; i < calevents.length; i++) {
-            var ce = calevents[i];
-            var e  = ce.e;
+            var ce = calevents[i];            
+            var e  = ce.event;
 
             if (node.custom == "t") {
                 if ($.inArray(node.text.toUpperCase(), ce.teams) >= 0)
@@ -571,7 +571,7 @@
         } else {
             for (i = 0; i < calevents.length; i++) {
                 var ce = calevents[i];
-                var e  = ce.e;
+                var e  = ce.event;
 
                 if ($.inArray(proj, ce.projects) >= 0)
                     eids2show.push(e.id);
