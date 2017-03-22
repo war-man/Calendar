@@ -25,3 +25,17 @@ function UpdateRiskLevelWrapper() {
     UpdateRiskLevel(riskmatrix);
 }
 
+function doIA(iaurl, mode) {
+    var url = "";
+    var param = "";
+
+    if (mode == "hosts") {
+        param = $('#AffectedHosts').val();
+        url = iaurl + "?broken=true&server=" + encodeURIComponent(param);
+    } else {
+        param = $('#AffectedProjects').val();
+        url = iaurl + "?system=" + encodeURIComponent(param);
+    }
+
+    window.open(url, '_blank');
+};

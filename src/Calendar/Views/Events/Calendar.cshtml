@@ -264,6 +264,7 @@
                                                         <tr>
                                                             @for (var col = 0; col < DAYSINAWEEK; col++)
                                                             {
+                                                                int NumOfDays = 1;
                                                                 int d = caldate.Day;
                                                                 {
                                                                     int ColSpan = 1;
@@ -280,7 +281,7 @@
                                                                          */
                                                                         //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
 
-                                                                        int NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
+                                                                        NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
                                                                         if (e.EndDateTime == e.EndDateTime.Date) /* for those end date with timestamp 0:00, it should not be counted as one day */
                                                                         {
                                                                             NumOfDays -= 1;
@@ -337,6 +338,7 @@
                                                                         }
                                                                         else
                                                                         {
+                                                                            /* The event expand to next row */
                                                                             e.StartDateTime = e.StartDateTime.Date.AddDays(ColSpan);
                                                                             ce.Continue = true;
                                                                         }
@@ -346,7 +348,9 @@
                                                                         <td class="st-c">&nbsp;</td>   @* ce is null*@
                                                                     }
                                                                 }
-                                                                caldate = caldate.AddDays(1);
+                                                                @* Bug fix for event spread more than one day. START *@
+                                                                caldate = caldate.AddDays(NumOfDays);
+                                                                @* Bug fix END *@
                                                             }   @* for-loop (var col = 0; col < DAYSINAWEEK; col++) *@
                                                         </tr>
                                                     } @* for-loop (var grid_row = 0; grid_row < MAX_GRIDEVENTROW; grid_row++) *@

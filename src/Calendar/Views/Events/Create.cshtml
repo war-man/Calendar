@@ -5,6 +5,7 @@
 @inject Calendar.Models.Services.StaticListOfValuesService LOVs
 @inject Calendar.Controllers.TeamsController Teams
 @inject Calendar.Controllers.ProjectsController Projects
+@inject Calendar.Controllers.AppSettingsController appsettings
 
 @{
     ViewData["Title"] = ViewBag.title;
@@ -102,7 +103,7 @@
         </div>
         <div class="form-group">
             <label asp-for="AffectedHosts" class="col-md-2 control-label">
-                Hosts<span role="button" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis' onclick="doIA('hosts')"></span>
+                Hosts<span role="button" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis' onclick="doIA('@appsettings.IA_Url', 'hosts')"></span>
             </label>
             <div class="col-md-10">
                 <input asp-for="AffectedHosts" class="form-control" data-role="tagsinput" />
@@ -111,7 +112,7 @@
         </div>
         <div class="form-group">
             <label asp-for="AffectedProjects" class="col-md-2 control-label">
-                Projects<span role="button" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis' onclick="doIA('projects')"></span>
+                Projects<span role="button" class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis' onclick="doIA('@appsettings.IA_Url', 'projects')"></span>
             </label>
             <div class="col-md-10">
                 <input asp-for="AffectedProjects" class="form-control" data-role="tagsinput" />
@@ -258,6 +259,7 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
+                <input type="hidden" name="Redir" value="@ViewBag.Redir" />
                 <input type="submit" value="Create" class="btn btn-default" />
             </div>
         </div>
@@ -265,7 +267,16 @@
 </form>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    
+    @if (@ViewBag.Redir != null)
+    {
+        <a href="@Uri.UnescapeDataString(ViewBag.Redir)">Back</a>
+    }
+    else
+    {
+        <a asp-action="Index">Back</a>
+    }
+
 </div>
 
 @section Scripts {
