@@ -171,9 +171,10 @@ namespace Calendar.Controllers
         }
 
         // GET: Events/Create
-        public IActionResult Create()
+        public IActionResult Create(string redir = null)
         {
             ViewBag.Title = "Create Event";
+            ViewBag.Redir = redir;
             if (User.IsInRole(Constants.ROLE_ADMIN))
                 return View();
             else
@@ -185,9 +186,10 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,RiskAnalysis")] Event @event)
+        public async Task<IActionResult> Create([Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,RiskAnalysis")] Event @event, string redir = null)
         {
             ViewBag.Title = "Create Event";
+            ViewBag.Redir = redir;
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
 
@@ -209,7 +211,10 @@ namespace Calendar.Controllers
 
                 _context.Add(@event);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                if (redir == null)
+                    return RedirectToAction("Index");
+                else
+                    return Redirect(redir);
             }
             return View(@event);
         }
@@ -233,7 +238,7 @@ namespace Calendar.Controllers
         */
 
         // GET: Events/Edit/5
-        public async Task<IActionResult> Edit(int? id, string redir)
+        public async Task<IActionResult> Edit(int? id, string redir = null)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
@@ -257,7 +262,7 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string redir, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,CreatedDate,CreatedBy,CreatedByDisplayName,RiskAnalysis")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,AffectedHosts,AffectedProjects,Category,EndDateTime,Reference,Result,StartDateTime,Subject,TaskDescription,AffectedTeams,RiskLevel,Environment,ActionBy,HealthCheckBy,Likelihood,Impact,ImpactAnalysis,MaintProcedure,VerificationStep,FallbackProcedure,EventStatus,CreatedDate,CreatedBy,CreatedByDisplayName,RiskAnalysis")] Event @event, string redir = null)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
@@ -305,17 +310,24 @@ namespace Calendar.Controllers
                         throw;
                     }
                 }
+
+                if (redir != null )
+                    return Redirect(redir);
+                else
+                    return RedirectToAction("Index");                
+/*
+ 
                 //string sredir = redir.Replace("%3F", "?").Replace("%3D","=").Replace("%26","&");
-                string sredir;
-                string pYear = "", pMonth = "";
+                //string sredir;
+                //string pYear = "", pMonth = "";
 
                 if (redir != null && redir.StartsWith("Calendar"))
                 {
                     sredir = Uri.UnescapeDataString(redir);
                     int qPos = sredir.IndexOf('?');
-                    if ( qPos >= 0)
+                    if (qPos >= 0)
                     {
-                        sredir = sredir.Substring(qPos+1, sredir.Length - (qPos+1));
+                        sredir = sredir.Substring(qPos + 1, sredir.Length - (qPos + 1));
                     }
                     string[] sparam = sredir.Split('&');
 
@@ -336,13 +348,17 @@ namespace Calendar.Controllers
                 }
                 else
                     return RedirectToAction("Index");
+*/
             }
             return View(@event);
         }
 
         // GET: Events/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, string redir = null)
         {
+
+            ViewBag.Redir = redir;
+
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
 
@@ -363,12 +379,17 @@ namespace Calendar.Controllers
         // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string redir = null)
         {
             var @event = await _context.Event.SingleOrDefaultAsync(m => m.ID == id);
             _context.Event.Remove(@event);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+
+            ViewBag.Redir = redir;
+            if (redir == null)
+                return RedirectToAction("Index");
+            else
+                return Redirect(redir);
         }
 
         private bool EventExists(int id)
@@ -377,9 +398,10 @@ namespace Calendar.Controllers
         }
 
         // GET: Events/Copy/5
-        public async Task<IActionResult> Copy(int? id, string redir)
+        public async Task<IActionResult> Copy(int? id, string redir = null)
         {
             ViewBag.Title = "Copy Event";
+            ViewBag.Redir = redir;
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
 
@@ -393,7 +415,6 @@ namespace Calendar.Controllers
             {
                 return NotFound();
             }
-            ViewBag.Redir = redir;
             return View("Create", @event);
         }
     }
