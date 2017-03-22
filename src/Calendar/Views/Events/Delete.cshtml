@@ -74,8 +74,16 @@
     
     <form asp-action="Delete">
         <div class="form-actions no-color">
+            <input type="hidden" name="Redir" value="@ViewBag.Redir" />
             <input type="submit" value="Confirm Delete" class="btn btn-default" /> |
-            <a asp-action="Index">Back to List</a>
+            @if (@ViewBag.Redir != null)
+            {
+                <a href="@Uri.UnescapeDataString(ViewBag.Redir)">Back</a>
+            }
+            else
+            {
+                <a asp-action="Index">Back</a>
+            }
         </div>
     </form>
 </div>

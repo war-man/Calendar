@@ -8,6 +8,8 @@
 
 @{
     ViewData["Title"] = "Event List";
+
+    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm);
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -15,7 +17,9 @@
 @if (@User.IsInRole("Admins"))
 {
 <p>
-    <a asp-action="Create">Create New</a>
+     @{
+        <a asp-action="Create" asp-route-redir="@redir">Create New</a>
+    }
 </p>
 }
 
@@ -79,8 +83,8 @@
                 @if (User.IsInRole("Admins"))
                 {
                     <span class="text-nowrap">
-                        <a class="btn btn-default btn-xs glyphicon glyphicon-trash" role="button" asp-action="Delete" asp-route-id="@item.ID" title="Delete the event"></a>
-                        <a class="btn btn-default btn-xs glyphicon glyphicon-duplicate" role="button" asp-action="Copy" asp-route-id="@item.ID" title="Make a copy of the event"></a>
+                        <a class="btn btn-default btn-xs glyphicon glyphicon-trash" role="button" asp-action="Delete" asp-route-id="@item.ID" asp-route-redir="@redir" title="Delete the event"></a>
+                        <a class="btn btn-default btn-xs glyphicon glyphicon-duplicate" role="button" asp-action="Copy" asp-route-id="@item.ID" asp-route-redir="@redir" title="Make a copy of the event"></a>
                     </span>
                 }
             </td>
@@ -95,7 +99,7 @@
             </td>
             <td>
                 @{
-                    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm);
+                    
                     var action = (User.IsInRole("Admins") ? "Edit" : "Details");
                     <a role="button" style="text-decoration:none;" asp-action="@action" asp-route-id="@item.ID" asp-route-redir="@redir">@item.Subject</a>
                 }
