@@ -26,13 +26,123 @@ namespace Calendar.Controllers
 
         // GET: Events
         //startdate_desc, startdate_asce, creation_desc, creation_asce
-        public async Task<IActionResult> Index(string sort)
+        public async Task<IActionResult> Index(string sort, string subject, string showday, string showSearchDay, string host, string project, string team, string searchdatefrom, string searchdateto)
         {
 
             ViewBag.SortParm = String.IsNullOrEmpty(sort) ? "" : sort;
-            
+            ViewBag.SubjectParm = String.IsNullOrEmpty(subject) ? "" : subject;
+            ViewBag.HostParm = String.IsNullOrEmpty(host) ? "" : host;
+            ViewBag.ProjParm = String.IsNullOrEmpty(project) ? "" : project;
+            ViewBag.TeamParm = String.IsNullOrEmpty(team) ? "" : team;
+            ViewBag.ShowParm = showday;
+            ViewBag.DayParm = showSearchDay;
+            ViewBag.FromParm = String.IsNullOrEmpty(searchdatefrom) ? "" : searchdatefrom;
+            ViewBag.ToParm = String.IsNullOrEmpty(searchdateto) ? "" : searchdateto;
+
             var events = from e in _context.Event
                            select e;
+
+            if (!String.IsNullOrEmpty(subject))
+            {
+                events = events.Where(e => e.Subject.Contains(subject));
+            }
+            if (!String.IsNullOrEmpty(host))
+            {
+                events = events.Where(e => e.AffectedHosts.Contains(host));
+            }
+            if (!String.IsNullOrEmpty(project))
+            {
+                events = events.Where(e => e.AffectedProjects.Contains(project));
+            }
+            if (!String.IsNullOrEmpty(team))
+            {
+                events = events.Where(e => e.AffectedTeams.Contains(team));
+            }
+
+            DateTime datetimefrom;
+            DateTime datetimeto;
+
+            if (!String.IsNullOrEmpty(searchdatefrom) || !String.IsNullOrEmpty(searchdateto))
+            {
+
+                if (showSearchDay.Equals("SD"))
+                {
+                    if (!String.IsNullOrEmpty(searchdatefrom) && DateTime.TryParse(searchdatefrom, out datetimefrom))
+                    {
+                        events = events.Where(e => e.StartDateTime >= datetimefrom);
+                    }
+                    if (!String.IsNullOrEmpty(searchdateto) && DateTime.TryParse(searchdateto, out datetimeto))
+                    {
+                        events = events.Where(e => e.StartDateTime <= datetimeto);
+                    }
+                }
+                else if(showSearchDay.Equals("CD"))
+                {
+                    if (!String.IsNullOrEmpty(searchdatefrom) && DateTime.TryParse(searchdatefrom, out datetimefrom))
+                    {
+                        events = events.Where(e => e.CreatedDate >= datetimefrom);
+                    }
+                    if (!String.IsNullOrEmpty(searchdateto) && DateTime.TryParse(searchdateto, out datetimeto))
+                    {
+                        events = events.Where(e => e.CreatedDate <= datetimeto);
+                    }
+                }
+                else
+                {
+                    if (!String.IsNullOrEmpty(searchdatefrom) && DateTime.TryParse(searchdatefrom, out datetimefrom))
+                    {
+                        events = events.Where(e => e.UpdatedDate >= datetimefrom);
+                    }
+                    if (!String.IsNullOrEmpty(searchdateto) && DateTime.TryParse(searchdateto, out datetimeto))
+                    {
+                        events = events.Where(e => e.UpdatedDate <= datetimeto);
+                    }
+                }
+            }
+            else
+            {                
+                switch (showday)
+                {
+                    case "S1":
+                        events = events.Where(e => e.StartDateTime >= DateTime.Now.Date && e.StartDateTime <= (DateTime.Now.AddDays(1).Date));
+                        break;
+                    case "S2":
+                        events = events.Where(e => e.StartDateTime >= DateTime.Now.Date && e.StartDateTime <= (DateTime.Now.AddDays(8).Date));
+                        break;
+                    case "S3":
+                        events = events.Where(e => e.StartDateTime >= DateTime.Now.Date && e.StartDateTime <= (DateTime.Now.AddDays(31).Date));
+                        break;
+                    case "S4":
+                        events = events.Where(e => e.StartDateTime >= DateTime.Now.Date && e.StartDateTime <= (DateTime.Now.AddDays(91).Date));
+                        break;
+                    case "C1":
+                        events = events.Where(e => e.CreatedDate >= DateTime.Now.Date && e.CreatedDate <= (DateTime.Now.AddDays(1).Date));
+                        break;
+                    case "C2":
+                        events = events.Where(e => e.CreatedDate >= (DateTime.Now.AddDays(-8).Date) && e.CreatedDate <= DateTime.Now.Date);
+                        break;
+                    case "C3":
+                        events = events.Where(e => e.CreatedDate >= (DateTime.Now.AddDays(-31).Date) && e.CreatedDate <= DateTime.Now.Date);
+                        break;
+                    case "C4":
+                        events = events.Where(e => e.CreatedDate >= (DateTime.Now.AddDays(-91).Date) && e.CreatedDate <= DateTime.Now.Date);
+                        break;
+                    case "U1":
+                        events = events.Where(e => e.UpdatedDate >= DateTime.Now.Date && e.UpdatedDate <= (DateTime.Now.AddDays(1).Date));
+                        break;
+                    case "U2":
+                        events = events.Where(e => e.UpdatedDate >= (DateTime.Now.AddDays(-8).Date) && e.UpdatedDate <= DateTime.Now.Date);
+                        break;
+                    case "U3":
+                        events = events.Where(e => e.UpdatedDate >= (DateTime.Now.AddDays(-31).Date) && e.UpdatedDate <= DateTime.Now.Date);
+                        break;
+                    case "U4":
+                        events = events.Where(e => e.UpdatedDate >= (DateTime.Now.AddDays(-91).Date) && e.UpdatedDate <= DateTime.Now.Date);
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             switch (sort)
             {

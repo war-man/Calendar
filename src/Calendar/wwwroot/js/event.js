@@ -25,6 +25,7 @@ function UpdateRiskLevelWrapper() {
     UpdateRiskLevel(riskmatrix);
 }
 
+
 function doIA(iaurl, mode) {
     var url = "";
     var param = "";
@@ -39,3 +40,13 @@ function doIA(iaurl, mode) {
 
     window.open(url, '_blank');
 };
+
+function UpdateSearchDateFilter() {
+    if ($('#searchdatefrom').val() == "" && $('#searchdateto').val() == "") {
+        $('#showday').removeAttr('disabled');
+    } else {
+        $('#showday').attr('disabled', 'disabled');
+    }
+}
+
+
