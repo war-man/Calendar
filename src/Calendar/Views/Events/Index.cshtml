@@ -9,7 +9,7 @@
 @{
     ViewData["Title"] = "Event List";
 
-    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm);
+    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm + "&subject=" + ViewBag.SubjectParm + "&host=" + ViewBag.HostParm + "&project=" + ViewBag.ProjParm + "&team=" + ViewBag.TeamParm + "&searchday=" + ViewBag.DayParm + "&searchrange=" + ViewBag.RangeParm + "&searchdatefrom=" + ViewBag.FromParm + "&searchdateto=" + ViewBag.ToParm);
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -20,7 +20,7 @@
      @{
         <a asp-action="Create" asp-route-redir="@redir">Create New</a>
         <a name="collapsesearch" id="collapsesearch" data-toggle="collapse" href="#collapseSearch" aria-expanded="false">Search <span id="search" class="glyphicon glyphicon-chevron-down"></span></a>
-    }
+     }
 </p>
 }
 
@@ -61,7 +61,7 @@
 
                     <div class="col-md-3">
                         <div class="col-md-12">
-                            <select name="showSearchDay" id="showSearchDay" class="form-control input-sm">
+                            <select name="searchday" id="searchday" class="form-control input-sm">
                                 @foreach (var s in LOVs.ListSearchDate())
                                 {
                                     @if (ViewBag.DayParm == s.Value)
@@ -80,10 +80,10 @@
 
                     <div class="col-md-3">
                         <div class="col-md-12">
-                            <select name="showday" id="showday" class="form-control input-sm">
+                            <select name="searchrange" id="searchrange" class="form-control input-sm">
                                 @foreach (var s in LOVs.ListSearchRange())
                                 {
-                                    @if (ViewBag.ShowParm == s.Value)
+                                    @if (ViewBag.RangeParm == s.Value)
                                     {
                                         <option value=@s.Value data-filter=@s.Filter selected>@s.Name</option>
                                     }
@@ -162,8 +162,8 @@
             <th width="12%">
                 @Html.DisplayNameFor(model => model.StartDateTime)
                 <span class="text-nowrap">
-                    <a asp-action="Index" asp-route-sort="sd_a" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-showday="@ViewBag.ShowParm" asp-route-showSearchDay="@ViewBag.DayParm" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="sd_a")?"red": "white")'></span></a>
-                    <a asp-action="Index" asp-route-sort="sd_d" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-showday="@ViewBag.ShowParm" asp-route-showSearchDay="@ViewBag.DayParm" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="sd_d") ?"red": "white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="sd_a" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="sd_a")?"red": "white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="sd_d" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="sd_d") ?"red": "white")'></span></a>
                 </span>
             </th>
             <th>
@@ -190,15 +190,15 @@
             <th width="10%">
                 @Html.DisplayNameFor(model => model.CreatedDate)
                 <span class="text-nowrap">
-                    <a asp-action="Index" asp-route-sort="cd_a" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-showday="@ViewBag.ShowParm" asp-route-showSearchDay="@ViewBag.DayParm" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="cd_a")?"red":"white")'></span></a>
-                    <a asp-action="Index" asp-route-sort="cd_d" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-showday="@ViewBag.ShowParm" asp-route-showSearchDay="@ViewBag.DayParm" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="cd_d")?"red": "white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="cd_a" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="cd_a")?"red":"white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="cd_d" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="cd_d")?"red": "white")'></span></a>
                 </span>
             </th>
             <th width="10%">
                 @Html.DisplayNameFor(model => model.UpdatedDate)
                 <span class="text-nowrap">
-                    <a asp-action="Index" asp-route-sort="ud_a" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-showday="@ViewBag.ShowParm" asp-route-showSearchDay="@ViewBag.DayParm" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="ud_a")?"red":"white")'></span></a>
-                    <a asp-action="Index" asp-route-sort="ud_d" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-showday="@ViewBag.ShowParm" asp-route-showSearchDay="@ViewBag.DayParm" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="ud_d")?"red": "white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="ud_a" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="ud_a")?"red":"white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="ud_d" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="ud_d")?"red": "white")'></span></a>
                 </span>
             </th>
         </tr>
@@ -296,17 +296,17 @@
 <script type="text/javascript">
     $(document).ready(function()
     {
-        $('#showSearchDay').trigger('change');
+        $('#searchday').trigger('change');
         UpdateSearchDateFilter();
     });
 
-    $('#showSearchDay').change(function () {
+    $('#searchday').change(function () {
         if ($(this).data('options') == undefined) {
-            $(this).data('options', $('#showday option').clone());
+            $(this).data('options', $('#searchrange option').clone());
         }
         var id = $(this).val();
         var options = $(this).data('options').filter('[data-filter=' + id + ']');
-        $('#showday').html(options);
+        $('#searchrange').html(options);
     });
 
     $('#searchdatefrom').blur(function () {

@@ -43,9 +43,9 @@ function doIA(iaurl, mode) {
 
 function UpdateSearchDateFilter() {
     if ($('#searchdatefrom').val() == "" && $('#searchdateto').val() == "") {
-        $('#showday').removeAttr('disabled');
+        $('#searchrange').removeAttr('disabled');
     } else {
-        $('#showday').attr('disabled', 'disabled');
+        $('#searchrange').attr('disabled', 'disabled');
     }
 }
 
