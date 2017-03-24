@@ -9,7 +9,7 @@
 @{
     ViewData["Title"] = "Event List";
 
-    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm);
+    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm + "&subject=" + ViewBag.SubjectParm + "&host=" + ViewBag.HostParm + "&project=" + ViewBag.ProjParm + "&team=" + ViewBag.TeamParm + "&searchday=" + ViewBag.DayParm + "&searchrange=" + ViewBag.RangeParm + "&searchdatefrom=" + ViewBag.FromParm + "&searchdateto=" + ViewBag.ToParm);
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -19,9 +19,137 @@
 <p>
      @{
         <a asp-action="Create" asp-route-redir="@redir">Create New</a>
-    }
+        <a name="collapsesearch" id="collapsesearch" data-toggle="collapse" href="#collapseSearch" aria-expanded="false">Search <span id="search" class="glyphicon glyphicon-chevron-down"></span></a>
+     }
 </p>
 }
+
+<div class="collapse" id="collapseSearch">
+    <div class="card card-block">
+        <form asp-controller="Events" asp-action="Index">
+            <div class="form-horizontal">
+                <div class="form-group">
+
+                    <div class="col-md-3">
+                        <label class="col-md-2 control-label input-sm">Subject</label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control input-sm" name="subject" value="@ViewBag.SubjectParm">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label class="col-md-2 control-label input-sm">Host</label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control input-sm" name="host" value="@ViewBag.HostParm">
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="col-md-2 control-label input-sm">Project</label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control input-sm" name="project" value="@ViewBag.ProjParm">
+                        </div>
+                    </div>
+                        
+                    <div class="col-md-3">
+                        <label class="col-md-2 control-label input-sm">Team</label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control input-sm" name="team" value="@ViewBag.TeamParm">
+                        </div>
+                    </div>
+                        
+
+                    <div class="col-md-3">
+                        <div class="col-md-12">
+                            <select name="searchday" id="searchday" class="form-control input-sm">
+                                @foreach (var s in LOVs.ListSearchDate())
+                                {
+                                    @if (ViewBag.DayParm == s.Value)
+                                    {
+                                        <option value=@s.Value selected>@s.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value=@s.Value>@s.Name</option>
+                                    }
+
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="col-md-12">
+                            <select name="searchrange" id="searchrange" class="form-control input-sm">
+                                @foreach (var s in LOVs.ListSearchRange())
+                                {
+                                    @if (ViewBag.RangeParm == s.Value)
+                                    {
+                                        <option value=@s.Value data-filter=@s.Filter selected>@s.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value=@s.Value data-filter=@s.Filter>@s.Name</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="col-md-2 control-label input-sm">From</label>
+                        <div class="col-md-10">
+                            <div class='input-group date' id='dtpickerFrom'>
+                                <input type="text" class="form-control input-sm" id="searchdatefrom" name="searchdatefrom" value="@ViewBag.FromParm">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $('#dtpickerFrom').datetimepicker({
+                                        format: 'lll',
+                                        sideBySide: true
+                                    });
+                                });
+                            </script>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="col-md-2 control-label input-sm">To</label>
+                        <div class="col-md-10">
+                            <div class='input-group date' id='dtpickerTo'>
+                                <input type="text" class="form-control input-sm" id="searchdateto" name="searchdateto" value="@ViewBag.ToParm">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                            <script type="text/javascript">
+                            $(function () {
+                                $('#dtpickerTo').datetimepicker({
+                                    format: 'lll',
+                                    sideBySide: true
+                                });
+                            });
+                            </script>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <div>
+                        <div class="col-md-3 col-md-offset-1">
+                            <input type="submit" value="Filter" class="btn btn-default" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
 
 <!--<table class="table" style="table-layout:fixed">-->
 <table class="table table-striped table-bordered table-hover">
@@ -34,8 +162,8 @@
             <th width="12%">
                 @Html.DisplayNameFor(model => model.StartDateTime)
                 <span class="text-nowrap">
-                    <a asp-action="Index" asp-route-sort="sd_a" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="sd_a")?"red": "white")'></span></a>
-                    <a asp-action="Index" asp-route-sort="sd_d" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="sd_d") ?"red": "white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="sd_a" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="sd_a")?"red": "white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="sd_d" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="sd_d") ?"red": "white")'></span></a>
                 </span>
             </th>
             <th>
@@ -62,15 +190,15 @@
             <th width="10%">
                 @Html.DisplayNameFor(model => model.CreatedDate)
                 <span class="text-nowrap">
-                    <a asp-action="Index" asp-route-sort="cd_a" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="cd_a")?"red":"white")'></span></a>
-                    <a asp-action="Index" asp-route-sort="cd_d" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="cd_d")?"red": "white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="cd_a" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="cd_a")?"red":"white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="cd_d" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="cd_d")?"red": "white")'></span></a>
                 </span>
             </th>
             <th width="10%">
                 @Html.DisplayNameFor(model => model.UpdatedDate)
                 <span class="text-nowrap">
-                    <a asp-action="Index" asp-route-sort="ud_a" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="ud_a")?"red":"white")'></span></a>
-                    <a asp-action="Index" asp-route-sort="ud_d" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="ud_d")?"red": "white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="ud_a" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Ascending Order"><span class='glyphicon glyphicon-chevron-up' style='color:@((ViewBag.SortParm=="ud_a")?"red":"white")'></span></a>
+                    <a asp-action="Index" asp-route-sort="ud_d" asp-route-subject="@ViewBag.SubjectParm" asp-route-host="@ViewBag.HostParm" asp-route-project="@ViewBag.ProjParm" asp-route-team="@ViewBag.TeamParm" asp-route-searchrange="@ViewBag.RangeParm" asp-route-searchday="@ViewBag.DayParm" asp-route-searchdatefrom="@ViewBag.FromParm" asp-route-searchdateto="@ViewBag.ToParm" title="Descending Order"><span class='glyphicon glyphicon-chevron-down' style='color:@((ViewBag.SortParm=="ud_d")?"red": "white")'></span></a>
                 </span>
             </th>
         </tr>
@@ -164,3 +292,39 @@
 }
     </tbody>
 </table>
+
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $('#searchday').trigger('change');
+        UpdateSearchDateFilter();
+    });
+
+    $('#searchday').change(function () {
+        if ($(this).data('options') == undefined) {
+            $(this).data('options', $('#searchrange option').clone());
+        }
+        var id = $(this).val();
+        var options = $(this).data('options').filter('[data-filter=' + id + ']');
+        $('#searchrange').html(options);
+    });
+
+    $('#searchdatefrom').blur(function () {
+        UpdateSearchDateFilter();
+    });
+
+    $('#searchdateto').blur(function () {
+        UpdateSearchDateFilter();
+    });
+
+    $('#collapsesearch').click(function () {
+        if ($('#search').attr('class') == "glyphicon glyphicon-chevron-down")
+        {
+            $('#search').removeClass("glyphicon glyphicon-chevron-down");
+            $('#search').addClass("glyphicon glyphicon-chevron-up");
+        } else {
+            $('#search').removeClass("glyphicon glyphicon-chevron-up");
+            $('#search').addClass("glyphicon glyphicon-chevron-down");
+        }
+    });
+</script>
