@@ -4,21 +4,6 @@
 
 @*
     @model IEnumerable<Calendar.Models.Event>
-
-    Index(  string sort, string subject, string searchrange, string searchday,
-            string host, string project, string team,
-            string searchdatefrom, string searchdateto, int? page, int? pgsize)
-    {
-            ViewBag.SortParm = String.IsNullOrEmpty(sort) ? "" : sort;
-            ViewBag.SubjectParm = String.IsNullOrEmpty(subject) ? "" : subject;
-            ViewBag.HostParm = String.IsNullOrEmpty(host) ? "" : host;
-            ViewBag.ProjParm = String.IsNullOrEmpty(project) ? "" : project;
-            ViewBag.TeamParm = String.IsNullOrEmpty(team) ? "" : team;
-            ViewBag.RangeParm = searchrange;
-            ViewBag.DayParm = searchday;
-            ViewBag.FromParm = String.IsNullOrEmpty(searchdatefrom) ? "" : searchdatefrom;
-            ViewBag.ToParm = String.IsNullOrEmpty(searchdateto) ? "" : searchdateto;
-    }
 *@
 
 @model PaginatedList<Calendar.Models.Event>
@@ -27,7 +12,7 @@
 @inject Calendar.Controllers.AppSettingsController appsettings
 
 @{
-                ViewData["Title"] = "Event List";
+    ViewData["Title"] = "Event List";
 
     var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm + "&subject=" + ViewBag.SubjectParm + "&host=" + ViewBag.HostParm + "&project=" + ViewBag.ProjParm + "&team=" + ViewBag.TeamParm + "&searchday=" + ViewBag.DayParm + "&searchrange=" + ViewBag.RangeParm + "&searchdatefrom=" + ViewBag.FromParm + "&searchdateto=" + ViewBag.ToParm + "&page=" + @Model.PageIndex + "&pgsize=" + @Model.PageSize);
 }
@@ -49,7 +34,7 @@
 
         </div>
         <div class="col-md-8"></div>
-        <div class="col-md-2 text-right">
+        <div class="col-md-2 text-right" style="padding-right:0">
             <a name="collapsesearch" id="collapsesearch" data-toggle="collapse" href="#collapseSearch" aria-expanded="false"><span id="searchicon" class="glyphicon glyphicon-search"></span><span id="search" class="glyphicon glyphicon-chevron-down"></span></a>
         </div>
     </div>
@@ -57,8 +42,7 @@
 
 <div class="panel panel-default collapse @ViewBag.SearchOn" id="collapseSearch">
     <div class="panel-body">
-        <form asp-controller="Events" asp-action="Index" method="get">
-            <input type="hidden" id="searchcollapse" name="searchcollapse" value="@ViewBag.SearchOn" />
+        <form asp-controller="Events" asp-action="Index" method="get">            
             <div class="container-fluid">
                 <div class="row">
                     <div class="row">
@@ -209,6 +193,10 @@
                         <div class="col-md-2">
                             <div class="row text-right">
                                 <div class="col-md-12">
+                                    <input type="hidden" id="searchcollapse" name="searchcollapse" value="@ViewBag.SearchOn" />
+                                    <input type="hidden" id="idsort" name="sort" value="@ViewBag.SortParm" />
+                                    <input type="hidden" id="idpage" name="page" value="@Model.PageIndex" />
+                                    <input type="hidden" id="idpgsize" name="pgsize" value="@Model.PageSize" />
                                     <input type="submit" value="Filter" class="btn btn-primary btn-sm" /> 
                                     <input type="button" onclick="clearform()" id="clearbtn" value="Clear" class="btn btn-primary btn-sm" />
                                 </div>
@@ -232,8 +220,7 @@
         <div class="col-md-6 text-right">
                 <nav aria-label="...">
                     <ul class="pagination pagination-sm"  style="margin:0">
-                        
-                        <li class="page-item"><span>Page: @(Model.PageIndex)/@(Model.TotalPages)</span></li>
+                        <li class="page-item"><span>Page: @((Model.TotalCount == 0) ? "-" : Model.PageIndex.ToString() + "/" + Model.TotalPages.ToString())</span></li>
                         <li class="page-item @prevDisabled">
                             <a asp-action="Index" tabindex="-1"
                                asp-route-sort="@ViewBag.SortParm"
@@ -241,12 +228,14 @@
                                asp-route-host="@ViewBag.HostParm"
                                asp-route-project="@ViewBag.ProjParm"
                                asp-route-team="@ViewBag.TeamParm"
+                               asp-route-refid="@ViewBag.RefParm"
+                               asp-route-eventid="@ViewBag.EventParm"
                                asp-route-searchrange="@ViewBag.RangeParm"
                                asp-route-searchday="@ViewBag.DayParm"
                                asp-route-searchdatefrom="@ViewBag.FromParm"
                                asp-route-searchdateto="@ViewBag.ToParm"
                                asp-route-page="@(Model.PageIndex - 1)"
-                               asp-route-fcode="@ViewData["fcode"]">
+                               asp-route-pgsize="@Model.PageSize">                               
                                 <span class="@prevDisabled glyphicon glyphicon-chevron-left" title="Previous Page"></span>
                             </a>
                         </li>
@@ -257,12 +246,14 @@
                                asp-route-host="@ViewBag.HostParm"
                                asp-route-project="@ViewBag.ProjParm"
                                asp-route-team="@ViewBag.TeamParm"
+                               asp-route-refid="@ViewBag.RefParm"
+                               asp-route-eventid="@ViewBag.EventParm"
                                asp-route-searchrange="@ViewBag.RangeParm"
                                asp-route-searchday="@ViewBag.DayParm"
                                asp-route-searchdatefrom="@ViewBag.FromParm"
                                asp-route-searchdateto="@ViewBag.ToParm"
                                asp-route-page="@(Model.PageIndex + 1)"
-                               asp-route-f="@ViewData["fcode"]">
+                               asp-route-pgsize="@Model.PageSize">                               
                                 <span class="@nextDisabled glyphicon glyphicon-chevron-right" title="Next Page"></span>
                             </a>
                         </li>                        
