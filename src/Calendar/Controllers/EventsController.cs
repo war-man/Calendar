@@ -26,7 +26,7 @@ namespace Calendar.Controllers
 
         // GET: Events
         //startdate_desc, startdate_asce, creation_desc, creation_asce
-        public async Task<IActionResult> Index(string sort, string subject, string searchrange, string searchday, string host, string project, string team, string searchdatefrom, string searchdateto)
+        public async Task<IActionResult> Index(string sort, string subject, string searchrange, string searchday, string host, string project, string team, string searchdatefrom, string searchdateto, int? page, int? pgsize)
         {
 
             ViewBag.SortParm = String.IsNullOrEmpty(sort) ? "" : sort;
@@ -165,8 +165,10 @@ namespace Calendar.Controllers
                     events = events.OrderByDescending(e => e.StartDateTime);
                     break;
             }
-
-            return View(await events.AsNoTracking().ToListAsync());
+            
+            return View(await PaginatedList<Event>.CreateAsync(events.AsNoTracking(), page ?? 1, pgsize ?? 10));
+        
+            //return View(await events.AsNoTracking().ToListAsync());
             //return View(await _context.Event.OrderByDescending(m => m.StartDateTime).ToListAsync());
         }
 
