@@ -26,21 +26,41 @@ namespace Calendar.Controllers
 
         // GET: Events
         //startdate_desc, startdate_asce, creation_desc, creation_asce
-        public async Task<IActionResult> Index(string sort, string subject, string searchrange, string searchday, string host, string project, string team, string searchdatefrom, string searchdateto)
-        {
-
+        public async Task<IActionResult> Index(string sort, string eventid, string subject, string searchrange, string searchday, string host, string project, string team, string refid, string searchdatefrom, string searchdateto)
+        {            
             ViewBag.SortParm = String.IsNullOrEmpty(sort) ? "" : sort;
             ViewBag.SubjectParm = String.IsNullOrEmpty(subject) ? "" : subject;
             ViewBag.HostParm = String.IsNullOrEmpty(host) ? "" : host;
             ViewBag.ProjParm = String.IsNullOrEmpty(project) ? "" : project;
             ViewBag.TeamParm = String.IsNullOrEmpty(team) ? "" : team;
+            ViewBag.RefParm = String.IsNullOrEmpty(refid) ? "" : refid;
             ViewBag.RangeParm = searchrange;
             ViewBag.DayParm = searchday;
+            ViewBag.EventParm = String.IsNullOrEmpty(eventid) ? "" : eventid;
             ViewBag.FromParm = String.IsNullOrEmpty(searchdatefrom) ? "" : searchdatefrom;
             ViewBag.ToParm = String.IsNullOrEmpty(searchdateto) ? "" : searchdateto;
+            
+            if (String.IsNullOrEmpty(eventid) && String.IsNullOrEmpty(subject) 
+                && String.IsNullOrEmpty(host) && String.IsNullOrEmpty(project) 
+                && String.IsNullOrEmpty(team) && String.IsNullOrEmpty(refid) 
+                && String.IsNullOrEmpty(searchdatefrom) || !String.IsNullOrEmpty(searchdateto) 
+                && (searchday.Equals("") || searchday.Equals("ND"))
+                && (searchrange.Equals("") || searchrange.Equals("C0") || searchrange.Equals("S0") || searchrange.Equals("U0")))
+            {
+                ViewBag.SearchOn = "";
+            } else
+            {
+                ViewBag.SearchOn = "in";
+            }
 
             var events = from e in _context.Event
                            select e;
+
+            int n_eventid;          
+            if (!String.IsNullOrEmpty(eventid) && Int32.TryParse(eventid, out n_eventid))
+            {
+                events = events.Where(e => e.ID.Equals(n_eventid));
+            }
 
             if (!String.IsNullOrEmpty(subject))
             {
@@ -58,6 +78,10 @@ namespace Calendar.Controllers
             {
                 events = events.Where(e => e.AffectedTeams.Contains(team));
             }
+            if (!String.IsNullOrEmpty(refid))
+            {
+                events = events.Where(e => e.Reference.Contains(refid));
+            }
 
             DateTime datetimefrom;
             DateTime datetimeto;
@@ -73,7 +97,7 @@ namespace Calendar.Controllers
                     }
                     if (!String.IsNullOrEmpty(searchdateto) && DateTime.TryParse(searchdateto, out datetimeto))
                     {
-                        events = events.Where(e => e.StartDateTime <= datetimeto);
+                        events = events.Where(e => e.EndDateTime <= datetimeto);
                     }
                 }
                 else if(searchday.Equals("CD"))
