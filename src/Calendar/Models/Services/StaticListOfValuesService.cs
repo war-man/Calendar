@@ -120,8 +120,9 @@ namespace Calendar.Models.Services
         {
             return new List<LOV>()
             {
+                new LOV("SearchDate", "", "ND"),
                 new LOV("SearchDate", "Creation Date", "CD"),
-                new LOV("SearchDate", "Start Date", "SD"),
+                new LOV("SearchDate", "Event Date", "SD"),
                 new LOV("SearchDate", "Update Date", "UD")
             };
         }
@@ -129,17 +130,17 @@ namespace Calendar.Models.Services
         {
             return new List<LOV>()
             {
-                new LOV("SearchRange", "Show All", "C0", "CD"),
+                new LOV("SearchRange", "", "C0", "CD"),
                 new LOV("SearchRange", "Show Today", "C1", "CD"),
                 new LOV("SearchRange", "Show last 7 days", "C2", "CD"),
                 new LOV("SearchRange", "Show last 30 days", "C3", "CD"),
                 new LOV("SearchRange", "Show last 90 days", "C4", "CD"),
-                new LOV("SearchRange", "Show All", "S0", "SD"),
+                new LOV("SearchRange", "", "S0", "SD"),
                 new LOV("SearchRange", "Show Today", "S1", "SD"),
                 new LOV("SearchRange", "Show coming 7 days", "S2", "SD"),
                 new LOV("SearchRange", "Show coming 30 days", "S3", "SD"),
                 new LOV("SearchRange", "Show coming 90 days", "S4", "SD"),
-                new LOV("SearchRange", "Show All", "U0", "UD"),
+                new LOV("SearchRange", "", "U0", "UD"),
                 new LOV("SearchRange", "Show Today", "U1", "UD"),
                 new LOV("SearchRange", "Show last 7 days", "U2", "UD"),
                 new LOV("SearchRange", "Show last 30 days", "U3", "UD"),
