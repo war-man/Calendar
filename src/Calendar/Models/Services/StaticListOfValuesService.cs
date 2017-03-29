@@ -12,12 +12,20 @@ namespace Calendar.Models.Services
         public string Function { get; set; }
         public string Name { get; set; }
         public string Value { get; set; }
+        public string Filter { get; set; }
 
         public LOV (string pFunction, string pName, string pValue)
         {
             Function = pFunction;
             Name = pName;
-            Value = pValue;      
+            Value = pValue;
+        }
+        public LOV(string pFunction, string pName, string pValue, string pFilter)
+        {
+            Function = pFunction;
+            Name = pName;
+            Value = pValue;
+            Filter = pFilter;
         }
     }
 
@@ -106,6 +114,37 @@ namespace Calendar.Models.Services
                 new LOV("EventStatus", "RFC in Progress", Constants.STATUS_RFC),
                 new LOV("EventStatus", "Schedule Confirmed", Constants.STATUS_SCHDCONFIRMED),
                 new LOV("EventStatus", "Tentative", Constants.STATUS_TENTATIVE)                
+            };
+        }
+        public List<LOV> ListSearchDate()
+        {
+            return new List<LOV>()
+            {
+                new LOV("SearchDate", "", "ND"),
+                new LOV("SearchDate", "Creation Date", "CD"),
+                new LOV("SearchDate", "Event Date", "SD"),
+                new LOV("SearchDate", "Update Date", "UD")
+            };
+        }
+        public List<LOV> ListSearchRange()
+        {
+            return new List<LOV>()
+            {
+                new LOV("SearchRange", "", "C0", "CD"),
+                new LOV("SearchRange", "Show Today", "C1", "CD"),
+                new LOV("SearchRange", "Show last 7 days", "C2", "CD"),
+                new LOV("SearchRange", "Show last 30 days", "C3", "CD"),
+                new LOV("SearchRange", "Show last 90 days", "C4", "CD"),
+                new LOV("SearchRange", "", "S0", "SD"),
+                new LOV("SearchRange", "Show Today", "S1", "SD"),
+                new LOV("SearchRange", "Show coming 7 days", "S2", "SD"),
+                new LOV("SearchRange", "Show coming 30 days", "S3", "SD"),
+                new LOV("SearchRange", "Show coming 90 days", "S4", "SD"),
+                new LOV("SearchRange", "", "U0", "UD"),
+                new LOV("SearchRange", "Show Today", "U1", "UD"),
+                new LOV("SearchRange", "Show last 7 days", "U2", "UD"),
+                new LOV("SearchRange", "Show last 30 days", "U3", "UD"),
+                new LOV("SearchRange", "Show last 90 days", "U4", "UD")
             };
         }
     }

@@ -26,13 +26,145 @@ namespace Calendar.Controllers
 
         // GET: Events
         //startdate_desc, startdate_asce, creation_desc, creation_asce
-        public async Task<IActionResult> Index(string sort)
+        public async Task<IActionResult> Index(string sort, string eventid, string subject, string searchrange, string searchday, string host, string project, string team, string refid, string searchdatefrom, string searchdateto, int? page, int? pgsize)
         {
-
             ViewBag.SortParm = String.IsNullOrEmpty(sort) ? "" : sort;
+            ViewBag.SubjectParm = String.IsNullOrEmpty(subject) ? "" : subject;
+            ViewBag.HostParm = String.IsNullOrEmpty(host) ? "" : host;
+            ViewBag.ProjParm = String.IsNullOrEmpty(project) ? "" : project;
+            ViewBag.TeamParm = String.IsNullOrEmpty(team) ? "" : team;
+            ViewBag.RefParm = String.IsNullOrEmpty(refid) ? "" : refid;
+            ViewBag.RangeParm = searchrange;
+            ViewBag.DayParm = searchday;
+            ViewBag.EventParm = String.IsNullOrEmpty(eventid) ? "" : eventid;
+            ViewBag.FromParm = String.IsNullOrEmpty(searchdatefrom) ? "" : searchdatefrom;
+            ViewBag.ToParm = String.IsNullOrEmpty(searchdateto) ? "" : searchdateto;
             
+            if (String.IsNullOrEmpty(eventid) && String.IsNullOrEmpty(subject) 
+                && String.IsNullOrEmpty(host) && String.IsNullOrEmpty(project) 
+                && String.IsNullOrEmpty(team) && String.IsNullOrEmpty(refid) 
+                && (String.IsNullOrEmpty(searchday) || searchday.Equals("ND")))
+            {
+                ViewBag.SearchOn = "";
+            } else
+            {
+                ViewBag.SearchOn = "in";
+            }
+
             var events = from e in _context.Event
                            select e;
+
+            int n_eventid;          
+            if (!String.IsNullOrEmpty(eventid) && Int32.TryParse(eventid, out n_eventid))
+            {
+                events = events.Where(e => e.ID.Equals(n_eventid));
+            }
+
+            if (!String.IsNullOrEmpty(subject))
+            {
+                events = events.Where(e => e.Subject.Contains(subject));
+            }
+            if (!String.IsNullOrEmpty(host))
+            {
+                events = events.Where(e => e.AffectedHosts.Contains(host));
+            }
+            if (!String.IsNullOrEmpty(project))
+            {
+                events = events.Where(e => e.AffectedProjects.Contains(project));
+            }
+            if (!String.IsNullOrEmpty(team))
+            {
+                events = events.Where(e => e.AffectedTeams.Contains(team));
+            }
+            if (!String.IsNullOrEmpty(refid))
+            {
+                events = events.Where(e => e.Reference.Contains(refid));
+            }
+
+            DateTime datetimefrom;
+            DateTime datetimeto;
+
+            if (!String.IsNullOrEmpty(searchdatefrom) || !String.IsNullOrEmpty(searchdateto))
+            {
+
+                if (searchday.Equals("SD"))
+                {
+                    if (!String.IsNullOrEmpty(searchdatefrom) && DateTime.TryParse(searchdatefrom, out datetimefrom))
+                    {
+                        events = events.Where(e => e.StartDateTime >= datetimefrom);
+                    }
+                    if (!String.IsNullOrEmpty(searchdateto) && DateTime.TryParse(searchdateto, out datetimeto))
+                    {
+                        events = events.Where(e => e.EndDateTime <= datetimeto);
+                    }
+                }
+                else if(searchday.Equals("CD"))
+                {
+                    if (!String.IsNullOrEmpty(searchdatefrom) && DateTime.TryParse(searchdatefrom, out datetimefrom))
+                    {
+                        events = events.Where(e => e.CreatedDate >= datetimefrom);
+                    }
+                    if (!String.IsNullOrEmpty(searchdateto) && DateTime.TryParse(searchdateto, out datetimeto))
+                    {
+                        events = events.Where(e => e.CreatedDate <= datetimeto);
+                    }
+                }
+                else
+                {
+                    if (!String.IsNullOrEmpty(searchdatefrom) && DateTime.TryParse(searchdatefrom, out datetimefrom))
+                    {
+                        events = events.Where(e => e.UpdatedDate >= datetimefrom);
+                    }
+                    if (!String.IsNullOrEmpty(searchdateto) && DateTime.TryParse(searchdateto, out datetimeto))
+                    {
+                        events = events.Where(e => e.UpdatedDate <= datetimeto);
+                    }
+                }
+            }
+            else
+            {                
+                switch (searchrange)
+                {
+                    case "S1":
+                        events = events.Where(e => e.StartDateTime.Date >= DateTime.Now.Date && e.StartDateTime.Date <= (DateTime.Now.AddDays(1).Date));
+                        break;
+                    case "S2":
+                        events = events.Where(e => e.StartDateTime.Date >= DateTime.Now.Date && e.StartDateTime.Date <= (DateTime.Now.AddDays(7).Date));
+                        break;
+                    case "S3":
+                        events = events.Where(e => e.StartDateTime.Date >= DateTime.Now.Date && e.StartDateTime.Date <= (DateTime.Now.AddDays(30).Date));
+                        break;
+                    case "S4":
+                        events = events.Where(e => e.StartDateTime.Date >= DateTime.Now.Date && e.StartDateTime.Date <= (DateTime.Now.AddDays(90).Date));
+                        break;
+                    case "C1":
+                        events = events.Where(e => e.CreatedDate.Date >= DateTime.Now.Date && e.CreatedDate.Date <= (DateTime.Now.AddDays(1).Date));
+                        break;
+                    case "C2":
+                        events = events.Where(e => e.CreatedDate.Date >= (DateTime.Now.AddDays(-7).Date) && e.CreatedDate.Date <= DateTime.Now.Date);
+                        break;
+                    case "C3":
+                        events = events.Where(e => e.CreatedDate.Date >= (DateTime.Now.AddDays(-30).Date) && e.CreatedDate.Date <= DateTime.Now.Date);
+                        break;
+                    case "C4":
+                        events = events.Where(e => e.CreatedDate.Date >= (DateTime.Now.AddDays(-90).Date) && e.CreatedDate.Date <= DateTime.Now.Date);
+                        break;
+                    case "U1":
+                        events = events.Where(e => e.UpdatedDate.Date >= DateTime.Now.Date && e.UpdatedDate.Date <= (DateTime.Now.AddDays(1).Date));
+                        break;
+                    case "U2":
+                        events = events.Where(e => e.UpdatedDate.Date >= (DateTime.Now.AddDays(-7).Date) && e.UpdatedDate.Date <= DateTime.Now.Date);
+                        break;
+                    case "U3":
+                        events = events.Where(e => e.UpdatedDate.Date >= (DateTime.Now.AddDays(-30).Date) && e.UpdatedDate.Date <= DateTime.Now.Date);
+                        break;
+                    case "U4":
+                        events = events.Where(e => e.UpdatedDate.Date >= (DateTime.Now.AddDays(-90).Date) && e.UpdatedDate.Date <= DateTime.Now.Date);
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             switch (sort)
             {
@@ -55,8 +187,10 @@ namespace Calendar.Controllers
                     events = events.OrderByDescending(e => e.StartDateTime);
                     break;
             }
-
-            return View(await events.AsNoTracking().ToListAsync());
+            
+            return View(await PaginatedList<Event>.CreateAsync(events.AsNoTracking(), page ?? 1, pgsize ?? 30));
+        
+            //return View(await events.AsNoTracking().ToListAsync());
             //return View(await _context.Event.OrderByDescending(m => m.StartDateTime).ToListAsync());
         }
 
@@ -416,6 +550,6 @@ namespace Calendar.Controllers
                 return NotFound();
             }
             return View("Create", @event);
-        }
+        }        
     }
 }
