@@ -21,7 +21,8 @@ namespace Calendar.Models.CalendarViewModels
         public List<String> Servers { get; set; }
         public string EventStatus { get; set; }
         public string RiskLevel { get; set; }
-
+        public int PrevEventID { get; set; }
+        public int NextEventID { get; set; }
         // Constructor
         public CalendarEventViewModel(Event e)
         {
