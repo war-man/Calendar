@@ -679,7 +679,7 @@
 
     function doOpenEvent(id) {
 
-        var url = "@((User.IsInRole(Constants.ROLE_ADMIN))? "Edit": "Details")" + "?id=" + id + "&redir=" + encodeURIComponent("@(Context.Request.PathBase)Calendar?year=@ViewBag.ViewDate.Year&month=@ViewBag.ViewDate.Month");
+        var url = "@((User.IsInRole(Constants.ROLE_ADMIN))? "Edit": "Details")" + "?id=" + id + "&redir=" + encodeURIComponent("Calendar?year=@ViewBag.ViewDate.Year&month=@ViewBag.ViewDate.Month");
 
         location.href = url;
     };
