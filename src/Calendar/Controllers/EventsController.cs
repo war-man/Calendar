@@ -441,9 +441,6 @@ namespace Calendar.Controllers
                     @event.UpdatedDate = DateTime.Now;
                     @event.UpdatedBy = username;
                     @event.UpdatedByDisplayName = displayname;
-                    //replace all the spaces in Hosts and Projects
-                    //@event.AffectedHosts = @event.AffectedHosts.Replace(" ", "");
-                    //@event.AffectedHosts = @event.AffectedProjects.Replace(" ", "");
 
                     //The IsModified doesn't work!
                     //_context.Entry(@event).Property("CreatedBy").IsModified = false;

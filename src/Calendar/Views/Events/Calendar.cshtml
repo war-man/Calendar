@@ -45,84 +45,91 @@
 
 @functions{
 
-    /* See if we can find the earliest coming event for review. */
-    
-    int reviewEventID = 0;
+            /* See if we can find the earliest coming event for review. */
 
-    /* Retrieve the CSS class for 'Today' */
-    public string GetTodayCSS(DateTime pFirstDateofTheMonth, int pDay, string pCssPrefix)
-    {
-        if (pFirstDateofTheMonth.AddDays(pDay - 1).Date == DateTime.Now.Date)
-        {
-            return pCssPrefix + "-today";
-        }
-        return string.Empty;
-    }
+            int reviewEventID = 0;
 
-    /* Retrieve the Next Event to be painted in the Calendar for a given date */
-    /* Version 2 which should be able to handler across month */
-    public CalendarEventViewModel GetNextEventByDate(DateTime pDate)
-    {
-        foreach (var item in Model)
-        {
+            /* Retrieve the CSS class for 'Today' */
+            public string GetTodayCSS(DateTime pFirstDateofTheMonth, int pDay, string pCssPrefix)
             {
-                if (item.Event.StartDateTime.Date == pDate.Date && !item.MarkedInCalendar)
+                if (pFirstDateofTheMonth.AddDays(pDay - 1).Date == DateTime.Now.Date)
                 {
-                    /* found the earliest coming event for the review funciton */
-                    if (reviewEventID == 0 && pDate.Date >= DateTime.Now.Date)
-                    {
-                        reviewEventID = item.Event.ID;
-                    }
-                    return item;
+                    return pCssPrefix + "-today";
                 }
+                return string.Empty;
+            }
+
+            /* Retrieve the Next Event to be painted in the Calendar for a given date */
+            /* Version 2 which should be able to handler across month */
+            public CalendarEventViewModel GetNextEventByDate(DateTime pDate)
+            {
+                foreach (var item in Model)
+                {
+                    {
+                        if (item.Event.StartDateTime.Date == pDate.Date && !item.MarkedInCalendar)
+                        {
+                            /* found the earliest coming event for the review funciton */
+                            if (ViewBag.ReviewDirection >= 0)
+                            {
+                                if (reviewEventID == 0 && pDate.Date >= DateTime.Now.Date)
+                                    reviewEventID = item.Event.ID;
+                            }
+                            else
+                            {
+                                if (pDate.Date >= DateTime.Now.Date)
+                                    reviewEventID = item.Event.ID;
+                            }
+
+                            return item;
+                        }
+                    }
+                }
+                return null;
+            }
+
+            /* Check if there is still event for a particular row in the calendar */
+            public bool MonthRowEventExhausted(DateTime pRowStart)
+            {
+                var e = Model.Where(m => (m.MarkedInCalendar == false && m.Event.StartDateTime.Date >= pRowStart.Date && m.Event.StartDateTime.Date <= pRowStart.Date.AddDays(6)));
+
+                return (e.Count() == 0);
+            }
+
+            /* Return the Popover Content */
+            public string GetPopoverContent(CalendarEventViewModel pCalEvt)
+            {
+                Event pEvt = pCalEvt.Event;
+
+                string IA_URL = appsettings.IA_Url; /* Impact Analysis URL */
+                string CM_URL = appsettings.CM_Url; /* Operation Team Change Management URL */
+
+                var content = "<table>";
+                content += "<tr><th valign=top>Subject </th><td>" + pEvt.Subject + "</td></tr>";
+                content += "<tr><th nowrap valign=top>Short Desc. </th><td>" + pEvt.TaskDescription + "</td></tr>";
+                content += "<tr><th valign=top>Hosts </th><td>" + pEvt.AffectedHosts.Replace(",", ", ")
+                    + "<a target=_blank href=" + IA_URL + "?broken=true&server=" + Uri.EscapeDataString(pEvt.AffectedHosts) + ">"
+                    + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
+                content += "<tr><th valign=top>Projects </th><td>" + pEvt.AffectedProjects.Replace(",", ", ")
+                        + "<a target=_blank href=" + IA_URL + "?system=" + Uri.EscapeDataString(pEvt.AffectedProjects) + ">"
+                        + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
+                content += "<tr><th valign=top>Teams </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
+                content += "<tr><th valign=top>Risk </th><td><span class='cal-risklevel-" + pEvt.RiskLevel + "'>" + pCalEvt.RiskLevel + "</span></td></tr>";
+                content += "<tr><th valign=top>Status </th><td>" + pCalEvt.EventStatus + "</td></tr>";
+                content += "<tr><th valign=top>Reference </th><td><a target=_blank href=" + CM_URL + "?i_CRN=" + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
+                content += "<tr><th valign=top>Results </th><td>" + pEvt.Result + "</td></tr></table>";
+                content += "<div class='small'><i>Last Updated " + pEvt.UpdatedDate + "</i></div>";
+                /*
+                        if (User.IsInRole(Constants.ROLE_ADMIN))
+                        {
+                            content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>Edit Event Details</a>";
+                        } else
+                        {
+                            content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Details?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>View Event Details</a>";
+                        }
+                */
+                return content;
             }
         }
-        return null;
-    }
-
-    /* Check if there is still event for a particular row in the calendar */
-    public bool MonthRowEventExhausted(DateTime pRowStart)
-    {
-        var e = Model.Where(m => (m.MarkedInCalendar == false && m.Event.StartDateTime.Date >= pRowStart.Date && m.Event.StartDateTime.Date <= pRowStart.Date.AddDays(6)));
-
-        return (e.Count() == 0);
-    }
-
-    /* Return the Popover Content */
-    public string GetPopoverContent(CalendarEventViewModel pCalEvt)
-    {
-        Event pEvt = pCalEvt.Event;
-
-        string IA_URL = appsettings.IA_Url; /* Impact Analysis URL */
-        string CM_URL = appsettings.CM_Url; /* Operation Team Change Management URL */
-
-        var content = "<table>";
-        content += "<tr><th valign=top>Subject </th><td>" + pEvt.Subject + "</td></tr>";
-        content += "<tr><th nowrap valign=top>Short Desc. </th><td>" + pEvt.TaskDescription + "</td></tr>";
-        content += "<tr><th valign=top>Hosts </th><td>" + pEvt.AffectedHosts.Replace(",", ", ")
-            + "<a target=_blank href=" + IA_URL + "?broken=true&server=" + Uri.EscapeDataString(pEvt.AffectedHosts) + ">"
-            + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
-        content += "<tr><th valign=top>Projects </th><td>" + pEvt.AffectedProjects.Replace(",", ", ")
-                + "<a target=_blank href=" + IA_URL + "?system=" + Uri.EscapeDataString(pEvt.AffectedProjects) + ">"
-                + "<span class='glyphicon glyphicon-flash' style='color:red' data-toggle='tooltip' data-placement='top' title='Perform Impact Analysis'></span></a></td></tr>";
-        content += "<tr><th valign=top>Teams </th><td>" + pEvt.AffectedTeams.Replace(",", ", ") + "</td></tr>";
-        content += "<tr><th valign=top>Risk </th><td><span class='cal-risklevel-" + pEvt.RiskLevel + "'>" + pCalEvt.RiskLevel + "</span></td></tr>";
-        content += "<tr><th valign=top>Status </th><td>" + pCalEvt.EventStatus + "</td></tr>";
-        content += "<tr><th valign=top>Reference </th><td><a target=_blank href=" + CM_URL + "?i_CRN=" + pEvt.Reference + ">" + pEvt.Reference + "</a></td></tr>";
-        content += "<tr><th valign=top>Results </th><td>" + pEvt.Result + "</td></tr></table>";
-        content += "<div class='small'><i>Last Updated " + pEvt.UpdatedDate + "</i></div>";
-        /*
-                if (User.IsInRole(Constants.ROLE_ADMIN))
-                {
-                    content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Edit?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>Edit Event Details</a>";
-                } else
-                {
-                    content += "<hr><a class='btn btn-primary btn-sm btn-block' href='Details?id=" + pEvt.ID + "&redir=" + Uri.EscapeDataString("Calendar?year=" + ViewBag.ViewDate.Year + "&month=" + ViewBag.ViewDate.Month) + "'>View Event Details</a>";
-                }
-        */
-        return content;
-    }
-}
 
 <div class="container-fluid">
     <div class="row" style="margin:2px"></div>    
@@ -155,7 +162,7 @@
                         </form>
                     </div>
                     <div class="col-md-2 nopadding">
-                        <a id="idShowModalEvent" class="btn btn-primary glyphicon glyphicon-eye-open @(LastDateofTheMonth >= DateTime.Now  ? "" :"disabled")" role="button" title="Review Events" data-toggle="modal" data-target="#modalEventDetails"></a>
+                        <button id="idShowModalEvent" class="btn btn-primary glyphicon glyphicon-eye-open" @(LastDateofTheMonth >= DateTime.Now  ? "" :"disabled") role="button" title="Review Events" data-toggle="modal" data-target="#modalEventDetails"></button>
                     </div>                    
                 </div>
             </div>
@@ -195,12 +202,12 @@
                             </table>
                             @{
                                 int offset = (int)FirstDateofTheMonth.DayOfWeek * -1 + 1;
-                                int lastday = LastDateofTheMonth.Day;
+        int lastday = LastDateofTheMonth.Day;
 
-                                double RowHeightPCent, RowTop;
-                                DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar, starting from FirstDateOfTheCalendar. 
+        double RowHeightPCent, RowTop;
+        DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar, starting from FirstDateOfTheCalendar. 
 
-                                RowHeightPCent = 100.0 / NumOfCalRow;
+        RowHeightPCent = 100.0 / NumOfCalRow;
 
                                 <div id="mvEventContainer" class="mv-event-container" style="height:700px;">
                                     @for (var row = 0; row < NumOfCalRow; row++)
@@ -263,23 +270,23 @@
                                                             @for (var col = 0; col < DAYSINAWEEK; col++)
                                                             {
                                                                 int NumOfDays = 1;
-                                                                int d = caldate.Day;
+    int d = caldate.Day;
                                                                 {
                                                                     int ColSpan = 1;
 
-                                                                    /* Get the first event of the date */
-                                                                    var ce = GetNextEventByDate(caldate);
+    /* Get the first event of the date */
+    var ce = GetNextEventByDate(caldate);
                                                                     if (ce != null)
                                                                     {
                                                                         var e = ce.Event;
 
-                                                                        /* Now, calculate the colspan of event. 
-                                                                         * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0
-                                                                         *      1-Feb-2017 0:00 to 5-Feb-2017 3:00 => colspan=4,1
-                                                                         */
-                                                                        //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
+    /* Now, calculate the colspan of event. 
+     * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0
+     *      1-Feb-2017 0:00 to 5-Feb-2017 3:00 => colspan=4,1
+     */
+    //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
 
-                                                                        NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
+    NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
                                                                         if (e.EndDateTime == e.EndDateTime.Date) /* for those end date with timestamp 0:00, it should not be counted as one day */
                                                                         {
                                                                             NumOfDays -= 1;
@@ -296,14 +303,14 @@
                                                                         }
 
                                                                         var over_title = ((e.RiskLevel == "50") ? "<span class='glyphicon glyphicon-exclamation-sign' style='color:red'></span>" : "") + ce.OriginalStart.ToString("dd-MMM h:mmtt") + " - " + ce.OriginalEnd.ToString("dd-MMM h:mmtt") + " (ID " + ce.Event.ID + ")";
-                                                                        var over_content = GetPopoverContent(ce);
-                                                                        var over_placement = (row <= 1) ? "bottom" : "top";
+    var over_content = GetPopoverContent(ce);
+    var over_placement = (row <= 1) ? "bottom" : "top";
 
                                                                         <td class="st-c" colspan="@ColSpan">
                                                                             <div class="st-c-pos">
                                                                          @*
                                                                             @if (!ce.Continue && e.Severity == 1)
-                                                                            {
+    {
                                                                                 <span class="glyphicon glyphicon-exclamation-sign" style="color:red;position:absolute;top:-3px;left:-3px"></span>
                                                                             }
 
@@ -316,14 +323,14 @@
                                                                                         <!--<a style="text-decoration:none; color:#ffffff;" asp-controller="Events" asp-action="Details" asp-route-id="@e.ID">-->
                                                                                         <a style="text-decoration:@((e.EventStatus == Constants.STATUS_CANCELLED)? "line-through": "none"); color:#ffffff;" href="#">                                                                                            
                                                                                                 @if (!ce.Continue)
-                                                                                                {
+    {
                                                                                                     <span>@e.StartDateTime.ToString("h:mmt").ToLower()</span>
                                                                                                 }
                                                                                                 else
                                                                                                 {
                                                                                                     <span>...</span>
                                                                                                 }
-                                                                                                @e.TaskDescription                                                                                                                                                                                        
+                                                                                                @e.TaskDescription
                                                                                         </a>
                                                                                      </div>
                                                                                 </div>
@@ -377,10 +384,10 @@
                 <script type="text/javascript">
                 $(function () {
                     $('#datetimepicker12').datetimepicker({
-                        format: 'lt',
+        format: 'lt',
                         inline: true
                     });
-                });
+    });
                 </script>
             </div>
         </div>
@@ -402,12 +409,12 @@
                         <h2 class="text-muted" id="idmodalEventHeader"></h2>
                     </div>
                     <div class="col-md-3 text-right">
-                        <button type="button" class="btn btn-primary btn-sm" onclick="NextEventModal(-1);">Previous</button>
-                        <a role="button" class="btn btn-primary btn-sm" onclick="NextEventModal(1);">Next</a>
+                        <button id="idBtnModelPrevEvent" type="button" class="btn btn-primary btn-sm" onclick="NextEventModal(-1);">Previous</button>
+                        <a id="idBtnModelNextEvent" role="button" class="btn btn-primary btn-sm" onclick="NextEventModal(1);">Next</a>
                         <!--<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Close</button>-->
                     </div>
                 </div>
-                <div class="row" id="idEventModalContent" style="overflow:hidden"></div>
+                <div class="row" id="idEventModalContent"></div>
             </div>
         </div>
         <span id="idModalReviewEventId" hidden>@reviewEventID</span>
@@ -416,22 +423,32 @@
 
 <script type="text/javascript">
     /* this javascript block is for handling the Reviewing Event Funciton */
-    function NextEventModal(direction) {
-        /* update #idModalReviewEventId with either next or previous event id */
-        var modalEvent  = $("#idModalReviewEventId");
-        var currentEventId = modalEvent.text();     /* Current reviewing Event ID */
-        var comingEventId = 0;                      /* Coming Event ID to be reviewed, can be next or previous */
+
+
+    function GetNextEventID(direction, currentEventId) {
+        /* get the next event in the given direction. 1 -> foreward, -1 -> backward */
+        var comingEventId = 0;
 
         for (i = 0; i < calevents.length; i++) {
             var ce = calevents[i];
             if (ce.event.id == currentEventId) {
-                comingEventId = (direction > 0) ? ce.nextEventID : ce.prevEventID;
-                modalEvent.text(comingEventId);
-                break;
-            }
+            comingEventId = (direction > 0) ? ce.nextEventID : ce.prevEventID;            
+            break;
         }
-        
-        /* comingEventId == 0 means no more event on the current calendar to be reviewed and we need to navigate to previous/new. */
+    }
+        return comingEventId;
+    }
+
+    function NextEventModal(direction) {
+        /* #idModalReviewEventId is the current view event id or the default event id when the page is just loaded */        
+        var modalEvent  = $("#idModalReviewEventId");
+        var currentEventId = modalEvent.text();     /* Current reviewing Event ID */
+        var comingEventId = GetNextEventID(direction, currentEventId);                      /* Coming Event ID to be reviewed, can be next or previous */
+
+        modalEvent.text(comingEventId);
+        /* comingEventId  = 0 means cannot find any coming event on the current calendar to review. 
+           let's navigate to previous/new for more events. */
+
         if (comingEventId == 0 && direction < 0) {
             location.href = "Calendar?year=@ViewDate_Prev.Year&month=@ViewDate_Prev.Month&reviewDirection=-1&reviewEventId=" + currentEventId;
         } else if (comingEventId == 0 && direction > 0) {
@@ -442,50 +459,52 @@
     };
 
     $(document).ready(function() {
-        /* get the earliest coming event, if any */
-        var direction = @ViewBag.ReviewDirection;
-        var reviewEventId = "@ViewBag.ReviewEventId";
-
-        /* if review id is given, we know that it is moved from previous/next calendar month.
-           we will base on this to find the next/previous event to review. */
-        if ( !reviewEventId == "" ) {
-            $("#idModalReviewEventId").text(reviewEventId);
-        }
+        /* get the earliest coming event to load into the modal div, if any. */
+        var direction = @ViewBag.ReviewDirection;   /* 1: move forward, -1: move backward */
+        var lastReviewEventId = ("@ViewBag.ReviewEventId" == "") ? 0 : Number("@ViewBag.ReviewEventId");
 
         /* update #idModalReviewEventId with either next or previous event id */
-        var modalEvent = $("#idModalReviewEventId");        
+        var modalEvent = $("#idModalReviewEventId");
         var currentEventId = modalEvent.text();     /* Current reviewing Event ID */
+        var comingEventId;             /* Coming Event ID to be reviewed, can be next or previous */
 
-        var comingEventId = 0;                      /* Coming Event ID to be reviewed, can be next or previous */
-
-        if ( direction != 0) {
-            for (i = 0; i < calevents.length; i++) {
-                var ce = calevents[i];
-                if (ce.event.id == currentEventId) {
-                    comingEventId = (direction > 0) ? ce.nextEventID : ce.prevEventID;
-                    modalEvent.text(comingEventId);
-                    break;
-                }
-            }
-        } else {
-            /* if direction = 0, we don't need to move and use the currentEventId */
+        /* if direction = 0, we don't need to move and use the currentEventId */
+        if ( direction == 0 ) {
             comingEventId = currentEventId;
-        }
-        /* need to handle if comingEventId == 0. i.e. no more event to review */
-        if (comingEventId != 0) {
-            $("#idEventModalContent").load("Details/" + comingEventId + "?modal=1 #idContainer", updModalHeader);                        
-            /* if reviewEventId is given, we need to show the modal right away. */
-            if ( "@ViewBag.ReviewEventId" != "" ) {
-                $("#idShowModalEvent").trigger('click');
+            if (comingEventId != 0) {
+                $("#idEventModalContent").load("Details/" + comingEventId + "?modal=1 #idContainer", updModalHeader);
+                
+            } else {
+                $("#idmodalEventHeader").text("Press 'Next' for more event(s), if any.");
             }
         } else {
-            $("#modalEventDetails").modal('hide');
-        }
+            if (lastReviewEventId == 0) 
+                comingEventId = currentEventId; /* we came from no where, just use the default event when the page just loaded */
+            else {
+                comingEventId = GetNextEventID(direction, lastReviewEventId);
+                if (comingEventId != 0)
+                    modalEvent.text(comingEventId);
+                else if (lastReviewEventId != currentEventId)
+                    comingEventId = currentEventId;
+            }
+
+            /* need to handle if comingEventId == 0. i.e. no more event to review */
+            if (comingEventId != 0) {
+                $("#idEventModalContent").load("Details/" + comingEventId + "?modal=1 #idContainer", updModalHeader);                        
+                /* if direction is not zero, that means we are moving and need to show the modal right away. */
+                $("#idShowModalEvent").trigger('click');
+            } else {
+                $("#idShowModalEvent").prop('disabled',true);
+                $("#modalEventDetails").modal('hide');
+            }
+        }        
     });
 
     /* Update the Modeal Header with Event Duration */
     function updModalHeader(e) {
         $("#idmodalEventHeader").text($("#idEventDuration").text());
+        /* Set the Event Container's width to 100% so that contents will not overflow outside the modal */
+        $("#idContainer").css('width', '100%');
     }
 
 </script>   
@@ -583,7 +602,7 @@
         var eids2hide = [];     // Event Ids to hdie from calendar
 
         for (i = 0; i < calevents.length; i++) {
-            var ce = calevents[i];            
+            var ce = calevents[i];
             var e  = ce.event;
 
             if (node.custom == "t") {
@@ -591,7 +610,7 @@
                     eids2show.push(e.id);
                 else
                     eids2hide.push(e.id);
-            } else if (node.custom == "p") {
+    } else if (node.custom == "p") {
                 /* find the parent. i.e. the team of the project */
                 var pnode = $('#teamtree').treeview('getParent', node);
                 if (pnode) {
@@ -618,24 +637,24 @@
             var nodes = $('#teamtree').treeview('getSelected');
             for (i=0; i < nodes.length; i++) {
                 $('#teamtree').treeview('unselectNode', [ nodes[i].nodeId, { silent: true} ]);
-            }
+        }
             /* select the root node */
             $('#teamtree').treeview('selectNode', [ 0, { silent: true} ]);
-        } else {
+    } else {
             for (i = 0; i < calevents.length; i++) {
                 var ce = calevents[i];
-                var e  = ce.event;
+    var e  = ce.event;
 
                 if ($.inArray(proj, ce.projects) >= 0)
                     eids2show.push(e.id);
-            }
+    }
 
             $('div[class*=ca-evp-]').hide();
 
             $.each(eids2show, function(index, value) {
-                var cls = 'ca-evp-' + value;
+        var cls = 'ca-evp-' + value;
                 $('.' + cls).show();
-            });
+    });
 
             /* unselect the selected nodes */
             var nodes = $('#teamtree').treeview('getSelected');

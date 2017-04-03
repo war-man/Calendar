@@ -46,21 +46,21 @@
             @Html.DisplayNameFor(model => model.Event.AffectedHosts)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Event.AffectedHosts)
+            @Html.DisplayFor(model => model.DisplayAffectedHosts)
             <a target=_blank href="@appsettings.IA_Url?broken=true&server=@Uri.EscapeDataString(Model.Event.AffectedHosts)"><span class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></span></a>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Event.AffectedProjects)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Event.AffectedProjects)
+            @Html.DisplayFor(model => model.DisplayAffectedProjects)
             <a target=_blank href="@appsettings.IA_Url?system=@Uri.EscapeDataString(Model.Event.AffectedProjects)"><span class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></span></a>
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Event.AffectedTeams)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Event.AffectedTeams)
+            @Html.DisplayFor(model => model.DisplayAffectedTeams)
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Event.Category)
@@ -162,3 +162,9 @@
         }
 
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        //$("#idContainer").css('width', '100%');
+    })
+</script>

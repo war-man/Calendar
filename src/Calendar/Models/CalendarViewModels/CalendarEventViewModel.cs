@@ -23,6 +23,9 @@ namespace Calendar.Models.CalendarViewModels
         public string RiskLevel { get; set; }
         public int PrevEventID { get; set; }
         public int NextEventID { get; set; }
+        public string DisplayAffectedHosts { get; set; }
+        public string DisplayAffectedTeams { get; set; }
+        public string DisplayAffectedProjects { get; set; }
         // Constructor
         public CalendarEventViewModel(Event e)
         {
@@ -32,6 +35,10 @@ namespace Calendar.Models.CalendarViewModels
             this.Continue = false;
             this.MarkedInCalendar = false;
 
+
+            DisplayAffectedHosts = e.AffectedHosts.Replace(",", ", ");
+            DisplayAffectedTeams = e.AffectedTeams.Replace(",", ", ");
+            DisplayAffectedProjects = e.AffectedProjects.Replace(",", ", ");
 
             // Lookup those Names by Values, such as RiskLevel, EventStatus, etc.
             StaticListOfValuesService LOVs = new StaticListOfValuesService();
@@ -45,3 +52,4 @@ namespace Calendar.Models.CalendarViewModels
     }
 
 }
+
