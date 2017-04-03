@@ -196,7 +196,7 @@ namespace Calendar.Controllers
 
 
         // GET: Events/Calendar
-        public async Task<IActionResult> Calendar(int? year, int? month, string filterProject, string filterTeam)
+        public async Task<IActionResult> Calendar(int? year, int? month, int? reviewEventId, int? reviewDirection, string filterProject, string filterTeam)
         {
             DateTime now = System.DateTime.Now;
             DateTime ViewDate;
@@ -221,6 +221,13 @@ namespace Calendar.Controllers
 
             /* Prefer using ViewBag instead of VieData */
             ViewBag.ViewDate = ViewDate;
+            /* If event id is present, we know that we are review events in modal */
+            ViewBag.ReviewEventId   = reviewEventId;
+            /* Revie direction give us a hint where are we going */
+            if (reviewDirection == null)               
+                ViewBag.ReviewDirection = 0;
+            else
+                ViewBag.ReviewDirection = reviewDirection;
 
             DateTime FirstDateofTheMonth  = new DateTime(ViewDate.Year, ViewDate.Month, 1);
             DateTime FirstDateofNextMonth = new DateTime(ViewDate.Year, ViewDate.Month, 1).AddMonths(1);
@@ -256,6 +263,9 @@ namespace Calendar.Controllers
             /* To maintain separation of concerns in mvc. */
             List<CalendarEventViewModel> CalEvents = new List<CalendarEventViewModel>();
 
+            int idx = 0;
+            int eventCount = @events.Count();
+
             foreach (var item in @events)
             {
                 CalendarEventViewModel ce = new CalendarEventViewModel(item);
@@ -263,6 +273,8 @@ namespace Calendar.Controllers
                 ce.Servers = item.AffectedHosts.Split(',').Select(p => p.Trim().ToUpper()).ToList();
                 ce.Projects = item.AffectedProjects.Split(',').Select(p => p.Trim().ToUpper()).ToList();
                 ce.Teams = item.AffectedTeams.Split(',').Select(p => p.Trim().ToUpper()).ToList();
+                ce.PrevEventID = 0;
+                ce.NextEventID = 0;
 
                 /* we need to trim the startdate and enddate */
                 if (ce.Event.StartDateTime < FirstDateOfTheCalendar)
@@ -277,13 +289,21 @@ namespace Calendar.Controllers
                 }
 
                 CalEvents.Add(ce);
+
+                /* Now, workout the PrevEventID and NextEventID for ReviewEventModal */
+                if (idx > 0 && idx < eventCount)
+                {
+                    CalEvents[idx].PrevEventID = CalEvents[idx - 1].Event.ID;
+                    CalEvents[idx - 1].NextEventID = CalEvents[idx].Event.ID;
+                }
+                idx++;
             }
 
             return View(CalEvents);
         }
 
         // GET: Events/Details/5
-        public async Task<IActionResult> Details(int? id, string redir = null)
+        public async Task<IActionResult> Details(int? id, string modal = null, string redir = null)
         {
             if (id == null)
             {
@@ -293,6 +313,7 @@ namespace Calendar.Controllers
             var @event = await _context.Event.SingleOrDefaultAsync(m => m.ID == id);
 
             ViewBag.Redir = redir;
+            ViewBag.Modal = modal;  /* show event detail with modal */
 
             if (@event == null)
             {
@@ -420,9 +441,6 @@ namespace Calendar.Controllers
                     @event.UpdatedDate = DateTime.Now;
                     @event.UpdatedBy = username;
                     @event.UpdatedByDisplayName = displayname;
-                    //replace all the spaces in Hosts and Projects
-                    //@event.AffectedHosts = @event.AffectedHosts.Replace(" ", "");
-                    //@event.AffectedHosts = @event.AffectedProjects.Replace(" ", "");
 
                     //The IsModified doesn't work!
                     //_context.Entry(@event).Property("CreatedBy").IsModified = false;
