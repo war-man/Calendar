@@ -162,7 +162,7 @@
                         </form>
                     </div>
                     <div class="col-md-2 nopadding">
-                        <button id="idShowModalEvent" class="btn btn-primary glyphicon glyphicon-eye-open" @(LastDateofTheMonth >= DateTime.Now  ? "" :"disabled") role="button" title="Review Events" data-toggle="modal" data-target="#modalEventDetails"></button>
+                        <button id="idShowModalEvent" class="btn btn-primary glyphicon glyphicon-eye-open" @(LastDateofTheMonth >= DateTime.Now  ? "" :"disabled") role="button" title="Review Up Coming Events" data-toggle="modal" data-target="#idEventDetailsModal"></button>
                     </div>                    
                 </div>
             </div>
@@ -395,7 +395,7 @@
 </div>
 
 @* Below is the Modal for reviewing events *@
-<div id="modalEventDetails" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modalEventDetailsLabel" aria-hidden="true">
+<div id="idEventDetailsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="EventDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-body">
@@ -495,7 +495,7 @@
                 $("#idShowModalEvent").trigger('click');
             } else {
                 $("#idShowModalEvent").prop('disabled',true);
-                $("#modalEventDetails").modal('hide');
+                $("#idEventDetailsModal").modal('hide');
             }
         }        
     });
