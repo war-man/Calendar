@@ -152,19 +152,13 @@
 
         @if (@ViewBag.Redir != null)
         {
-        <span @(User.IsInRole("Admins") ? "" : "hidden")><a asp-action="Edit" asp-route-id="@Model.Event.ID" asp-route-redir="@Uri.UnescapeDataString(ViewBag.Redir)">Edit</a> |</span>
+        <span @(User.IsInRole("Admins") ? "" : "hidden")><a href='@Context.Request.PathBase/Events/Edit?id=@Model.Event.ID&redir=@Uri.UnescapeDataString(ViewBag.Redir)'>Edit</a> |</span>
         <a href="@Uri.UnescapeDataString(ViewBag.Redir)">Back</a>
         }
         else
         {
-        <span @(User.IsInRole("Admins") ? "" : "hidden")><a asp-action="Edit" asp-route-id="@Model.Event.ID" asp-route-redir="">Edit</a> |</span>
+        <span @(User.IsInRole("Admins") ? "" : "hidden")><a href='@Context.Request.PathBase/Events/Edit?id=@Model.Event.ID'>Edit</a> |</span>
         <a asp-action="Index">Back</a>
         }
 
 </div>
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        //$("#idContainer").css('width', '100%');
-    })
-</script>
