@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Calendar.Data;
 using Calendar.Models;
+using Calendar.Helpers;
 
 namespace Calendar.Controllers
 {
@@ -20,9 +21,14 @@ namespace Calendar.Controllers
         }
 
         // GET: Acknowledgements
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? eventid)
         {
-            return View(await _context.Acknowledgement.ToListAsync());
+            if (eventid == null)
+                return View(await _context.Acknowledgement.ToListAsync());
+            else
+            {
+                return View(await _context.Acknowledgement.Where(m => m.EventID == eventid).ToListAsync());
+            }
         }
 
         // GET: Acknowledgements/Details/5
@@ -53,13 +59,39 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,AckMessage,CreatedBy,CreatedByDisplayName,CreatedDate,EventID,Team,UpdatedBy,UpdatedByDisplayName,UpdatedDate")] Acknowledgement acknowledgement)
+        public async Task<IActionResult> Create([Bind("ID,AckMessage,CreatedBy,CreatedByDisplayName,CreatedDate,EventID,Team,UpdatedBy,UpdatedByDisplayName,UpdatedDate")] Acknowledgement acknowledgement, string redir)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (ModelState.IsValid)
             {
+                /* Audit Fields */
+                var username = "anonymous";
+                var u = User.Claims.Where(m => m.Type == "username");
+                if (u.Count() == 1) { username = u.First().Value; }
+                var displayname = "anonymous";
+                var d = User.Claims.Where(m => m.Type == "displayName");
+                if (d.Count() == 1) { displayname = d.First().Value; }
+                acknowledgement.CreatedDate = DateTime.Now;
+                acknowledgement.CreatedBy = username;
+                acknowledgement.CreatedByDisplayName = displayname;
+                acknowledgement.UpdatedDate = acknowledgement.CreatedDate;
+                acknowledgement.UpdatedBy = username;
+                acknowledgement.UpdatedByDisplayName = displayname;
+
+
                 _context.Add(acknowledgement);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+
+                if (redir == "")
+                    return RedirectToAction("Index");
+                else
+                {
+                    RedirectToActionResult redirectResult = new RedirectToActionResult("Details", "Events", new { @id = acknowledgement.EventID });
+                    return redirectResult;
+                }
+
             }
             return View(acknowledgement);
         }
@@ -67,6 +99,9 @@ namespace Calendar.Controllers
         // GET: Acknowledgements/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();
@@ -87,6 +122,9 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,AckMessage,CreatedBy,CreatedByDisplayName,CreatedDate,EventID,Team,UpdatedBy,UpdatedByDisplayName,UpdatedDate")] Acknowledgement acknowledgement)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id != acknowledgement.ID)
             {
                 return NotFound();
@@ -118,6 +156,9 @@ namespace Calendar.Controllers
         // GET: Acknowledgements/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             if (id == null)
             {
                 return NotFound();
@@ -137,6 +178,9 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!User.IsInRole(Constants.ROLE_ADMIN))
+                return NotFound();
+
             var acknowledgement = await _context.Acknowledgement.SingleOrDefaultAsync(m => m.ID == id);
             _context.Acknowledgement.Remove(acknowledgement);
             await _context.SaveChangesAsync();

@@ -26,8 +26,13 @@ namespace Calendar.Models.CalendarViewModels
         public string DisplayAffectedHosts { get; set; }
         public string DisplayAffectedTeams { get; set; }
         public string DisplayAffectedProjects { get; set; }
+        
+        /* List of acknowledgements */
+        public List<Acknowledgement> Acks { get; set; }
+
         // Constructor
-        public CalendarEventViewModel(Event e)
+        public CalendarEventViewModel(Event e) : this(e, null) { }
+        public CalendarEventViewModel(Event e, List<Acknowledgement> acks)
         {
             this.Event = e;
             this.OriginalStart = e.StartDateTime;
@@ -35,6 +40,8 @@ namespace Calendar.Models.CalendarViewModels
             this.Continue = false;
             this.MarkedInCalendar = false;
 
+            if (acks != null)
+                this.Acks = acks;
 
             DisplayAffectedHosts = e.AffectedHosts.Replace(",", ", ");
             DisplayAffectedTeams = e.AffectedTeams.Replace(",", ", ");

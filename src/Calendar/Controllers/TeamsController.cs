@@ -65,7 +65,7 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,CalendarStyle,Description,Name")] Team team)
+        public async Task<IActionResult> Create([Bind("ID,CalendarStyle,Description,Name,DomainGroup")] Team team)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
@@ -103,7 +103,7 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,CalendarStyle,Description,Name")] Team team)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,CalendarStyle,Description,Name,DomainGroup")] Team team)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
