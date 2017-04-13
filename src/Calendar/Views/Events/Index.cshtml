@@ -14,7 +14,7 @@
 @{
     ViewData["Title"] = "Event List";
 
-    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm + "&subject=" + ViewBag.SubjectParm + "&host=" + ViewBag.HostParm + "&project=" + ViewBag.ProjParm + "&team=" + ViewBag.TeamParm + "&searchday=" + ViewBag.DayParm + "&searchrange=" + ViewBag.RangeParm + "&searchdatefrom=" + ViewBag.FromParm + "&searchdateto=" + ViewBag.ToParm + "&page=" + @Model.PageIndex + "&pgsize=" + @Model.PageSize);
+    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm + "&eventid=" + ViewBag.EventParm + "&subject=" + ViewBag.SubjectParm + "&host=" + ViewBag.HostParm + "&project=" + ViewBag.ProjParm + "&team=" + ViewBag.TeamParm + "&searchday=" + ViewBag.DayParm + "&searchrange=" + ViewBag.RangeParm + "&searchdatefrom=" + ViewBag.FromParm + "&searchdateto=" + ViewBag.ToParm + "&page=" + @Model.PageIndex + "&pgsize=" + @Model.PageSize);
 }
 
 <h2>@ViewData["Title"]</h2>

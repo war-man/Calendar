@@ -8,9 +8,8 @@
 
 <h2>@ViewData["Title"] - ID @Html.DisplayFor(model => model.Event.ID), @Html.DisplayFor(model => model.EventStatus)</h2>
 
-<div>
+<div style="position:relative;">
     <hr />
-
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Event.Subject)
@@ -32,8 +31,6 @@
         <dd id="idEventDuration">
             @Html.DisplayFor(model => model.Event.StartDateTime) - @Html.DisplayFor(model => model.Event.EndDateTime)
         </dd>
-
-
         <dt>
             @Html.DisplayNameFor(model => model.Event.EventStatus)
         </dt>
@@ -79,6 +76,15 @@
         </dt>
         <dd>
             @Html.TextAreaFor(model => model.Event.ImpactAnalysis,5,200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" } )
+        </dd>
+        <dt>            
+             <button type="button" class="@(User.Identity.IsAuthenticated? "":"hidden ")btn btn-primary btn-xs glyphicon glyphicon-thumbs-up" data-toggle="modal" data-target="#teamAckModal" data-whatever="" title="Acknowldege the event"></button>Team ACK
+        </dt>
+        <dd>
+            <div style1="position:absolute; top:60px; left:620px; height:200px; overflow:hidden">
+                @Html.Partial("AckPartial", Model.Acks)
+            </div>
+
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Event.MaintProcedure)
@@ -162,3 +168,10 @@
         }
 
 </div>
+
+<script type="text/javascript">
+  $('#teamAckModal').on('shown.bs.modal', function () {
+      $('#idMessage').focus()
+      $('#idTeamAckEventID').val(@Model.Event.ID);
+  })
+</script>

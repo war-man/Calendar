@@ -1,0 +1,113 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model IEnumerable<Calendar.Models.Acknowledgement>
+
+@{
+    ViewData["Title"] = "Team Acknowledgements";
+}
+
+<div classx="xbg-info">
+<table class="table table-box xtable-bordered table-condensedx table-stripedx">
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="idTeamAckRow-@item.ID" class="small">
+                <td style="width:40%;" >
+                    @{
+                        var displayname = item.UpdatedByDisplayName.Substring(0, item.UpdatedByDisplayName.IndexOf(','));
+                        var date = item.UpdatedDate.ToString("MMM dd, yyyy");
+                        var time = item.UpdatedDate.ToString("h:mmtt").ToLower();
+                    }                    
+                    @Html.DisplayFor(modelItem => item.Team) <span class="text-primary"><strong>@displayname</strong></span>
+                    <p class="text-muted p-inline">said</p> 
+                    @if (item.AckMessage == null)
+                    {
+                        <p class="text-muted p-inline">Nothing</p>
+                    }
+                    else
+                    {
+                    <p class="text-primary p-inline">@Html.DisplayFor(modelItem => item.AckMessage)</p>
+                    }
+                    <br /><p class="text-muted p-inline">@date at @time</p>
+                </td>
+                <td>
+                    <form class="formTeamAckRow @(User.Identity.IsAuthenticated? "":"hidden")" asp-controller="Acknowledgements" asp-action="Delete" asp-route-id="@item.ID" method="post">
+                        <div class="form-actions no-color">
+                            <input type="hidden" name="ackid" value="@item.ID" />
+                            <button type="submit" value="Delete" class="btn btn-default btn-xs glyphicon glyphicon-remove"></button>
+                        </div>
+                    </form>
+                </td>
+            </tr>            
+        }
+    </tbody>
+</table>
+</div> 
+
+<div class="modal fade" id="teamAckModal" tabindex="-1" role="dialog" aria-labelledby="teamAckModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Team Acknowledgement</h4>
+            </div>
+            <div class="modal-body">                    
+                    <form id="idFormTeamAck" class="row" asp-controller="Acknowledgements" asp-action="Create" method="post">
+                            <div class="form-group col-md-8">
+                                <input type="hidden" class="form-control" id="idTeam" name="Team" value="HA4" placeholder="Team">
+                                <input type="hidden" class="form-control" id="idTeamAckEventID" name="EventID" value="">
+                                <input type="hidden" class="form-control" name="redir" value="this">
+                                <input type="text" class="form-control" id="idMessage" name="AckMessage" placeholder="Message">
+                            </div>
+                            <div class="form-group col-md-4 text-right">
+                                <button type="submit" class="btn btn-ms btn-primary">Save</button>
+                                <button type="button" class="btn btn-ms btn-primary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+      $('.formTeamAckRow').on('submit', function (e) {
+        var ackid = $(this).find('input[name="ackid"]').val();
+        
+        e.preventDefault();
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function (data) {
+                $('#idTeamAckRow-' + ackid).remove();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+            }
+        });        
+      });
+
+      $('#idFormTeamAck1').on('submit', function (e) {
+        var ackid = $(this).find('input[name="ackid"]').val();
+        var ackid = $(this).find('input[name="ackid"]').val();
+        var ackid = $(this).find('input[name="ackid"]').val();
+
+        e.preventDefault();
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function (data) {
+                $('#idTeamAckRow-' + ackid).remove();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+            }
+        });
+    });
+  });
+
+</script>

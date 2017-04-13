@@ -320,7 +320,9 @@ namespace Calendar.Controllers
                 return NotFound();
             }
 
-            CalendarEventViewModel CalendarEvent = new CalendarEventViewModel(@event);
+            var acks = await _context.Acknowledgement.Where(m => m.EventID == id).OrderBy(m => m.UpdatedDate).ToListAsync();
+
+            CalendarEventViewModel CalendarEvent = new CalendarEventViewModel(@event, acks);
 
             return View(CalendarEvent);
         }

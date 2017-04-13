@@ -8,9 +8,10 @@ using Calendar.Data;
 namespace Calendar.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20170413080727_ackmessagenullable")]
+    partial class ackmessagenullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1")
@@ -236,8 +237,6 @@ namespace Calendar.Data.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasAnnotation("MaxLength", 50);
-
-                    b.Property<string>("DomainGroup");
 
                     b.Property<string>("Name")
                         .IsRequired()

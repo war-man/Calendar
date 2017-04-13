@@ -54,3 +54,16 @@ textarea {
 .bootstrap-tagsinput {
 width: 100%;
 }
+
+.p-inline {
+    display:inline;
+}
+
+.table-box1 {
+border-collapse: separate;
+border: 1px solid rgb(128, 128, 128);
+}
+
+.table-box1 thead > tr > th {
+    border: none;
+}
