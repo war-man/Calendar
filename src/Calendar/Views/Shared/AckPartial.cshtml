@@ -9,18 +9,18 @@
 }
 
 <div classx="xbg-info">
-<table class="table table-box xtable-bordered table-condensedx table-stripedx">
+<table class="table table-condensed xtable-bordered" id="idTeamAckTable">
     <tbody>
         @foreach (var item in Model)
         {
             <tr id="idTeamAckRow-@item.ID" class="small">
-                <td style="width:40%;" >
+                <td style="width:50%;" >
                     @{
                         var displayname = item.UpdatedByDisplayName.Substring(0, item.UpdatedByDisplayName.IndexOf(','));
                         var date = item.UpdatedDate.ToString("MMM dd, yyyy");
                         var time = item.UpdatedDate.ToString("h:mmtt").ToLower();
                     }                    
-                    @Html.DisplayFor(modelItem => item.Team) <span class="text-primary"><strong>@displayname</strong></span>
+                    <span id="idTeamAckTeam-@item.Team">@Html.DisplayFor(modelItem => item.Team)</span> <span class="text-primary"><strong>@displayname</strong></span>
                     <p class="text-muted p-inline">said</p> 
                     @if (item.AckMessage == null)
                     {
@@ -36,7 +36,10 @@
                     <form class="formTeamAckRow @(User.Identity.IsAuthenticated? "":"hidden")" asp-controller="Acknowledgements" asp-action="Delete" asp-route-id="@item.ID" method="post">
                         <div class="form-actions no-color">
                             <input type="hidden" name="ackid" value="@item.ID" />
-                            <button type="submit" value="Delete" class="btn btn-default btn-xs glyphicon glyphicon-remove"></button>
+                            <input type="hidden" name="team" value="@item.Team" />
+                            <button type="submit" value="Delete" class="btn btn-default btn-xs hidden border-none" data-toggle="tooltip" data-placement="top" data-htmlx="true" title="Remove this">
+                                <span class="text-muted glyphicon glyphicon-remove"></span>
+                            </button>
                         </div>
                     </form>
                 </td>
@@ -54,28 +57,31 @@
                 <h4 class="modal-title" id="exampleModalLabel">Team Acknowledgement</h4>
             </div>
             <div class="modal-body">                    
-                    <form id="idFormTeamAck" class="row" asp-controller="Acknowledgements" asp-action="Create" method="post">
-                            <div class="form-group col-md-8">
-                                <input type="hidden" class="form-control" id="idTeam" name="Team" value="HA4" placeholder="Team">
-                                <input type="hidden" class="form-control" id="idTeamAckEventID" name="EventID" value="">
+                 <form id="idFormTeamAck" class="row" asp-controller="Acknowledgements" asp-action="Create" method="post">
+                            <div class="form-group col-md-8">                                                                
+                                <select id="idTeam" name="team" class="form-control select-placeholder"></select>
+                                <span id="idTeamFieldValidationError" class="text-danger hidden">The Team field is required.</span>
+                                <input type="hidden" class="form-control" id="idTeamAckEventID" name="EventID" value="">                                
                                 <input type="hidden" class="form-control" name="redir" value="this">
-                                <input type="text" class="form-control" id="idMessage" name="AckMessage" placeholder="Message">
+                                <textarea rows="5" class="form-control" id="idMessage" name="AckMessage" placeholder="Message"></textarea>
                             </div>
                             <div class="form-group col-md-4 text-right">
                                 <button type="submit" class="btn btn-ms btn-primary">Save</button>
                                 <button type="button" class="btn btn-ms btn-primary" data-dismiss="modal">Close</button>
                             </div>
-                        </form>
+                  </form>
             </div>
         </div>
     </div>
 </div>
 
 <script type="text/javascript">
-  $(document).ready(function () {
+    $(document).ready(function () {
+      /* bind the form submit action - delete */
       $('.formTeamAckRow').on('submit', function (e) {
         var ackid = $(this).find('input[name="ackid"]').val();
-        
+        var team = $(this).find('input[name="team"]').val();
+          
         e.preventDefault();
         $.ajax({
             type: $(this).attr('method'),
@@ -83,6 +89,11 @@
             data: $(this).serialize(),
             success: function (data) {
                 $('#idTeamAckRow-' + ackid).remove();
+
+                if ($('#idTeamAckTeam-' + team).length == 0) {
+                    $('#idAffectedTeam-' + team).removeClass('acknowledged');
+                    $('#idAffectedTeam-' + team).addClass('not-acknowledged');
+                }                
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert('Status: ' + textStatus + ', Error: ' + errorThrown);
@@ -90,24 +101,32 @@
         });        
       });
 
-      $('#idFormTeamAck1').on('submit', function (e) {
-        var ackid = $(this).find('input[name="ackid"]').val();
-        var ackid = $(this).find('input[name="ackid"]').val();
-        var ackid = $(this).find('input[name="ackid"]').val();
+      /* Bind the Form submit validation - Save */
+      $('#idFormTeamAck').on('submit', function (e) {
+          var team = $(this).find('select[name="team"]').val();
 
-        e.preventDefault();
-        $.ajax({
-            type: $(this).attr('method'),
-            url: $(this).attr('action'),
-            data: $(this).serialize(),
-            success: function (data) {
-                $('#idTeamAckRow-' + ackid).remove();
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert('Status: ' + textStatus + ', Error: ' + errorThrown);
-            }
-        });
-    });
+          if (team == null) {
+              e.preventDefault();
+              $("#idTeamFieldValidationError").removeClass('hidden');
+          }
+      });
+
+      /* bind the hover table row */
+      $('#idTeamAckTable tr').hover(function () {          
+          $(":button", this).removeClass('hidden');
+      }, function () {          
+          $(":button", this).addClass('hidden');
+      });
+
+      /* mimic placeholder for dropdown list. Not quite work in FF. */
+      $('select').change(function () {
+          if ($(this).children('option:first-child').is(':selected')) {
+              $(this).addClass('select-placeholder');
+          } else {
+              $(this).removeClass('select-placeholder');
+          }
+          $("#idTeamFieldValidationError").addClass('hidden');
+      });
   });
 
 </script>

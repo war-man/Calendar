@@ -59,11 +59,27 @@ width: 100%;
     display:inline;
 }
 
-.table-box1 {
-border-collapse: separate;
-border: 1px solid rgb(128, 128, 128);
+.select-placeholder {
+    color: grey;
 }
 
-.table-box1 thead > tr > th {
+.select-placeholder select option:first-child { 
+    color: grey; 
+    display: none;
+}
+
+.select-placeholder select option {
+    color: #555;
+} 
+
+.acknowledged {
+
+}
+
+.not-acknowledged {
+    color: red;
+}
+
+.border-none {
     border: none;
 }
