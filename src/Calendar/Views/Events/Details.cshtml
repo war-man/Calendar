@@ -4,6 +4,22 @@
 
 @{
     ViewData["Title"] = "Event Details";
+
+    //List<string> AffectedTeams = Model.Event.AffectedTeams.Split(',').ToList();
+}
+
+@functions {
+
+    Boolean IsTeamAcknowledged(string pTeam)
+    {
+        foreach(var item in Model.Acks)
+        {
+            if (item.Team == pTeam)
+                return true;
+        }
+        return false;
+    }
+
 }
 
 <h2>@ViewData["Title"] - ID @Html.DisplayFor(model => model.Event.ID), @Html.DisplayFor(model => model.EventStatus)</h2>
@@ -37,8 +53,6 @@
         <dd>
             @Html.DisplayFor(model => model.EventStatus)
         </dd>
-
-
         <dt>
             @Html.DisplayNameFor(model => model.Event.AffectedHosts)
         </dt>
@@ -54,10 +68,24 @@
             <a target=_blank href="@appsettings.IA_Url?system=@Uri.EscapeDataString(Model.Event.AffectedProjects)"><span class='glyphicon glyphicon-flash' style='color:red' title='Perform Impact Analysis'></span></a>
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Event.AffectedTeams)
+            @Html.DisplayNameFor(model => model.Event.AffectedTeams)            
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.DisplayAffectedTeams)
+            @*Html.DisplayFor(model => model.DisplayAffectedTeams)*@
+            @foreach (var team in Model.Teams)
+            {
+
+                var c = (Model.Teams.IndexOf(team) < Model.Teams.Count()-1) ? "," : "";
+
+                if (IsTeamAcknowledged(team))
+                {
+                    <span id="idAffectedTeam-@team" class="acknowledged" title="@team acknowledged the Event">@team@c</span>
+                }
+                else
+                {
+                    <span id="idAffectedTeam-@team" class="not-acknowledged" title="Waiting for @team's acknowledgement">@team@c</span>
+                }
+            }
         </dd>
         <dt>
             @Html.DisplayNameFor(model => model.Event.Category)
@@ -77,8 +105,8 @@
         <dd>
             @Html.TextAreaFor(model => model.Event.ImpactAnalysis,5,200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" } )
         </dd>
-        <dt>            
-             <button type="button" class="@(User.Identity.IsAuthenticated? "":"hidden ")btn btn-primary btn-xs glyphicon glyphicon-thumbs-up" data-toggle="modal" data-target="#teamAckModal" data-whatever="" title="Acknowldege the event"></button>Team ACK
+        <dt>
+            <span data-toggle="tooltip" data-placement="top" data-html="true" title="Acknowldege the event"><a role="button" class="@(User.Identity.IsAuthenticated? "":"hidden ")btn btn-primary btn-xs" data-toggle="modal" data-target="#teamAckModal" data-whatever=""><span class="glyphicon glyphicon-thumbs-up"></span></a></span>Team ACK
         </dt>
         <dd>
             <div style1="position:absolute; top:60px; left:620px; height:200px; overflow:hidden">
@@ -170,8 +198,25 @@
 </div>
 
 <script type="text/javascript">
-  $('#teamAckModal').on('shown.bs.modal', function () {
-      $('#idMessage').focus()
+  /* pass the EventID and AffectedTeams to the Modal Form */
+    $('#teamAckModal').on('shown.bs.modal', function () {
+        $('#idTeam').focus()
+    });
+
+  $('#teamAckModal').on('show.bs.modal', function () {      
       $('#idTeamAckEventID').val(@Model.Event.ID);
+      /* update the team selection list */
+      var str = "@Model.Event.AffectedTeams";
+
+      $('#idTeam')
+          .find('option')
+          .remove()
+          .end()
+          .append('<option selected disabled>Team</option>')
+      ;
+      $('#idTeam').addClass('select-placeholder');
+      $.each(str.split(','), function (key, value) {
+          $('#idTeam').append('<option value="' + value + '">' + value + '</option>');
+      });
   })
 </script>

@@ -270,12 +270,6 @@ namespace Calendar.Controllers
             {
                 CalendarEventViewModel ce = new CalendarEventViewModel(item);
 
-                ce.Servers = item.AffectedHosts.Split(',').Select(p => p.Trim().ToUpper()).ToList();
-                ce.Projects = item.AffectedProjects.Split(',').Select(p => p.Trim().ToUpper()).ToList();
-                ce.Teams = item.AffectedTeams.Split(',').Select(p => p.Trim().ToUpper()).ToList();
-                ce.PrevEventID = 0;
-                ce.NextEventID = 0;
-
                 /* we need to trim the startdate and enddate */
                 if (ce.Event.StartDateTime < FirstDateOfTheCalendar)
                 {
