@@ -188,8 +188,15 @@ namespace Calendar.Controllers
                     break;
             }
             
-            return View(await PaginatedList<Event>.CreateAsync(events.AsNoTracking(), page ?? 1, pgsize ?? 30));
-        
+            var viewModel = new EventIndexData();
+            viewModel.Events = events
+                  .Include(e => e.Acknowledgements)
+                  .AsNoTracking();
+            
+            return View(new PaginatedEventIndex(viewModel, page ?? 1, pgsize ?? 30));
+
+            //return View(await PaginatedList<Event>.CreateAsync(events.AsNoTracking(), page ?? 1, pgsize ?? 30));
+
             //return View(await events.AsNoTracking().ToListAsync());
             //return View(await _context.Event.OrderByDescending(m => m.StartDateTime).ToListAsync());
         }

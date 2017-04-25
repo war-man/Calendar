@@ -6,6 +6,8 @@
 
 @{
     ViewData["Title"] = "Team Acknowledgements";
+
+    string username = (User.Identity.IsAuthenticated) ? User.Claims.Where(m => m.Type == "username").SingleOrDefault().Value : "";
 }
 
 <div classx="xbg-info">
@@ -33,7 +35,7 @@
                     <br /><p class="text-muted p-inline">@date at @time</p>
                 </td>
                 <td>
-                    <form class="formTeamAckRow @(User.Identity.IsAuthenticated? "":"hidden")" asp-controller="Acknowledgements" asp-action="Delete" asp-route-id="@item.ID" method="post">
+                    <form class="formTeamAckRow @(User.Identity.IsAuthenticated && username == item.UpdatedBy? "":"hidden")" asp-controller="Acknowledgements" asp-action="Delete" asp-route-id="@item.ID" method="post">
                         <div class="form-actions no-color">
                             <input type="hidden" name="ackid" value="@item.ID" />
                             <input type="hidden" name="team" value="@item.Team" />
