@@ -6,10 +6,10 @@
 
 @if (User.Identity.IsAuthenticated)
 {
-    string displayName = "";
-    var c = User.Claims.Where(m => m.Type == "displayName");
-
-    if (c.Count() > 0) { displayName = c.First().Value; }
+    string displayName = User.Claims.Where(m => m.Type == "displayName").SingleOrDefault().Value;
+    //var c = User.Claims.Where(m => m.Type == "displayName");
+    //if (c.Count() > 0) { displayName = c.First().Value; }
+    
 
     <form asp-area="" asp-controller="User" asp-action="LogOut" method="post" id="logoutForm" class="navbar-right">
         <ul class="nav navbar-nav navbar-right">

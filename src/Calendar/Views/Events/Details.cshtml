@@ -4,8 +4,8 @@
 
 @{
     ViewData["Title"] = "Event Details";
-
-    //List<string> AffectedTeams = Model.Event.AffectedTeams.Split(',').ToList();
+    
+    string username = (User.Identity.IsAuthenticated)? User.Claims.Where(m => m.Type == "username").SingleOrDefault().Value : "";
 }
 
 @functions {

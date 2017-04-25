@@ -9,7 +9,7 @@ namespace Calendar.Models
     public class Acknowledgement
     {
         public int ID { get; set; }
-        public int EventID { get; set; }
+        public int EventID { get; set; }    /* foreign key */
         [StringLength(15, MinimumLength = 2), Required]
         public string Team { get; set; }
         [Display(Name = "Message"),StringLength(500, MinimumLength = 3)]
@@ -27,6 +27,9 @@ namespace Calendar.Models
         public string UpdatedBy { get; set; }
         [Display(Name = "Updated By"), StringLength(50)]
         public string UpdatedByDisplayName { get; set; }
+
+        /* navigation property */
+        public Event Event { get; set; }
 
     }
 }
