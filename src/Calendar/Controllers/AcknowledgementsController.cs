@@ -31,6 +31,12 @@ namespace Calendar.Controllers
             }
         }
 
+        // GET: Acknowledgements
+        public async Task<IActionResult> IndexPartial(int eventid)
+        {
+            return PartialView("AckPartial", await _context.Acknowledgement.Where(m => m.EventID == eventid).ToListAsync());
+        }
+
         // GET: Acknowledgements/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -59,7 +65,7 @@ namespace Calendar.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,AckMessage,CreatedBy,CreatedByDisplayName,CreatedDate,EventID,Team,UpdatedBy,UpdatedByDisplayName,UpdatedDate")] Acknowledgement acknowledgement, string redir)
+        public async Task<IActionResult> Create([Bind("ID,AckMessage,CreatedBy,CreatedByDisplayName,CreatedDate,EventID,Team,UpdatedBy,UpdatedByDisplayName,UpdatedDate")] Acknowledgement acknowledgement, string redir, string ajax)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
@@ -84,11 +90,14 @@ namespace Calendar.Controllers
                 _context.Add(acknowledgement);
                 await _context.SaveChangesAsync();
 
-                if (redir == "")
+
+                if (ajax == "true")
+                    return new EmptyResult();
+                else if (redir == "")
                     return RedirectToAction("Index");
                 else
                 {
-                    RedirectToActionResult redirectResult = new RedirectToActionResult("Details", "Events", new { @id = acknowledgement.EventID });
+                    RedirectToActionResult redirectResult = new RedirectToActionResult("Details", "Events", new { @id = acknowledgement.EventID, @redir = redir });
                     return redirectResult;
                 }
 
@@ -176,7 +185,7 @@ namespace Calendar.Controllers
         // POST: Acknowledgements/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string ajax)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
@@ -184,7 +193,10 @@ namespace Calendar.Controllers
             var acknowledgement = await _context.Acknowledgement.SingleOrDefaultAsync(m => m.ID == id);
             _context.Acknowledgement.Remove(acknowledgement);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            if (ajax == "true")
+                return new EmptyResult();
+            else
+                return RedirectToAction("Index");
         }
 
         private bool AcknowledgementExists(int id)

@@ -4,8 +4,8 @@
 
 @{
     ViewData["Title"] = "Event Details";
-
-    //List<string> AffectedTeams = Model.Event.AffectedTeams.Split(',').ToList();
+    
+    string username = (User.Identity.IsAuthenticated)? User.Claims.Where(m => m.Type == "username").SingleOrDefault().Value : "";
 }
 
 @functions {
@@ -106,10 +106,10 @@
             @Html.TextAreaFor(model => model.Event.ImpactAnalysis,5,200, new { @readonly = true, @style = "border-width:1px;", @cols = "200" } )
         </dd>
         <dt>
-            <span data-toggle="tooltip" data-placement="top" data-html="true" title="Acknowldege the event"><a role="button" class="@(User.Identity.IsAuthenticated? "":"hidden ")btn btn-primary btn-xs" data-toggle="modal" data-target="#teamAckModal" data-whatever=""><span class="glyphicon glyphicon-thumbs-up"></span></a></span>Team ACK
+            <span data-toggle="tooltip" data-placement="top" data-html="true" title="Acknowldege the event"><a role="button" class="@(User.Identity.IsAuthenticated? "":"hidden ")btn btn-primary btn-xs" data-toggle="modal" data-target="#idTeamAckModal" data-whatever=""><span class="glyphicon glyphicon-thumbs-up"></span></a></span>Team ACK
         </dt>
         <dd>
-            <div style1="position:absolute; top:60px; left:620px; height:200px; overflow:hidden">
+            <div id="idAckPartialView">
                 @Html.Partial("AckPartial", Model.Acks)
             </div>
 
@@ -186,7 +186,7 @@
 
         @if (@ViewBag.Redir != null)
         {
-        <span @(User.IsInRole("Admins") ? "" : "hidden")><a href='@Context.Request.PathBase/Events/Edit?id=@Model.Event.ID&redir=@Uri.UnescapeDataString(ViewBag.Redir)'>Edit</a> |</span>
+        <span @(User.IsInRole("Admins") ? "" : "hidden")><a href='@Context.Request.PathBase/Events/Edit?id=@Model.Event.ID&redir=@Uri.EscapeDataString(ViewBag.Redir)'>Edit</a> |</span>
         <a href="@Uri.UnescapeDataString(ViewBag.Redir)">Back</a>
         }
         else
@@ -197,26 +197,105 @@
 
 </div>
 
+<!--Team Acknowledgement Modal-->
+<div class="modal fade" id="idTeamAckModal" tabindex="-1" role="dialog" aria-labelledby="teamAckModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Team Acknowledgement</h4>
+            </div>
+            <div class="modal-body">
+                <form id="idFormTeamAck" name="FormTeamAck" class="row" asp-controller="Acknowledgements" asp-action="Create" method="post">
+                    <div class="form-group col-md-8">
+                        <select id="idTeam" name="team" class="form-control select-placeholder"></select>
+                        <span id="idTeamFieldValidationError" class="text-danger hidden">The Team field is required.</span>
+                        <input type="hidden" class="form-control" id="idTeamAckEventID" name="EventID" value="@Model.Event.ID">
+                        <input type="hidden" class="form-control" id="idTeakAckRedir" name="redir" value="@ViewBag.Redir">
+                        <input type="hidden" class="form-control" id="idAjax" name="ajax" value="true">
+                        <textarea rows="5" class="form-control" id="idAckMessage" name="AckMessage" placeholder="Message"></textarea>
+                    </div>
+                    <div class="form-group col-md-4 text-right">
+                        <button type="submit" class="btn btn-ms btn-primary">Save</button>
+                        <button type="button" class="btn btn-ms btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
-  /* pass the EventID and AffectedTeams to the Modal Form */
-    $('#teamAckModal').on('shown.bs.modal', function () {
-        $('#idTeam').focus()
+    /* ------ Team Acknowledgement START HERE ------ */
+    /* pass the EventID and AffectedTeams to the Modal Form */
+    $('#idTeamAckModal').on('shown.bs.modal', function () {
+          $('#idTeam').focus()
     });
 
-  $('#teamAckModal').on('show.bs.modal', function () {      
-      $('#idTeamAckEventID').val(@Model.Event.ID);
-      /* update the team selection list */
-      var str = "@Model.Event.AffectedTeams";
+    $('#idTeamAckModal').on('show.bs.modal', function () {
+        /* update the team selection list */
+        var str = "@Model.Event.AffectedTeams";
 
-      $('#idTeam')
-          .find('option')
-          .remove()
-          .end()
-          .append('<option selected disabled>Team</option>')
-      ;
-      $('#idTeam').addClass('select-placeholder');
-      $.each(str.split(','), function (key, value) {
-          $('#idTeam').append('<option value="' + value + '">' + value + '</option>');
-      });
-  })
+        $('#idAckMessage').val('');
+        $('#idTeam')
+            .find('option')
+            .remove()
+            .end()
+            .append('<option selected disabled>Team</option>')
+        ;
+        $('#idTeam').addClass('select-placeholder');
+        $.each(str.split(','), function (key, value) {
+            $('#idTeam').append('<option value="' + value + '">' + value + '</option>');
+        });
+    });
+
+    /* mimic placeholder for dropdown list. Not quite work in FF. */
+    $('select').change(function () {
+        if ($(this).children('option:first-child').is(':selected')) {
+            $(this).addClass('select-placeholder');
+        } else {
+            $(this).removeClass('select-placeholder');
+        }
+        $("#idTeamFieldValidationError").addClass('hidden');
+    });
+
+    /* Bind the Form submit - Save */
+    $('#idFormTeamAck').on('submit', function (e) {
+        var team = $(this).find('select[name="team"]').val();
+        var eventid = $(this).find('input[name="EventID"]').val();
+
+        if (team == null) {
+            e.preventDefault();
+            $("#idTeamFieldValidationError").removeClass('hidden');
+        }
+        else {
+            /* 1st ajax call to save the acknowledgement (modal)
+               2nd ajax call to refresh the partial view */
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function (result) {
+                    $.ajax({
+                        type: "get",
+                        url: '@Url.Action("IndexPartial","Acknowledgements")',
+                        data: 'eventid=' + eventid,
+                        success: function (result) {
+                            $("#idAckPartialView").html(result);
+                            $('#idTeamAckModal').removeClass('fade');
+                            $('#idTeamAckModal').modal('hide');
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+                        }
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+                }
+            });
+        }
+    });
+    /* ------ Team Acknowledgement END HERE ------ */
 </script>
