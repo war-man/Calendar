@@ -91,7 +91,7 @@ namespace Calendar.Controllers
                 await _context.SaveChangesAsync();
 
 
-                if (ajax != null)
+                if (ajax == "true")
                     return new EmptyResult();
                 else if (redir == "")
                     return RedirectToAction("Index");
@@ -185,7 +185,7 @@ namespace Calendar.Controllers
         // POST: Acknowledgements/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string ajax)
         {
             if (!User.IsInRole(Constants.ROLE_ADMIN))
                 return NotFound();
@@ -193,7 +193,10 @@ namespace Calendar.Controllers
             var acknowledgement = await _context.Acknowledgement.SingleOrDefaultAsync(m => m.ID == id);
             _context.Acknowledgement.Remove(acknowledgement);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            if (ajax == "true")
+                return new EmptyResult();
+            else
+                return RedirectToAction("Index");
         }
 
         private bool AcknowledgementExists(int id)
