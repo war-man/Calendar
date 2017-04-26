@@ -1,0 +1,89 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model IEnumerable<Calendar.Models.Acknowledgement>
+
+@{
+    ViewData["Title"] = "Team Acknowledgements";
+
+    string username = (User.Identity.IsAuthenticated) ? User.Claims.Where(m => m.Type == "username").SingleOrDefault().Value : "";
+}
+
+<div classx="xbg-info">
+<table class="table table-condensed xtable-bordered" id="idTeamAckTable">
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="idTeamAckRow-@item.ID" class="small">
+                <td style="width:50%;" >
+                    @{
+                        var displayname = item.UpdatedByDisplayName.Substring(0, item.UpdatedByDisplayName.IndexOf(','));
+                        var date = item.UpdatedDate.ToString("MMM dd, yyyy");
+                        var time = item.UpdatedDate.ToString("h:mmtt").ToLower();
+                    }                    
+                    <span id="idTeamAckTeam-@item.Team">@Html.DisplayFor(modelItem => item.Team)</span> <span class="text-primary"><strong>@displayname</strong></span>
+                    <p class="text-muted p-inline">said</p> 
+                    @if (item.AckMessage == null)
+                    {
+                        <p class="text-muted p-inline">Nothing</p>
+                    }
+                    else
+                    {
+                    <p class="text-primary p-inline">@Html.DisplayFor(modelItem => item.AckMessage)</p>
+                    }
+                    <br /><p class="text-muted p-inline">@date at @time</p>
+                </td>
+                <td>
+                    <form class="formTeamAckRow @(User.Identity.IsAuthenticated && username == item.UpdatedBy? "":"hidden")" asp-controller="Acknowledgements" asp-action="Delete" asp-route-id="@item.ID" method="post">
+                        <div class="form-actions no-color">
+                            <input type="hidden" name="ackid" value="@item.ID" />
+                            <input type="hidden" name="team" value="@item.Team" />
+                            <input type="hidden" name="ajax" value="true" />
+                            <button type="submit" value="Delete" class="btn btn-default btn-xs hidden border-none" data-toggle="tooltip" data-placement="top" data-htmlx="true" title="Remove this">
+                                <span class="text-muted glyphicon glyphicon-remove"></span>
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>            
+        }
+    </tbody>
+</table>
+</div> 
+
+<script type="text/javascript">
+    $(document).ready(function () {
+      /* bind the form submit action - delete */
+      $('.formTeamAckRow').on('submit', function (e) {
+        var ackid = $(this).find('input[name="ackid"]').val();
+        var team = $(this).find('input[name="team"]').val();
+          
+        e.preventDefault();
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function (data) {
+                $('#idTeamAckRow-' + ackid).remove();
+
+                if ($('#idTeamAckTeam-' + team).length == 0) {
+                    $('#idAffectedTeam-' + team).removeClass('acknowledged');
+                    $('#idAffectedTeam-' + team).addClass('not-acknowledged');
+                }                
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+            }
+        });        
+      });
+
+      /* bind the hover table row. show/hide the delete button*/
+      $('#idTeamAckTable tr').hover(function () {          
+          $(":button", this).removeClass('hidden');
+      }, function () {          
+          $(":button", this).addClass('hidden');
+      });
+  });
+
+</script>

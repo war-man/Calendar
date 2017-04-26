@@ -4,9 +4,12 @@
 
 @*
     @model IEnumerable<Calendar.Models.Event>
+    @model PaginatedList<Calendar.Models.Event>
+    @model Calendar.Models.CalendarViewModels.EventIndexData
 *@
 
-@model PaginatedList<Calendar.Models.Event>
+
+@model PaginatedEventIndex
 
 @inject Calendar.Models.Services.StaticListOfValuesService LOVs
 @inject Calendar.Controllers.AppSettingsController appsettings
@@ -14,7 +17,22 @@
 @{
     ViewData["Title"] = "Event List";
 
-    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm + "&subject=" + ViewBag.SubjectParm + "&host=" + ViewBag.HostParm + "&project=" + ViewBag.ProjParm + "&team=" + ViewBag.TeamParm + "&searchday=" + ViewBag.DayParm + "&searchrange=" + ViewBag.RangeParm + "&searchdatefrom=" + ViewBag.FromParm + "&searchdateto=" + ViewBag.ToParm + "&page=" + @Model.PageIndex + "&pgsize=" + @Model.PageSize);
+    var redir = Uri.UnescapeDataString(@Context.Request.PathBase + "/Events?sort=" + @ViewBag.SortParm + "&eventid=" + ViewBag.EventParm + "&subject=" + ViewBag.SubjectParm + "&host=" + ViewBag.HostParm + "&project=" + ViewBag.ProjParm + "&team=" + ViewBag.TeamParm + "&searchday=" + ViewBag.DayParm + "&searchrange=" + ViewBag.RangeParm + "&searchdatefrom=" + ViewBag.FromParm + "&searchdateto=" + ViewBag.ToParm + "&page=" + @Model.PageIndex + "&pgsize=" + @Model.PageSize);
+}
+
+
+@functions {
+
+    Boolean IsTeamAcknowledged(IEnumerable<Acknowledgement> pAcks, string pTeam)
+    {
+        foreach (var item in pAcks)
+        {
+            if (item.Team == pTeam)
+                return true;
+        }
+        return false;
+    }
+
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -316,9 +334,9 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model)
+@foreach (var item in Model.Events)
     {
-        <tr>
+        <tr>            
             <td>
                 @if (User.IsInRole("Admins"))
                 {
@@ -359,9 +377,28 @@
                 }
             </td>
             <td>
-                @{
+                @*
                     String affectedteams = item.AffectedTeams.Replace(",", ", ");
                     @affectedteams
+                *@
+
+                @{ 
+                    var Teams = item.AffectedTeams.Split(',').ToList();
+                
+                    foreach (var team in Teams)
+                    {
+
+                        var c = (Teams.IndexOf(team) < Teams.Count() - 1) ? "," : "";
+
+                        if (IsTeamAcknowledged(item.Acknowledgements, team))
+                        {
+                            <span id="idAffectedTeam-@team" class="acknowledged" title="@team acknowledged the Event">@team@c</span>
+                        }
+                        else
+                        {
+                            <span id="idAffectedTeam-@team" class="not-acknowledged" title="Waiting for @team's acknowledgement">@team@c</span>
+                        }
+                    }
                 }
             </td>
             <td>

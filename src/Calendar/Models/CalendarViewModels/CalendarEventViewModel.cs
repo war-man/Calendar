@@ -26,19 +26,32 @@ namespace Calendar.Models.CalendarViewModels
         public string DisplayAffectedHosts { get; set; }
         public string DisplayAffectedTeams { get; set; }
         public string DisplayAffectedProjects { get; set; }
-        // Constructor
-        public CalendarEventViewModel(Event e)
-        {
-            this.Event = e;
-            this.OriginalStart = e.StartDateTime;
-            this.OriginalEnd = e.EndDateTime;
-            this.Continue = false;
-            this.MarkedInCalendar = false;
+        
+        /* List of acknowledgements */
+        public List<Acknowledgement> Acks { get; set; }
 
+        // Constructor
+        public CalendarEventViewModel(Event e) : this(e, null) { }
+        public CalendarEventViewModel(Event e, List<Acknowledgement> acks)
+        {
+            Event = e;
+            OriginalStart = e.StartDateTime;
+            OriginalEnd = e.EndDateTime;
+            Continue = false;
+            MarkedInCalendar = false;
+
+            if (acks != null)
+                Acks = acks;
 
             DisplayAffectedHosts = e.AffectedHosts.Replace(",", ", ");
             DisplayAffectedTeams = e.AffectedTeams.Replace(",", ", ");
             DisplayAffectedProjects = e.AffectedProjects.Replace(",", ", ");
+
+            Servers = e.AffectedHosts.Split(',').Select(p => p.Trim().ToUpper()).ToList();
+            Projects = e.AffectedProjects.Split(',').Select(p => p.Trim().ToUpper()).ToList();
+            Teams = e.AffectedTeams.Split(',').Select(p => p.Trim().ToUpper()).ToList();
+            PrevEventID = 0;
+            NextEventID = 0;
 
             // Lookup those Names by Values, such as RiskLevel, EventStatus, etc.
             StaticListOfValuesService LOVs = new StaticListOfValuesService();

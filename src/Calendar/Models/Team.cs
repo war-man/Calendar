@@ -15,5 +15,7 @@ namespace Calendar.Models
         public string Description { get; set; }
         [Display(Name = "Calendar Style"), StringLength(15, MinimumLength = 6)]
         public string CalendarStyle { get; set; }
+        [Display(Name = "Domain Group")]
+        public string DomainGroup { get; set; }
     }
 }

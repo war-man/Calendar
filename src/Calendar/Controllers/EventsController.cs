@@ -188,8 +188,15 @@ namespace Calendar.Controllers
                     break;
             }
             
-            return View(await PaginatedList<Event>.CreateAsync(events.AsNoTracking(), page ?? 1, pgsize ?? 30));
-        
+            var viewModel = new EventIndexData();
+            viewModel.Events = events
+                  .Include(e => e.Acknowledgements)
+                  .AsNoTracking();
+            
+            return View(new PaginatedEventIndex(viewModel, page ?? 1, pgsize ?? 30));
+
+            //return View(await PaginatedList<Event>.CreateAsync(events.AsNoTracking(), page ?? 1, pgsize ?? 30));
+
             //return View(await events.AsNoTracking().ToListAsync());
             //return View(await _context.Event.OrderByDescending(m => m.StartDateTime).ToListAsync());
         }
@@ -270,12 +277,6 @@ namespace Calendar.Controllers
             {
                 CalendarEventViewModel ce = new CalendarEventViewModel(item);
 
-                ce.Servers = item.AffectedHosts.Split(',').Select(p => p.Trim().ToUpper()).ToList();
-                ce.Projects = item.AffectedProjects.Split(',').Select(p => p.Trim().ToUpper()).ToList();
-                ce.Teams = item.AffectedTeams.Split(',').Select(p => p.Trim().ToUpper()).ToList();
-                ce.PrevEventID = 0;
-                ce.NextEventID = 0;
-
                 /* we need to trim the startdate and enddate */
                 if (ce.Event.StartDateTime < FirstDateOfTheCalendar)
                 {
@@ -320,7 +321,9 @@ namespace Calendar.Controllers
                 return NotFound();
             }
 
-            CalendarEventViewModel CalendarEvent = new CalendarEventViewModel(@event);
+            var acks = await _context.Acknowledgement.Where(m => m.EventID == id).OrderBy(m => m.UpdatedDate).ToListAsync();
+
+            CalendarEventViewModel CalendarEvent = new CalendarEventViewModel(@event, acks);
 
             return View(CalendarEvent);
         }

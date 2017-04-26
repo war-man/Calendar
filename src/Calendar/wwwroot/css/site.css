@@ -54,3 +54,32 @@ textarea {
 .bootstrap-tagsinput {
 width: 100%;
 }
+
+.p-inline {
+    display:inline;
+}
+
+.select-placeholder {
+    color: grey;
+}
+
+.select-placeholder select option:first-child { 
+    color: grey; 
+    display: none;
+}
+
+.select-placeholder select option {
+    color: #555;
+} 
+
+.acknowledged {
+
+}
+
+.not-acknowledged {
+    color: red;
+}
+
+.border-none {
+    border: none;
+}
