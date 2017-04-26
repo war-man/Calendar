@@ -283,6 +283,8 @@
                         data: 'eventid=' + eventid,
                         success: function (result) {
                             $("#idAckPartialView").html(result);
+                            $('#idAffectedTeam-' + team).removeClass('not-acknowledged');
+                            $('#idAffectedTeam-' + team).addClass('acknowledged');
                             $('#idTeamAckModal').removeClass('fade');
                             $('#idTeamAckModal').modal('hide');
                         },
