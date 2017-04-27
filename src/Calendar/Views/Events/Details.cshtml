@@ -227,77 +227,79 @@
 
 <script type="text/javascript">
     /* ------ Team Acknowledgement START HERE ------ */
-    /* pass the EventID and AffectedTeams to the Modal Form */
-    $('#idTeamAckModal').on('shown.bs.modal', function () {
-          $('#idTeam').focus()
-    });
-
-    $('#idTeamAckModal').on('show.bs.modal', function () {
-        /* update the team selection list */
-        var str = "@Model.Event.AffectedTeams";
-
-        $('#idAckMessage').val('');
-        $('#idTeam')
-            .find('option')
-            .remove()
-            .end()
-            .append('<option selected disabled>Team</option>')
-        ;
-        $('#idTeam').addClass('select-placeholder');
-        $.each(str.split(','), function (key, value) {
-            $('#idTeam').append('<option value="' + value + '">' + value + '</option>');
+    $(document).ready(function () {
+        /* pass the EventID and AffectedTeams to the Modal Form */
+        $('#idTeamAckModal').on('shown.bs.modal', function () {
+              $('#idTeam').focus()
         });
-    });
 
-    /* mimic placeholder for dropdown list. Not quite work in FF. */
-    $('select').change(function () {
-        if ($(this).children('option:first-child').is(':selected')) {
-            $(this).addClass('select-placeholder');
-        } else {
-            $(this).removeClass('select-placeholder');
-        }
-        $("#idTeamFieldValidationError").addClass('hidden');
-    });
+        $('#idTeamAckModal').on('show.bs.modal', function () {
+            /* update the team selection list */
+            var str = "@Model.Event.AffectedTeams";
 
-    /* Bind the Form submit - Save */
-    $('#idFormTeamAck').on('submit', function (e) {
-        var team = $(this).find('select[name="team"]').val();
-        var eventid = $(this).find('input[name="EventID"]').val();
-
-        if (team == null) {
-            e.preventDefault();
-            $("#idTeamFieldValidationError").removeClass('hidden');
-        }
-        else {
-            /* 1st ajax call to save the acknowledgement (modal)
-               2nd ajax call to refresh the partial view */
-            e.preventDefault();
-            $.ajax({
-                type: $(this).attr('method'),
-                url: $(this).attr('action'),
-                data: $(this).serialize(),
-                success: function (result) {
-                    $.ajax({
-                        type: "get",
-                        url: '@Url.Action("IndexPartial","Acknowledgements")',
-                        data: 'eventid=' + eventid,
-                        success: function (result) {
-                            $("#idAckPartialView").html(result);
-                            $('#idAffectedTeam-' + team).removeClass('not-acknowledged');
-                            $('#idAffectedTeam-' + team).addClass('acknowledged');
-                            $('#idTeamAckModal').removeClass('fade');
-                            $('#idTeamAckModal').modal('hide');
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            alert('Status: ' + textStatus + ', Error: ' + errorThrown);
-                        }
-                    });
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('Status: ' + textStatus + ', Error: ' + errorThrown);
-                }
+            $('#idAckMessage').val('');
+            $('#idTeam')
+                .find('option')
+                .remove()
+                .end()
+                .append('<option selected disabled>Team</option>')
+            ;
+            $('#idTeam').addClass('select-placeholder');
+            $.each(str.split(','), function (key, value) {
+                $('#idTeam').append('<option value="' + value + '">' + value + '</option>');
             });
-        }
+        });
+
+        /* mimic placeholder for dropdown list. Not quite work in FF. */
+        $('select').change(function () {
+            if ($(this).children('option:first-child').is(':selected')) {
+                $(this).addClass('select-placeholder');
+            } else {
+                $(this).removeClass('select-placeholder');
+            }
+            $("#idTeamFieldValidationError").addClass('hidden');
+        });
+
+        /* Bind the Form submit - Save */
+        $('#idFormTeamAck').on('submit', function (e) {
+            var team = $(this).find('select[name="team"]').val();
+            var eventid = $(this).find('input[name="EventID"]').val();
+
+            if (team == null) {
+                e.preventDefault();
+                $("#idTeamFieldValidationError").removeClass('hidden');
+            }
+            else {
+                /* 1st ajax call to save the acknowledgement (modal)
+                   2nd ajax call to refresh the partial view */
+                e.preventDefault();
+                $.ajax({
+                    type: $(this).attr('method'),
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        $.ajax({
+                            type: "get",
+                            url: '@Url.Action("IndexPartial","Acknowledgements")',
+                            data: 'eventid=' + eventid,
+                            success: function (result) {
+                                $("#idAckPartialView").html(result);
+                                $('#idAffectedTeam-' + team).removeClass('not-acknowledged');
+                                $('#idAffectedTeam-' + team).addClass('acknowledged');
+                                $('#idTeamAckModal').removeClass('fade');
+                                $('#idTeamAckModal').modal('hide');
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+                            }
+                        });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+                    }
+                });
+            }
+        });
     });
     /* ------ Team Acknowledgement END HERE ------ */
 </script>
