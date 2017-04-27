@@ -67,7 +67,7 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,AckMessage,CreatedBy,CreatedByDisplayName,CreatedDate,EventID,Team,UpdatedBy,UpdatedByDisplayName,UpdatedDate")] Acknowledgement acknowledgement, string redir, string ajax)
         {
-            if (!User.IsInRole(Constants.ROLE_ADMIN))
+            if (!User.Identity.IsAuthenticated)
                 return NotFound();
 
             if (ModelState.IsValid)
@@ -108,7 +108,7 @@ namespace Calendar.Controllers
         // GET: Acknowledgements/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (!User.IsInRole(Constants.ROLE_ADMIN))
+            if (!User.Identity.IsAuthenticated)
                 return NotFound();
 
             if (id == null)
@@ -131,8 +131,8 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,AckMessage,CreatedBy,CreatedByDisplayName,CreatedDate,EventID,Team,UpdatedBy,UpdatedByDisplayName,UpdatedDate")] Acknowledgement acknowledgement)
         {
-            if (!User.IsInRole(Constants.ROLE_ADMIN))
-                return NotFound();
+            if (!User.Identity.IsAuthenticated)
+                    return NotFound();
 
             if (id != acknowledgement.ID)
             {
@@ -165,7 +165,7 @@ namespace Calendar.Controllers
         // GET: Acknowledgements/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (!User.IsInRole(Constants.ROLE_ADMIN))
+            if (!User.Identity.IsAuthenticated)
                 return NotFound();
 
             if (id == null)
@@ -187,7 +187,7 @@ namespace Calendar.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id, string ajax)
         {
-            if (!User.IsInRole(Constants.ROLE_ADMIN))
+            if (!User.Identity.IsAuthenticated)
                 return NotFound();
 
             var acknowledgement = await _context.Acknowledgement.SingleOrDefaultAsync(m => m.ID == id);
