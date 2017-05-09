@@ -115,6 +115,14 @@
 
         </dd>
         <dt>
+            <span data-toggle="tooltip" data-placement="top" data-html="true" title="Add the attachment"><a role="button" class="@(User.Identity.IsAuthenticated? "":"hidden ")btn btn-primary btn-xs" data-toggle="modal" data-target="#AttachModal" data-whatever=""><span class="glyphicon glyphicon-paperclip"></span></a></span>Attachment
+        </dt>
+        <dd>
+            <div id="idAttachPartialView" style1="position:absolute; top:60px; left:620px; height:200px; overflow:hidden">
+                @Html.Partial("AttachPartial", Model.Attachs)
+            </div>
+        </dd>
+        <dt>
             @Html.DisplayNameFor(model => model.Event.MaintProcedure)
         </dt>
         <dd>
@@ -225,6 +233,34 @@
     </div>
 </div>
 
+<!--Attachment Modal-->
+<div class="modal fade" id="AttachModal" tabindex="-1" role="dialog" aria-labelledby="AttachModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Attachment</h4>
+            </div>
+            <div class="modal-body">
+                <form id="idFormAttach" name="FormAttach" class="row" enctype="multipart/form-data" asp-controller="Attachments" asp-action="Upload" method="post">
+                    <div class="form-group col-md-10">
+                        <input type="hidden" class="form-control" id="idAttachEventID" name="EventID" value="">
+                        <input type="hidden" class="form-control" id="idRedir" name="redir" value="this">
+                        <input type="hidden" class="form-control" id="idAjax" name="ajax" value="true">
+                        <input type="file" id="idFile" name="AttachFile" multiple>
+                        <!--<input type="file" class="file" id="idFile" name="AttachFile" data-show-preview="true" multiple data-allowed-file-extensions='["gif", "png", "jpg", "xlsx", "xls", "txt", "doc", "docx", "ppt", "pptx", "log", "pdf", "zip", "tar", "gz"]' maxFileCount="2">-->                        
+                        <div id="kv-error-2" class="alert alert-danger fade in" style="margin-top:10px;display:none"></div>
+                        <!--<div id="kv-success-2" class="alert alert-success fade in" style="margin-top:10px;display:none"></div>-->
+                    </div>
+                    <div class="form-group col-md-2 text-right">
+                        <button type="button" class="btn btn-ms btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     /* ------ Team Acknowledgement START HERE ------ */
     $(document).ready(function () {
@@ -300,6 +336,124 @@
                 });
             }
         });
-    });
+    //});
     /* ------ Team Acknowledgement END HERE ------ */
+
+    
+    /* ------ ATTACHMENTS CODE BEGIN HERE ------ */
+    //$(document).ready(function () {
+    var errorExist = false;
+    var errorMsg = "";
+
+    $("#idFile").fileinput({
+        uploadAsync: true,
+        allowedFileExtensions: ["gif", "png", "jpg", "xlsx", "xls", "txt", "doc", "docx", "ppt", "pptx", "log", "pdf", "zip", "tar", "gz"],
+        maxFileCount: 5,
+        elErrorContainer: "#kv-error-2"
+    });
+
+    /* Clear the loaded file when re-open the diag */
+    $('#AttachModal').on('show.bs.modal', function () {
+        $('.fileinput-remove-button').click();
+        $('#kv-error-2').empty();
+        $('#kv-error-2').attr("style", "margin-top:10px;display:none");
+        errorExist = false; // reset the error flag
+    })
+    
+    $('#AttachModal').on('shown.bs.modal', function () {
+        $('.file-caption-name').focus();
+        $('#idAttachEventID').val(@Model.Event.ID);
+    })
+
+    /* Clear the custom error message after press Remove button */
+        $("#idFile").on('fileclear', function (event, data, msg) {
+        //if ($('.file-caption-name').attr("title") == "Validation Error") {
+          //  $('#kv-error-2').empty();
+          //  $('#kv-error-2').attr("style", "margin-top:10px;display:none");
+        //}
+    })    
+
+    /* Clear the error panel after re-open the diag */
+        $("#idFile").on('filecleared', function (event, data, msg) {
+        if (errorExist == false) {
+            errorMsg = "";
+            //$('#kv-error-2').empty();
+            //$('#kv-error-2').attr("style", "margin-top:10px;display:");
+            $('#kv-error-2').append("<BR>inside clear errorexist = false");
+        }
+        else {
+            errorExist = false; // reset the error flag
+            //$('#kv-error-2').attr("style", "margin-top:10px;display:");
+            $('#kv-error-2').append("<BR>inside clear errorexist = true");
+        }
+    })
+
+    /* Show and display the error */
+    $("#idFile").on('fileerror', function (event, data, msg) {
+        errorExist = true;
+        $('#kv-error-2').empty();
+        //$('#kv-error-2').append(msg);
+        errorMsg = errorMsg.concat(errorMsg, msg, "<BR>");
+        alert(errorMsg);
+        $('#kv-error-2').append(errorMsg);
+        $('#kv-error-2').attr("style", "margin-top:10px;display:");
+    })
+
+    $("#idFile").on('filecustomerror', function (event, params, msg) {
+        //errorExist = true;
+        //$('#kv-error-2').append(msg);
+        //$('#kv-error-2').append("<BR>custom error");
+        //$('#kv-error-2').attr("style", "margin-top:10px;display:");
+    });
+
+    /* Validate attachment file before upload */
+    $("#idFile").on('fileloaded', function (event, data, msg) {
+        //var filename = $('.file-caption-name').attr("title");
+        //$('#kv-error-2').append("<BR>file loaded");
+    })
+  
+
+    /* Bind the Form submit - Save */
+    $('#idFormAttach').on('submit', function (e) {
+        var eventid = $(this).find('input[name="EventID"]').val();
+
+        if (eventid == null) {
+            e.preventDefault();
+        }
+        else {
+            /* 1st ajax call to save the acknowledgement (modal)
+                2nd ajax call to refresh the partial view */
+            e.preventDefault();
+            $.ajax({
+                type: $(this).attr('method'),
+                url: $(this).attr('action'),
+                data: new FormData(this),
+                cache: false,
+                processData: false, // Don't process the files
+                contentType: false, // Set content type to false as jQuery will tell the server its a query string request
+                success: function (result) {
+                    $.ajax({
+                        type: "get",
+                        cache: false,
+                        url: '@Url.Action("IndexPartial", "Attachments")',
+                        data: 'eventid=' + eventid,
+                        success: function (result) {
+                            $("#idAttachPartialView").html(result);
+                            $('#AttachModal').modal('hide');
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+                        }
+                    });
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+                }
+            });
+        }
+    });
+    });
+
+    /* ------ ATTACHMENTS CODE END HERE ------ */
+
 </script>

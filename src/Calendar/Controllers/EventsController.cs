@@ -323,8 +323,13 @@ namespace Calendar.Controllers
 
             var acks = await _context.Acknowledgement.Where(m => m.EventID == id).OrderBy(m => m.UpdatedDate).ToListAsync();
 
-            CalendarEventViewModel CalendarEvent = new CalendarEventViewModel(@event, acks);
+            var attachs = await _context.Attachment.Where(m => m.EventID == id).OrderBy(m => m.UpdatedDate).ToListAsync();
 
+            CalendarEventViewModel CalendarEvent = new CalendarEventViewModel(@event, acks, attachs);
+            /*
+            var attachs = await _context.Attachment.Where(m => m.EventID == id).OrderBy(m => m.UpdatedDate).ToListAsync();
+            CalendarEvent = new CalendarEventViewModel(@event, null, attachs);
+            */
             return View(CalendarEvent);
         }
 
