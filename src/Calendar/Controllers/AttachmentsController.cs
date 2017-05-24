@@ -20,6 +20,7 @@ namespace Calendar.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IHostingEnvironment _environment;
+        public Attachment tempAttachment;
 
         public IEnumerable<Attachment> ListAll()
         {
@@ -238,8 +239,6 @@ namespace Calendar.Controllers
                 return new EmptyResult();
             else
                 return RedirectToAction("Index");
-
-            //return RedirectToAction("Index", new { eventid = attachment.EventID });
         }
 
         private bool AttachmentExists(int id)
@@ -254,77 +253,74 @@ namespace Calendar.Controllers
             {
                 var uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString());
                 var attachment = new Attachment();
+                tempAttachment = attachment;
 
-                foreach (var file in AttachFile)
-                {
-                    if (file.Length > 0)
+                if (AttachFile != null) { 
+                    foreach (var file in AttachFile)
                     {
-                        /* Audit Fields */
-                        var username = "anonymous";
-                        var u = User.Claims.Where(m => m.Type == "username");
-                        if (u.Count() == 1) { username = u.First().Value; }
-                        var displayname = "anonymous";
-                        var d = User.Claims.Where(m => m.Type == "displayName");
-                        if (d.Count() == 1) { displayname = d.First().Value; }
-                        attachment.CreatedDate = DateTime.Now;
-                        attachment.CreatedBy = username;
-                        attachment.CreatedByDisplayName = displayname;
-                        attachment.UpdatedDate = attachment.CreatedDate;
-                        attachment.UpdatedBy = username;
-                        attachment.UpdatedByDisplayName = displayname;
-                        attachment.EventID = EventID;
-                        attachment.FileName = Path.GetFileName(file.FileName);
-                        attachment.FilePath = Path.Combine(uploads, Path.GetFileName(file.FileName));
-
-                        _context.Add(attachment);
-                        await _context.SaveChangesAsync();
-
-                        /* Upload the file to path ~/uploads/eventid/attachmentid/attachmentname */
-                        uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString(), attachment.ID.ToString());
-                        if (!Directory.Exists(uploads))
+                        if (file.Length > 0)
                         {
-                            Directory.CreateDirectory(uploads);
-                        }
-
-                        using (var fileStream = new FileStream(Path.Combine(_environment.WebRootPath, uploads, Path.GetFileName(file.FileName)), FileMode.Create))
-                        {
-                            await file.CopyToAsync(fileStream);
-                            ViewBag.UploadStatus = "Upload successfully.";
-
+                            /* Audit Fields */
+                            var username = "anonymous";
+                            var u = User.Claims.Where(m => m.Type == "username");
+                            if (u.Count() == 1) { username = u.First().Value; }
+                            var displayname = "anonymous";
+                            var d = User.Claims.Where(m => m.Type == "displayName");
+                            if (d.Count() == 1) { displayname = d.First().Value; }
+                            attachment.CreatedDate = DateTime.Now;
+                            attachment.CreatedBy = username;
+                            attachment.CreatedByDisplayName = displayname;
+                            attachment.UpdatedDate = attachment.CreatedDate;
+                            attachment.UpdatedBy = username;
+                            attachment.UpdatedByDisplayName = displayname;
+                            attachment.EventID = EventID;
+                            attachment.FileName = Path.GetFileName(file.FileName);
                             attachment.FilePath = Path.Combine(uploads, Path.GetFileName(file.FileName));
-                            _context.Update(attachment);
+
+                            _context.Add(attachment);
                             await _context.SaveChangesAsync();
+
+                            /* Upload the file to path ~/uploads/eventid/attachmentid/attachmentname */
+                            //Original
+                            uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString(), attachment.ID.ToString());
+                            //for debug file upload error
+                            //uploads = Path.Combine("_environment.WebRootPath", "uploads", EventID.ToString(), attachment.ID.ToString());
+                            if (!Directory.Exists(uploads))
+                            {
+                                Directory.CreateDirectory(uploads);
+                            }
+
+                            using (var fileStream = new FileStream(Path.Combine(_environment.WebRootPath, uploads, Path.GetFileName(file.FileName)), FileMode.Create))
+                            {
+                                await file.CopyToAsync(fileStream);
+                                ViewBag.UploadStatus = "Upload successfully.";
+
+                                attachment.FilePath = Path.Combine(uploads, Path.GetFileName(file.FileName));
+                                _context.Update(attachment);
+                                await _context.SaveChangesAsync();
+                            }
                         }
                     }
                 }
-
-                /*if (ajax == "true")
-                    return new EmptyResult();
-                else if (redir == "")
-                    return RedirectToAction("Index");
-                else
-                {
-                    ViewBag.Redir = redir;
-                    if (!User.IsInRole(Constants.ROLE_ADMIN))
-                        return NotFound();
-
-                    RedirectToActionResult redirectResult = new RedirectToActionResult("Details", "Events", new { @id = attachment.EventID });
-                    return redirectResult;
-                }*/
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                return Json("Upload failed");
-            }
+                //Remove the temp attachment record
+                _context.Remove(tempAttachment);
+                await _context.SaveChangesAsync();
 
-            return Json("File uploaded successfully");
+                //return exception message
+                Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                return Json(new { success = false, message = e.Message });
+            }
+            
+            return Json(new { success=true, message = "Upload successfully." });
         }
 
         [HttpPost]
         public async Task<IActionResult> Upload(ICollection<IFormFile> AttachFile, int EventID, string redir = null, string ajax = null)
         {
-
+            //function not work : will delete later
             try
             {
                 var uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString());
@@ -355,7 +351,7 @@ namespace Calendar.Controllers
                         await _context.SaveChangesAsync();
 
                         /* Upload the file to path ~/uploads/eventid/attachmentid/attachmentname */
-                        uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString(), attachment.ID.ToString());
+                        uploads = Path.Combine("_environment.WebRootPath", "uploads", EventID.ToString(), attachment.ID.ToString());
                         if (!Directory.Exists(uploads))
                         {
                             Directory.CreateDirectory(uploads);
@@ -392,97 +388,6 @@ namespace Calendar.Controllers
                 throw new Exception(e.Message + "<br>" + e.InnerException.Message);
             }
         }
-
-        //[HttpPost]
-        public FileResult Download(int id)
-        {
-            var attachment = _context.Attachment.SingleOrDefaultAsync(m => m.ID == id);
-            if (attachment == null)
-            {
-                return null;
-            }
-            else
-            {
-                string fullName = attachment.Result.FilePath;
-                string extension = Path.GetExtension(attachment.Result.FileName);
-
-                byte[] fileBytes = GetFile(fullName);
-                return File(
-                    fileBytes, ReturnExtension(extension), attachment.Result.FileName);
-            }
-        }
-
-        byte[] GetFile(string s)
-        {
-            System.IO.FileStream fs = System.IO.File.OpenRead(s);
-            byte[] data = new byte[fs.Length];
-            int br = fs.Read(data, 0, data.Length);
-            if (br != fs.Length)
-                throw new System.IO.IOException(s);
-            return data;
-        }
-
-        private string ReturnExtension(string fileExtension)
-        {
-            switch (fileExtension)
-            {
-                case ".htm":
-                case ".html":
-                case ".log":
-                    return "text/HTML";
-                case ".txt":
-                    return "text/plain";
-                case ".doc":
-                    return "application/ms-word";
-                case ".tiff":
-                case ".tif":
-                    return "image/tiff";
-                case ".asf":
-                    return "video/x-ms-asf";
-                case ".avi":
-                    return "video/avi";
-                case ".zip":
-                    return "application/zip";
-                case ".xls":
-                case ".csv":
-                    return "application/vnd.ms-excel";
-                case ".gif":
-                    return "image/gif";
-                case ".jpg":
-                case "jpeg":
-                    return "image/jpeg";
-                case ".bmp":
-                    return "image/bmp";
-                case ".wav":
-                    return "audio/wav";
-                case ".mp3":
-                    return "audio/mpeg3";
-                case ".mpg":
-                case "mpeg":
-                    return "video/mpeg";
-                case ".rtf":
-                    return "application/rtf";
-                case ".asp":
-                    return "text/asp";
-                case ".pdf":
-                    return "application/pdf";
-                case ".fdf":
-                    return "application/vnd.fdf";
-                case ".ppt":
-                    return "application/mspowerpoint";
-                case ".dwg":
-                    return "image/vnd.dwg";
-                case ".msg":
-                    return "application/msoutlook";
-                case ".xml":
-                case ".sdxl":
-                    return "application/xml";
-                case ".xdp":
-                    return "application/vnd.adobe.xdp+xml";
-                default:
-                    return "application/octet-stream";
-            }
-
-        }
+        
     }
 }

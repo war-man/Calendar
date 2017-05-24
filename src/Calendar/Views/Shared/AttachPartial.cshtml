@@ -8,23 +8,24 @@
                     @foreach (var item in Model)
                     {
                         string title = "Created by: <br>" + @item.CreatedByDisplayName + "<br> Creation Date: <br>" + @item.CreatedDate;
-                        <span id="idAttachRow-@item.ID" onmouseover="showbutton(this); "
-                              onmouseout="hidebutton(this); ">
+                        <span id="idAttachRow-@item.ID"  style="display: inline-block;" onmouseover="showbutton(this); " onmouseout="hidebutton(this); ">
+                            <i id="idAttachRow-@item.ID" class="glyphicon glyphicon-paperclip"></i>
                             <a id="idAttachRow-@item.ID"
                                href="/uploads/@item.EventID/@item.ID/@item.FileName"
                                target="_blank"
                                data-toggle="tooltip"
-                               data-html="true"
-                               title="Created by: <br>@Html.DisplayFor(modelItem => item.CreatedByDisplayName) <br> Creation Date: <br>@Html.DisplayFor(modelItem => item.CreatedDate)">
+                               data-html="true"                              
+                               title="Uploaded by @Html.DisplayFor(modelItem => item.CreatedByDisplayName) at @Html.DisplayFor(modelItem => item.CreatedDate)">
                                 @Html.DisplayFor(modelItem => item.FileName)
                             </a>
-
                             <form id="idAttachRow-@item.ID" style="display:inline;" class="formAttachRow @(User.Identity.IsAuthenticated? "":"hidden")" asp-controller="Attachments" asp-action="Delete" asp-route-id="@item.ID" method="post">
                                 <input type="hidden" name="attachid" value="@item.ID" />
-                                <button id="idAttachBtn-@item.ID" type="submit" value="Delete"
-                                        class="btn btn-default btn-xs hidden border-none" data-toggle="tooltip"
-                                        data-placement="top" data-htmlx="true" title="Remove this">
+                                <button id="idAttachBtn-@item.ID" type="submit" value="Delete" class="btn btn-default hidden btn-xs border-none" data-toggle="tooltip" data-placement="top" data-htmlx="true" title="Remove this">
                                     <span class="text-muted glyphicon glyphicon-remove"></span>
+                                </button>
+
+                                <button id="idAttachSpace-@item.ID" type="submit" value="Delete" class="btn btn-default btn-xs border-none" data-toggle="tooltip" data-placement="top" data-htmlx="true" title="Remove this">
+                                    <span class="text-muted glyphicon glyphicon-remove invisbleCrossbtn"></span>
                                 </button>
                             </form>
                         </span>
@@ -49,8 +50,8 @@
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function (data) {
-                //$('#idAttachRow-' + attachid).remove();
                 $('a').remove('#idAttachRow-' + attachid);
+                $('i').remove('#idAttachRow-' + attachid);
                 $('form').remove('#idAttachRow-' + attachid);
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -65,12 +66,14 @@
         var linkid = obj.id;
         var btnid = linkid.replace("idAttachRow-", "");
         $("#idAttachBtn-" + btnid).removeClass('hidden');
+        $("#idAttachSpace-" + btnid).addClass('hidden');
     }
 
     function hidebutton(obj) {
         var linkid = obj.id;
         var btnid = linkid.replace("idAttachRow-", "");
         $("#idAttachBtn-" + btnid).addClass('hidden');
+        $("#idAttachSpace-" + btnid).removeClass('hidden');
     }
-
+    
 </script>
