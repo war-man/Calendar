@@ -47,3 +47,29 @@
 .glyphicon.glyphicon-chevron-down {
     font-size: 8px;
 }
+
+.invisbleCrossbtn, .invisbleCrossbtn span {
+  color: #fff;
+}
+
+.explorer-frame .file-other-icon {
+    font-size: 2.8em;
+}
+
+.theme-explorer .explorer-frame .kv-file-content {
+    width: 50px;
+    height: 80px;
+    padding: 5px;
+    text-align: center;
+}
+
+.theme-explorer .file-actions-cell {
+    width: 60px;
+    padding: 0;
+}
+
+.theme-explorer .file-thumb-progress .progress {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}

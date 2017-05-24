@@ -1,0 +1,75 @@
+@model Calendar.Models.Attachment
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h2>Create</h2>
+
+<form asp-action="Create">
+    <div class="form-horizontal">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label class="col-md-2 control-label">File</label>
+            <div class="col-md-10">
+                <input type="file" class="file" id="idFile" name="AttachFile" data-show-preview="true" data-allowed-file-extensions='["gif", "png", "jpg", "xlsx", "xls", "txt", "doc", "docx", "ppt", "pptx", "log", "pdf", "zip", "tar", "gz"]'>
+                <div id="kv-error-2" class="alert alert-danger fade in" style="margin-top:10px;display:none"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="FileName" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="FileName" class="form-control" />
+                <span asp-validation-for="FileName" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="FilePath" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="FilePath" class="form-control" />
+                <span asp-validation-for="FilePath" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="EventID" class="col-md-2 control-label"></label>
+            <div class="col-md-10">
+                <input asp-for="EventID" class="form-control" />
+                <span asp-validation-for="EventID" class="text-danger" />
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+</form>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+<script type="text/javascript">
+    var errorExist = false;
+
+    $("#idFile").on('filecleared', function (event, data, msg) {
+        if (errorExist == false) {
+            $('#kv-error-2').empty();
+            $('#kv-error-2').attr("style", "margin-top:10px;display:none");
+        }
+        else
+            errorExist = false; // reset the error flag
+    })
+
+    $("#idFile").on('fileerror', function (event, data, msg) {
+        errorExist = true;
+        $('#kv-error-2').empty();
+        $('#kv-error-2').append(msg);
+        $('#kv-error-2').attr("style", "margin-top:10px;display:");
+    })
+
+</script>
