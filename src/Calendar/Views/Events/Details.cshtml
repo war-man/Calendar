@@ -420,13 +420,14 @@
                 },
             }
         }).on('fileclear', function(event) {
-            console.log("fileclear");
-            $('#kv-error-1').attr("style","margin-top:10px;display:none");
-            $('#kv-error-1').empty();
+            console.log("fileclear");    
+            HideCustomErrPanel();
+        }).on('filedeleted', function(event, key, jqXHR, data) {
+            console.log('Key = ' + key);   
+            HideCustomErrPanel();
         }).on('fileselect', function(event) {
             console.log("change");
-            $('#kv-error-1').attr("style","margin-top:10px;display:none");
-            $('#kv-error-1').empty();
+            HideCustomErrPanel();
         }).on('fileuploaded', function(event, data, msg) {
             var form = data.form, files = data.files, extra = data.extra,
                 response = data.response, reader = data.reader;
@@ -436,15 +437,13 @@
             var form = data.form, files = data.files, extra = data.extra,
                 response = data.response, reader = data.reader;
             console.log("load error");
-            $('#kv-error-1').append(msg);
-            $('#kv-error-1').attr("style","margin-top:10px;display:");
+            RedirectToCustomErrPanel(msg);
         }).on('filebatchuploadcomplete', function(event, files, extra) {
             console.log('File batch upload complete');
-            $('.kv-fileinput-error').attr("style","display:none");
-        }).on('filebatchuploaderror', function(event, files, extra) {
-            console.log('File batch upload error');
-            $('.kv-fileinput-error').attr("style","display:none");
-            $('.file-error-message').attr("style","display:none");
+            HideOriginalErrPanel();
+        }).on('fileunlock', function(event, filestack, extraData) {
+            var fstack = filestack.filter(function(n){ return n != undefined });
+            console.log('Files selected - ' + fstack.length);
         });
 
         /* Clear the loaded file when re-open the diag */
@@ -533,6 +532,26 @@
         });
     });
 
+    /* function to hide the error panel
+     * Since the error panel for file upload does not work as expected,
+     * we redirect the error message to custom error panel 
+     * and hide the original error panel
+     */
+    function HideOriginalErrPanel() {          
+        $('.kv-fileinput-error').empty();
+        $('.kv-fileinput-error').attr("style","display: none;");
+        $('.kv-upload-progress').addClass("hide");
+    }
+
+    function HideCustomErrPanel() {                  
+        $('#kv-error-1').attr("style","margin-top:10px;display:none");
+        $('#kv-error-1').empty();    
+    }
+
+    function RedirectToCustomErrPanel(msg) {
+        $('#kv-error-1').append(msg);
+        $('#kv-error-1').attr("style","margin-top:10px;display:");
+    }
     /* ------ ATTACHMENTS CODE END HERE ------ */
 
 </script>
