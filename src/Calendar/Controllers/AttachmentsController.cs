@@ -282,9 +282,9 @@ namespace Calendar.Controllers
 
                             /* Upload the file to path ~/uploads/eventid/attachmentid/attachmentname */
                             //Original
-                            //uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString(), attachment.ID.ToString());
+                            uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString(), attachment.ID.ToString());
                             //for debug file upload error
-                            uploads = Path.Combine("_environment.WebRootPath", "uploads", EventID.ToString(), attachment.ID.ToString());
+                            //uploads = Path.Combine("_environment.WebRootPath", "uploads", EventID.ToString(), attachment.ID.ToString());
                             if (!Directory.Exists(uploads))
                             {
                                 Directory.CreateDirectory(uploads);
