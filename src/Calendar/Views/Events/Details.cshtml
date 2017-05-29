@@ -345,16 +345,15 @@
         $("#idFile").fileinput({
             theme: "explorer",
             uploadUrl: '@Url.Action("Upload2", "Attachments")', // server upload action
-            uploadAsync: true,
+            uploadAsync: true,      // enable ajax upload
             dropZoneEnabled: false, // disable drag and drop file function
             maxFileCount: 5,
             overwriteInitial: false,
-            //elErrorContainer: 'kv-error-1',
             previewFileIcon: '<i class="fa fa-file"></i>',
             initialPreviewAsData: true, // defaults markup
             fileActionSettings: {
-                removeTitle: 'Remove file from list',
-                showZoom: false
+                removeTitle: 'Remove file from list',   // tooltip for remove button in file list
+                showZoom: false                         // disable review file button
             },
             layoutTemplates: {
                 preview: '<div class="file-preview {class}">\n' +
@@ -422,9 +421,11 @@
                 },
             }
         }).on('fileclear', function(event) {
-            console.log("fileclear");    
+        // trigger when file input remove button or close button is pressed
+            console.log("fileclear");
             HideCustomErrPanel();
         }).on('fileremoved', function(event, id, index) {
+        // remove corresponding error message after file removed
             console.log('id = ' + id + ', index = ' + index);
             $('#null #null').remove();
             $('#null').remove();
@@ -434,19 +435,22 @@
                 HideCustomErrPanel();
             };
         }).on('filedeleted', function(event, key, jqXHR, data) {
-            console.log('Key = ' + key);   
+        // trigger after deletion of corresponding file
+            console.log('Key = ' + key);
             HideCustomErrPanel();
-        }).on('fileselect', function(event) {
-            console.log("change");
         }).on('filebrowse', function(event) {
+        // trigger when browse button is clicked
             console.log('File browse');
-            if ($('ul#null').length == 1) {  
+            
+            if ($('ul#null').length == 1) { // for no files selected error
                 if ($("div .file-caption-name span").text().trim() == "No files selected") {               
+                    // for file list panel is empty
+                    // clear the error and hide Remove and Upload button
                     $('.fileinput-remove-button').click();
                 } else {
+                    // for the file list panel contains file
                     $('#null #null').remove();
                     $('#null').remove();
-                    $('div .file-input').removeClass('has-error');
                     $('div .file-input').removeClass('has-error');
                     $('div .file-caption-name').attr('title', $('div .file-caption-name').val());
                     $('div .file-caption-name i').removeClass('glyphicon-exclamation-sign');
@@ -456,34 +460,49 @@
                         HideCustomErrPanel();
                     };
                 }
-            } else {
+            } else { // for other error
                 HideCustomErrPanel();           
             }
         }).on('filepreajax', function(event, previewId, index) {
+        // clear error panel before each upload submission
             console.log('File pre ajax triggered');
             HideCustomErrPanel();  
         }).on('fileuploaded', function(event, data, msg) {
+        // change Close button to Done button after upload successfully
             var form = data.form, files = data.files, extra = data.extra,
                 response = data.response, reader = data.reader;
-            $('#idCloseBtn').text('Done');
             console.log("fileuploaded");
-        }).on('fileuploaderror', function(event, data, msg) {            
+            $('#idCloseBtn').text('Done');
+        }).on('fileuploaderror', function(event, data, msg) { 
+        // handle upload error and file input validation error for ajax upload
+
             console.log("load error");
             if (data != null) {
                 var form = data.form, files = data.files, extra = data.extra,
                     response = data.response, reader = data.reader;
                 
-                //for individual upload error, add the filename to msg
-
-                //for batch upload error
-                RedirectToCustomErrPanel(data.id, data.index, msg);
+                if (data.index == null) { // for file count > max count
+                    RedirectToCustomErrPanel(null, null, msg);
+                } else { 
+                    //alert(data.filenames[data.index]);
+                    //alert('<b>'+data.files[data.index].name+': </b></n>'+msg);
+                    //alert(msg.search('<b>'+data.files[data.index].name+': </b>'));
+                    RedirectToCustomErrPanel(data.id, data.index, msg);
+                }
             } else { // for no data to upload error
                 RedirectToCustomErrPanel(null, null, msg);            
             }
         }).on('filebatchuploadcomplete', function(event, files, extra) {
+        // original error panel always shows an empty box, so custom error panel is used instead
+        // hide original error panel when upload completed
             console.log('File batch upload complete');
             HideOriginalErrPanel();
         });
+        
+        /* Hide the fileinput error panel */
+        $('#errdiv').bind('DOMAttrModified', function(event) {
+            $('.kv-fileinput-error').attr("style","display: none;");
+        })
 
         /* Clear the loaded file when re-open the diag */
         $('#AttachModal').on('show.bs.modal', function () {
@@ -491,6 +510,7 @@
             $('#idCloseBtn').text('Close');
         })
 
+        /* Refresh the parital view after attachment diag close */
         $('#AttachModal').on('hidden.bs.modal', function (e) {
             var eventid = @Model.Event.ID;
 
@@ -498,7 +518,7 @@
                 e.preventDefault();
             }
             else {
-                /* 1st ajax call to save the acknowledgement (modal)
+                /*  1st ajax call to save the attachment (modal)
                     2nd ajax call to refresh the partial view */
                 e.preventDefault();
                 $.ajax({
@@ -538,7 +558,7 @@
                 e.preventDefault();
             }
             else {
-                /* 1st ajax call to save the acknowledgement (modal)
+                /* 1st ajax call to save the attachment (modal)
                     2nd ajax call to refresh the partial view */
                 e.preventDefault();
                 $.ajax({
@@ -568,12 +588,7 @@
                     }
                 });
             }
-        });
-        
-        //$('#errdiv').bind('DOMNodeInserted DOMSubtreeModified DOMNodeRemoved', function(event) {
-        $('#errdiv').bind('DOMAttrModified', function(event) {
-            $('.kv-fileinput-error').attr("style","display: none;");
-        })
+        });        
 
     });
 
@@ -591,6 +606,11 @@
     function HideCustomErrPanel() {                  
         $('#kv-error-1').attr("style","margin-top:10px;display:none;");
         $('#kv-error-1').empty();  
+        //$('div .file-input .theme-explorer').removeClass('has-error');
+        $('div .file-caption-name i').removeClass('glyphicon-exclamation-sign');
+        $('div .file-caption-name i').addClass('glyphicon-file kv-caption-icon');
+        $('div .file-caption-name span').removeClass('text-danger');
+        $('div .file-caption-name').removeClass('text-danger');
     }
     
     function RedirectToCustomErrPanel(id, index, msg) {
@@ -599,14 +619,14 @@
         }
         $('#kv-error-1').append('<ul id="'+index+'" ><li id="' + id + '" >' + msg + "</li></ul>");
         $('#kv-error-1').attr("style","margin-top:10px;display:");
+        
+        $('div .file-caption-name i').addClass('glyphicon-exclamation-sign');
+        $('div .file-caption-name i').removeClass('glyphicon-file kv-caption-icon');
+        $('div .file-caption-name').addClass('text-danger');
+        //$('div .file-caption-name').attr('title', "Validation Error");
+        //$('div .file-input').removeClass('has-error').addClass('has-error');
     }
 
-/*    function ReErrMsg(id) {
-        $('#kv-error-1').append('<ul><li data-file-id="' + id + '" >' + msg + "</li></ul>");
-        $('#kv-error-1').attr("style","margin-top:10px;display:");
-        //$('#kv-fileinput-error').append($('#kv-error-1').val());
-        //alter($('#kv-error-1').val());
-    }*/
     /* ------ ATTACHMENTS CODE END HERE ------ */
 
 </script>
