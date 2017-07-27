@@ -30,9 +30,12 @@ namespace Calendar.Models.CalendarViewModels
         /* List of acknowledgements */
         public List<Acknowledgement> Acks { get; set; }
 
+        /* List of attachments */
+        public List<Attachment> Attachs { get; set; }
+
         // Constructor
-        public CalendarEventViewModel(Event e) : this(e, null) { }
-        public CalendarEventViewModel(Event e, List<Acknowledgement> acks)
+        public CalendarEventViewModel(Event e) : this(e, null, null) { }
+        public CalendarEventViewModel(Event e, List<Acknowledgement> acks, List<Attachment> attachs)
         {
             Event = e;
             OriginalStart = e.StartDateTime;
@@ -42,6 +45,9 @@ namespace Calendar.Models.CalendarViewModels
 
             if (acks != null)
                 Acks = acks;
+
+            if (attachs != null)
+                this.Attachs = attachs;
 
             DisplayAffectedHosts = e.AffectedHosts.Replace(",", ", ");
             DisplayAffectedTeams = e.AffectedTeams.Replace(",", ", ");

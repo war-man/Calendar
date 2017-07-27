@@ -102,6 +102,42 @@ namespace Calendar.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Calendar.Models.Attachment", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("CreatedBy")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("CreatedByDisplayName")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<int>("EventID");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 255);
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasAnnotation("MaxLength", 500);
+
+                    b.Property<string>("UpdatedBy")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<string>("UpdatedByDisplayName")
+                        .HasAnnotation("MaxLength", 50);
+
+                    b.Property<DateTime>("UpdatedDate");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Attachment");
+                });
+
             modelBuilder.Entity("Calendar.Models.Event", b =>
                 {
                     b.Property<int>("ID")
