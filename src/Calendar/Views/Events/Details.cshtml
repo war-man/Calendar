@@ -245,12 +245,12 @@
             <div class="modal-body">
                 <form id="idFormAttach" name="FormAttach" class="row" enctype="multipart/form-data" asp-controller="Attachments" asp-action="Upload" method="post">
                     <div class="form-group col-md-10">
+                        <input type="file" id="idFile" name="AttachFile" multiple class="file-loading">
+                        <div id="kv-error-1" class="alert alert-danger fade in" style="margin-top:10px;display:none"></div>
+                        <!--<div id="kv-success-1" class="alert alert-success fade in" style="margin-top:10px;display:none"></div>-->
                         <input type="hidden" class="form-control" id="idAttachEventID" name="EventID" value="">
                         <input type="hidden" class="form-control" id="idRedir" name="redir" value="this">
                         <input type="hidden" class="form-control" id="idAjax" name="ajax" value="true">
-                        <input type="file" id="idFile" name="AttachFile" multiple class="file-loading" >
-                        <div id="kv-error-1" class="alert alert-danger fade in" style="margin-top:10px;display:none"></div>
-                        <div id="kv-success-1" class="alert alert-success fade in" style="margin-top:10px;display:none"></div>
                     </div>
                     <div class="form-group col-md-2 text-right">
                         <button type="button" class="btn btn-ms btn-primary" data-dismiss="modal" id="idCloseBtn">Close</button>
@@ -344,7 +344,7 @@
         /* ------ ATTACHMENTS CODE BEGIN HERE ------ */
         $("#idFile").fileinput({
             theme: "explorer",
-            uploadUrl: '@Url.Action("Upload2", "Attachments")', // server upload action
+            uploadUrl: '@Url.Action("AjaxUpload", "Attachments")', // server upload action
             uploadAsync: true,      // enable ajax upload
             dropZoneEnabled: false, // disable drag and drop file function
             maxFileCount: 5,
@@ -368,11 +368,11 @@
             },
             uploadExtraData: function (previewId, index) {
                 var obj = {};
-                if (previewId == undefined) 
+                if (previewId == undefined)
                 {
-                    return obj;                                        
-                } else {                    
-                    obj = { EventID: "@Model.Event.ID", redir: "@ViewBag.ReDir" };                
+                    return obj;
+                } else {
+                    obj = { EventID: "@Model.Event.ID", redir: "@ViewBag.ReDir" };
                 }
                 return obj;
             },
@@ -420,6 +420,7 @@
                     return ext.match(/(mp3|wav)$/i);
                 },
             }
+        //});
         }).on('fileclear', function(event) {
         // trigger when file input remove button or close button is pressed
             console.log("fileclear");
@@ -438,12 +439,33 @@
         // trigger after deletion of corresponding file
             console.log('Key = ' + key);
             HideCustomErrPanel();
+        }).on('filesuccessremove', function(event, id) {
+            console.log('File success remove');
+            if ($('ul#null').length == 1) { // for no files selected error
+                if ($("div .file-caption-name span").text().trim() == "No files selected") {
+                    // for file list panel is empty
+                    // clear the error and hide Remove and Upload button
+                    $('.fileinput-remove-button').click();
+                } else {
+                    // for the file list panel contains file
+                    $('#null #null').remove();
+                    $('#null').remove();
+                    $('div .file-input').removeClass('has-error');
+                    $('div .file-caption-name').attr('title', $('div .file-caption-name').val());
+                    $('div .file-caption-name i').removeClass('glyphicon-exclamation-sign');
+                    $('div .file-caption-name i').addClass('glyphicon-file kv-caption-icon');
+                    $('div .file-caption-name span').removeClass('text-danger');
+                    if ($('div#kv-error-1').children('ul').length == 0) {
+                        HideCustomErrPanel();
+                    };
+                }
+            } 
         }).on('filebrowse', function(event) {
         // trigger when browse button is clicked
             console.log('File browse');
-            
+
             if ($('ul#null').length == 1) { // for no files selected error
-                if ($("div .file-caption-name span").text().trim() == "No files selected") {               
+                if ($("div .file-caption-name span").text().trim() == "No files selected") {
                     // for file list panel is empty
                     // clear the error and hide Remove and Upload button
                     $('.fileinput-remove-button').click();
@@ -461,36 +483,38 @@
                     };
                 }
             } else { // for other error
-                HideCustomErrPanel();           
+                HideCustomErrPanel();
             }
         }).on('filepreajax', function(event, previewId, index) {
-        // clear error panel before each upload submission
+            // clear error panel before each upload submission
             console.log('File pre ajax triggered');
-            HideCustomErrPanel();  
+            HideCustomErrPanel();
+        }).on('fileselectnone', function(event) {
+            console.log('File select test');
         }).on('fileuploaded', function(event, data, msg) {
         // change Close button to Done button after upload successfully
             var form = data.form, files = data.files, extra = data.extra,
                 response = data.response, reader = data.reader;
             console.log("fileuploaded");
             $('#idCloseBtn').text('Done');
-        }).on('fileuploaderror', function(event, data, msg) { 
+        }).on('fileuploaderror', function(event, data, msg) {
         // handle upload error and file input validation error for ajax upload
 
             console.log("load error");
             if (data != null) {
                 var form = data.form, files = data.files, extra = data.extra,
                     response = data.response, reader = data.reader;
-                
+
                 if (data.index == null) { // for file count > max count
                     RedirectToCustomErrPanel(null, null, msg);
-                } else { 
+                } else {
                     //alert(data.filenames[data.index]);
                     //alert('<b>'+data.files[data.index].name+': </b></n>'+msg);
                     //alert(msg.search('<b>'+data.files[data.index].name+': </b>'));
                     RedirectToCustomErrPanel(data.id, data.index, msg);
                 }
             } else { // for no data to upload error
-                RedirectToCustomErrPanel(null, null, msg);            
+                RedirectToCustomErrPanel(null, null, msg);
             }
         }).on('filebatchuploadcomplete', function(event, files, extra) {
         // original error panel always shows an empty box, so custom error panel is used instead
@@ -498,7 +522,7 @@
             console.log('File batch upload complete');
             HideOriginalErrPanel();
         });
-        
+
         /* Hide the fileinput error panel */
         $('#errdiv').bind('DOMAttrModified', function(event) {
             $('.kv-fileinput-error').attr("style","display: none;");
@@ -588,43 +612,45 @@
                     }
                 });
             }
-        });        
+        });
 
     });
 
     /* function to hide the error panel
      * Since the error panel for file upload does not work as expected,
-     * we redirect the error message to custom error panel and hide the 
+     * we redirect the error message to custom error panel and hide the
      * original error panel
      */
-    function HideOriginalErrPanel() {          
+    function HideOriginalErrPanel() {
         $('.kv-fileinput-error').empty();
         $('.kv-fileinput-error').attr("style","display: none;");
         $('.kv-upload-progress').addClass("hide");
     }
 
-    function HideCustomErrPanel() {                  
+    function HideCustomErrPanel() {
         $('#kv-error-1').attr("style","margin-top:10px;display:none;");
-        $('#kv-error-1').empty();  
+        $('#kv-error-1').empty();
         //$('div .file-input .theme-explorer').removeClass('has-error');
         $('div .file-caption-name i').removeClass('glyphicon-exclamation-sign');
         $('div .file-caption-name i').addClass('glyphicon-file kv-caption-icon');
         $('div .file-caption-name span').removeClass('text-danger');
         $('div .file-caption-name').removeClass('text-danger');
     }
-    
+
     function RedirectToCustomErrPanel(id, index, msg) {
-        if (id == null) {            
+        if (id == null) {
             $('#kv-error-1').empty();
+        } else {
+            // to get the correct index number for file
+            index=id.substr(id.lastIndexOf('-')+1, id.length-id.lastIndexOf('-')-1);        
         }
+        
         $('#kv-error-1').append('<ul id="'+index+'" ><li id="' + id + '" >' + msg + "</li></ul>");
         $('#kv-error-1').attr("style","margin-top:10px;display:");
-        
+
         $('div .file-caption-name i').addClass('glyphicon-exclamation-sign');
         $('div .file-caption-name i').removeClass('glyphicon-file kv-caption-icon');
         $('div .file-caption-name').addClass('text-danger');
-        //$('div .file-caption-name').attr('title', "Validation Error");
-        //$('div .file-input').removeClass('has-error').addClass('has-error');
     }
 
     /* ------ ATTACHMENTS CODE END HERE ------ */

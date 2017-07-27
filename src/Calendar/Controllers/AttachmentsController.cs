@@ -215,8 +215,8 @@ namespace Calendar.Controllers
                 return NotFound();
 
             var attachment = await _context.Attachment.SingleOrDefaultAsync(m => m.ID == id);
-            var uploads = Path.Combine(_environment.WebRootPath, "uploads", attachment.EventID.ToString(), attachment.ID.ToString());
-            string fullPath = Path.Combine(uploads, attachment.FileName);
+            var uploaddir = Path.Combine(_environment.WebRootPath, "uploads", attachment.EventID.ToString(), attachment.ID.ToString());
+            string fullPath = Path.Combine(uploaddir, attachment.FileName);
             try
             {
                 if (System.IO.File.Exists(fullPath))
@@ -225,7 +225,7 @@ namespace Calendar.Controllers
                     System.IO.File.Delete(fullPath);
 
                     //delete the directory for file
-                    System.IO.Directory.Delete(uploads);
+                    System.IO.Directory.Delete(uploaddir);
                 }
             }
             catch (Exception e)
@@ -247,11 +247,11 @@ namespace Calendar.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> Upload2(ICollection<IFormFile> AttachFile, int EventID, string redir = null, string ajax = null)
+        public async Task<JsonResult> AjaxUpload(ICollection<IFormFile> AttachFile, int EventID, string redir = null, string ajax = null)
         {
             try
             {
-                var uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString());
+                var uploaddir = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString());
                 var attachment = new Attachment();
                 tempAttachment = attachment;
 
@@ -275,27 +275,27 @@ namespace Calendar.Controllers
                             attachment.UpdatedByDisplayName = displayname;
                             attachment.EventID = EventID;
                             attachment.FileName = Path.GetFileName(file.FileName);
-                            attachment.FilePath = Path.Combine(uploads, Path.GetFileName(file.FileName));
+                            attachment.FilePath = Path.Combine(uploaddir, Path.GetFileName(file.FileName));
 
                             _context.Add(attachment);
                             await _context.SaveChangesAsync();
 
                             /* Upload the file to path ~/uploads/eventid/attachmentid/attachmentname */
                             //Original
-                            uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString(), attachment.ID.ToString());
+                            uploaddir = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString(), attachment.ID.ToString());
                             //for debug file upload error
-                            //uploads = Path.Combine("_environment.WebRootPath", "uploads", EventID.ToString(), attachment.ID.ToString());
-                            if (!Directory.Exists(uploads))
+                            //uploaddir = Path.Combine("_environment.WebRootPath", "uploads", EventID.ToString(), attachment.ID.ToString());
+                            if (!Directory.Exists(uploaddir))
                             {
-                                Directory.CreateDirectory(uploads);
+                                Directory.CreateDirectory(uploaddir);
                             }
 
-                            using (var fileStream = new FileStream(Path.Combine(_environment.WebRootPath, uploads, Path.GetFileName(file.FileName)), FileMode.Create))
+                            using (var fileStream = new FileStream(Path.Combine(_environment.WebRootPath, uploaddir, Path.GetFileName(file.FileName)), FileMode.Create))
                             {
                                 await file.CopyToAsync(fileStream);
                                 ViewBag.UploadStatus = "Upload successfully.";
 
-                                attachment.FilePath = Path.Combine(uploads, Path.GetFileName(file.FileName));
+                                attachment.FilePath = Path.Combine(uploaddir, Path.GetFileName(file.FileName));
                                 _context.Update(attachment);
                                 await _context.SaveChangesAsync();
                             }
@@ -318,12 +318,12 @@ namespace Calendar.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upload(ICollection<IFormFile> AttachFile, int EventID, string redir = null, string ajax = null)
+        public async Task<IActionResult> NonAjaxUpload(ICollection<IFormFile> AttachFile, int EventID, string redir = null, string ajax = null)
         {
             //function not work : will delete later
             try
             {
-                var uploads = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString());
+                var uploaddir = Path.Combine(_environment.WebRootPath, "uploads", EventID.ToString());
 
                 foreach (var file in AttachFile)
                 {
@@ -345,24 +345,24 @@ namespace Calendar.Controllers
                         attachment.UpdatedByDisplayName = displayname;
                         attachment.EventID = EventID;
                         attachment.FileName = Path.GetFileName(file.FileName);
-                        attachment.FilePath = Path.Combine(uploads, Path.GetFileName(file.FileName));
+                        attachment.FilePath = Path.Combine(uploaddir, Path.GetFileName(file.FileName));
 
                         _context.Add(attachment);
                         await _context.SaveChangesAsync();
 
                         /* Upload the file to path ~/uploads/eventid/attachmentid/attachmentname */
-                        uploads = Path.Combine("_environment.WebRootPath", "uploads", EventID.ToString(), attachment.ID.ToString());
-                        if (!Directory.Exists(uploads))
+                        uploaddir = Path.Combine("_environment.WebRootPath", "uploads", EventID.ToString(), attachment.ID.ToString());
+                        if (!Directory.Exists(uploaddir))
                         {
-                            Directory.CreateDirectory(uploads);
+                            Directory.CreateDirectory(uploaddir);
                         }
 
-                        using (var fileStream = new FileStream(Path.Combine(_environment.WebRootPath, uploads, Path.GetFileName(file.FileName)), FileMode.Create))
+                        using (var fileStream = new FileStream(Path.Combine(_environment.WebRootPath, uploaddir, Path.GetFileName(file.FileName)), FileMode.Create))
                         {
                             await file.CopyToAsync(fileStream);
                             ViewBag.UploadStatus = "Upload successfully.";
 
-                            attachment.FilePath = Path.Combine(uploads, Path.GetFileName(file.FileName));
+                            attachment.FilePath = Path.Combine(uploaddir, Path.GetFileName(file.FileName));
                             _context.Update(attachment);
                             await _context.SaveChangesAsync();
                         }

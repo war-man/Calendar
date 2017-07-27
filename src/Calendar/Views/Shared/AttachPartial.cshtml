@@ -1,5 +1,11 @@
 @model IEnumerable<Calendar.Models.Attachment>
 
+@{
+    ViewData["Title"] = "Team Attachments";
+
+    string username = (User.Identity.IsAuthenticated) ? User.Claims.Where(m => m.Type == "username").SingleOrDefault().Value : "";
+}
+
 <div classx="xbg-info">
     <table class="table table-condensed xtable-bordered" id="idAttachTable">
         <tbody>
@@ -23,7 +29,6 @@
                                 <button id="idAttachBtn-@item.ID" type="submit" value="Delete" class="btn btn-default hidden btn-xs border-none" data-toggle="tooltip" data-placement="top" data-htmlx="true" title="Remove this">
                                     <span class="text-muted glyphicon glyphicon-remove"></span>
                                 </button>
-
                                 <button id="idAttachSpace-@item.ID" type="submit" value="Delete" class="btn btn-default btn-xs border-none" data-toggle="tooltip" data-placement="top" data-htmlx="true" title="Remove this">
                                     <span class="text-muted glyphicon glyphicon-remove invisbleCrossbtn"></span>
                                 </button>
