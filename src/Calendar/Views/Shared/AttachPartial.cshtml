@@ -55,17 +55,7 @@
                 break;
         }
         return fileClass;
-    }
-
-    public string getFileLoc(string pathBase)
-    {
-        string fileLoc;
-        if (pathBase == "")
-            fileLoc = "";
-        else
-            fileLoc = "/" + pathBase;
-        return fileLoc;
-    }
+    }    
 }
 
 <div classx="xbg-info">
@@ -79,7 +69,7 @@
                         <span id="idAttachRow-@item.ID"  style="display: inline-block;" onmouseover="showbutton(this); " onmouseout="hidebutton(this); ">
                             <i id="idAttachRow-@item.ID" class="@getFileClass(@item.FileName)"></i>
                             <a id="idAttachRow-@item.ID"
-                               href="@getFileLoc(@Context.Request.PathBase)/uploads/@item.EventID/@item.ID/@item.FileName"
+                               href="@Context.Request.PathBase/uploads/@item.EventID/@item.ID/@item.FileName"
                                target="_blank"
                                data-toggle="tooltip"
                                data-html="true"                              
