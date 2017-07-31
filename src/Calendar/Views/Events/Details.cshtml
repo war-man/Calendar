@@ -376,14 +376,14 @@
                 }
                 return obj;
             },
-            allowedFileExtensions: ["jpg", "png", "gif", "pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "log", "zip", "7z"],
+            allowedFileExtensions: ["jpg", "png", "gif", "pdf", "doc", "docx", "xls", "xlsx", "xlsm", "ppt", "pptx", "txt", "log", "zip", "7z", "msg"],
             preferIconicPreview: true, // this will force thumbnails to display icons for following file extensions
             previewFileIconSettings: { // configure your icon file extensions
                 'doc': '<i class="fa fa-file-word-o text-primary"></i>',
                 'xls': '<i class="fa fa-file-excel-o text-success"></i>',
                 'ppt': '<i class="fa fa-file-powerpoint-o text-danger"></i>',
                 'pdf': '<i class="fa fa-file-pdf-o text-danger"></i>',
-                'zip': '<i class="fa fa-file-archive-o text-muted"></i>',
+                'zip': '<i class="fa fa-file-zip-o text-muted"></i>',
                 'htm': '<i class="fa fa-file-code-o text-info"></i>',
                 'txt': '<i class="fa fa-file-text-o text-info"></i>',
                 'mov': '<i class="fa fa-file-movie-o text-warning"></i>',
@@ -392,7 +392,8 @@
                 // has been configured (the keys itself will be used as extensions)
                 'jpg': '<i class="fa fa-file-photo-o text-danger"></i>',
                 'gif': '<i class="fa fa-file-photo-o text-muted"></i>',
-                'png': '<i class="fa fa-file-photo-o text-primary"></i>'
+                'png': '<i class="fa fa-file-photo-o text-primary"></i>',
+                'msg': '<i class="fa fa-envelope-o text-warning"></i>'
             },
             previewFileExtSettings: { // configure the logic for determining icon file extensions
                 'doc': function(ext) {
