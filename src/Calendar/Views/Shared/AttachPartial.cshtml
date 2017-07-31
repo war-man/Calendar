@@ -6,6 +6,68 @@
     string username = (User.Identity.IsAuthenticated) ? User.Claims.Where(m => m.Type == "username").SingleOrDefault().Value : "";
 }
 
+@functions{
+    public string getFileClass(string targetFile)
+    {
+        string fileClass;
+        string fileExt = targetFile.Substring(targetFile.LastIndexOf(".") + 1);
+        switch (fileExt)
+        {
+            case "doc":
+            case "docx":
+                fileClass = "fa-lg fa fa-file-word-o text-primary";
+                break;
+            case "xls":
+            case "xlsx":
+            case "xlsm":
+                fileClass = "fa-lg fa fa-file-excel-o text-success";
+                break;
+            case "ppt":
+            case "pptx":
+                fileClass = "fa-lg fa fa-file-powerpoint-o text-danger";
+                break;
+            case "txt":
+            case "log":
+                fileClass = "fa-lg fa fa-file-text-o text-info";
+                break;
+            case "zip":
+            case "7z":
+            case "rar":
+                fileClass = "fa-lg fa fa-file-zip-o text-muted";
+                break;
+            case "jpg":
+                fileClass = "fa-lg fa fa-file-photo-o text-danger";
+                break;
+            case "png":
+                fileClass = "fa-lg fa fa-file-photo-o text-primary";
+                break;
+            case "gif":
+                fileClass = "fa-lg fa fa-file-photo-o text-muted";
+                break;
+            case "pdf":
+                fileClass = "fa-lg fa fa-file-pdf-o text-danger";
+                break;
+            case "msg":
+                fileClass = "fa-lg fa fa-envelope-o text-warning";
+                break;
+            default:
+                fileClass = "glyphicon glyphicon-paperclip";
+                break;
+        }
+        return fileClass;
+    }
+
+    public string getFileLoc(string pathBase)
+    {
+        string fileLoc;
+        if (pathBase == "")
+            fileLoc = "";
+        else
+            fileLoc = "/" + pathBase;
+        return fileLoc;
+    }
+}
+
 <div classx="xbg-info">
     <table class="table table-condensed xtable-bordered" id="idAttachTable">
         <tbody>
@@ -15,9 +77,9 @@
                     {
                         string title = "Created by: <br>" + @item.CreatedByDisplayName + "<br> Creation Date: <br>" + @item.CreatedDate;
                         <span id="idAttachRow-@item.ID"  style="display: inline-block;" onmouseover="showbutton(this); " onmouseout="hidebutton(this); ">
-                            <i id="idAttachRow-@item.ID" class="glyphicon glyphicon-paperclip"></i>
+                            <i id="idAttachRow-@item.ID" class="@getFileClass(@item.FileName)"></i>
                             <a id="idAttachRow-@item.ID"
-                               href="/uploads/@item.EventID/@item.ID/@item.FileName"
+                               href="@getFileLoc(@Context.Request.PathBase)/uploads/@item.EventID/@item.ID/@item.FileName"
                                target="_blank"
                                data-toggle="tooltip"
                                data-html="true"                              
