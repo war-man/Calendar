@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Calendar
 {
@@ -91,7 +92,11 @@ namespace Calendar
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            app.UseStaticFiles();
+//            app.UseStaticFiles();
+            var provider = new FileExtensionContentTypeProvider();
+            provider.Mappings[".msg"] = "application/octect-stream";         
+
+            app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
 
             app.UseIdentity();
 
