@@ -33,5 +33,7 @@ namespace Calendar.Data
         public DbSet<TeamProject> TeamProject { get; set; }
 
         public DbSet<Acknowledgement> Acknowledgement { get; set; }
+
+        public DbSet<Attachment> Attachment { get; set; }
     }
 }

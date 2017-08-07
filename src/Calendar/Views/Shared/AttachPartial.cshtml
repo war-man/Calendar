@@ -1,0 +1,136 @@
+@model IEnumerable<Calendar.Models.Attachment>
+
+@{
+    ViewData["Title"] = "Team Attachments";
+
+    string username = (User.Identity.IsAuthenticated) ? User.Claims.Where(m => m.Type == "username").SingleOrDefault().Value : "";
+}
+
+@functions{
+    public string getFileClass(string targetFile)
+    {
+        string fileClass;
+        string fileExt = targetFile.Substring(targetFile.LastIndexOf(".") + 1);
+        switch (fileExt)
+        {
+            case "doc":
+            case "docx":
+                fileClass = "fa-lg fa fa-file-word-o text-primary";
+                break;
+            case "xls":
+            case "xlsx":
+            case "xlsm":
+                fileClass = "fa-lg fa fa-file-excel-o text-success";
+                break;
+            case "ppt":
+            case "pptx":
+                fileClass = "fa-lg fa fa-file-powerpoint-o text-danger";
+                break;
+            case "txt":
+            case "log":
+                fileClass = "fa-lg fa fa-file-text-o text-info";
+                break;
+            case "zip":
+            case "7z":
+            case "rar":
+                fileClass = "fa-lg fa fa-file-zip-o text-muted";
+                break;
+            case "jpg":
+                fileClass = "fa-lg fa fa-file-photo-o text-danger";
+                break;
+            case "png":
+                fileClass = "fa-lg fa fa-file-photo-o text-primary";
+                break;
+            case "gif":
+                fileClass = "fa-lg fa fa-file-photo-o text-muted";
+                break;
+            case "pdf":
+                fileClass = "fa-lg fa fa-file-pdf-o text-danger";
+                break;
+            case "msg":
+                fileClass = "fa-lg fa fa-envelope-o text-warning";
+                break;
+            default:
+                fileClass = "glyphicon glyphicon-paperclip";
+                break;
+        }
+        return fileClass;
+    }    
+}
+
+<div classx="xbg-info">
+    <table class="table table-condensed xtable-bordered" id="idAttachTable">
+        <tbody>
+                <tr class="small">
+                    <td >
+                    @foreach (var item in Model)
+                    {
+                        string title = "Created by: <br>" + @item.CreatedByDisplayName + "<br> Creation Date: <br>" + @item.CreatedDate;
+                        <span id="idAttachRow-@item.ID"  style="display: inline-block;" onmouseover="showbutton(this); " onmouseout="hidebutton(this); ">
+                            <i id="idAttachRow-@item.ID" class="@getFileClass(@item.FileName)"></i>
+                            <a id="idAttachRow-@item.ID"
+                               href="@Context.Request.PathBase/uploads/@item.EventID/@item.ID/@item.FileName"
+                               target="_blank"
+                               data-toggle="tooltip"
+                               data-html="true"                              
+                               title="Uploaded by @Html.DisplayFor(modelItem => item.CreatedByDisplayName) at @Html.DisplayFor(modelItem => item.CreatedDate)">
+                                @Html.DisplayFor(modelItem => item.FileName)
+                            </a>
+                            <form id="idAttachRow-@item.ID" style="display:inline;" class="formAttachRow @(User.Identity.IsAuthenticated? "":"hidden")" asp-controller="Attachments" asp-action="Delete" asp-route-id="@item.ID" method="post">
+                                <input type="hidden" name="attachid" value="@item.ID" />
+                                <button id="idAttachBtn-@item.ID" type="submit" value="Delete" class="btn btn-default hidden btn-xs border-none" data-toggle="tooltip" data-placement="top" data-htmlx="true" title="Remove this">
+                                    <span class="text-muted glyphicon glyphicon-remove"></span>
+                                </button>
+                                <button id="idAttachSpace-@item.ID" type="submit" value="Delete" class="btn btn-default btn-xs border-none" data-toggle="tooltip" data-placement="top" data-htmlx="true" title="Remove this">
+                                    <span class="text-muted glyphicon glyphicon-remove invisbleCrossbtn"></span>
+                                </button>
+                            </form>
+                        </span>
+                    }
+                    </td>
+                </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+      $('.formAttachRow').on('submit', function (e) {
+          var attachid = $(this).find('input[name="attachid"]').val();
+
+        e.preventDefault();
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function (data) {
+                $('a').remove('#idAttachRow-' + attachid);
+                $('i').remove('#idAttachRow-' + attachid);
+                $('form').remove('#idAttachRow-' + attachid);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert('Status: ' + textStatus + ', Error: ' + errorThrown);
+            }
+        });
+      });
+
+  });
+
+    function showbutton(obj) {
+        var linkid = obj.id;
+        var btnid = linkid.replace("idAttachRow-", "");
+        $("#idAttachBtn-" + btnid).removeClass('hidden');
+        $("#idAttachSpace-" + btnid).addClass('hidden');
+    }
+
+    function hidebutton(obj) {
+        var linkid = obj.id;
+        var btnid = linkid.replace("idAttachRow-", "");
+        $("#idAttachBtn-" + btnid).addClass('hidden');
+        $("#idAttachSpace-" + btnid).removeClass('hidden');
+    }
+    
+</script>

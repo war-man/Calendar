@@ -51,7 +51,7 @@ function UpdateSearchDateFilter() {
 }
 
 
-function clearform() {
+function ClearEventSearchForm() {
     $("[id|=fp]").val("");
     $("#searchday").val("ND");
     $('#searchdatefrom').val("");
