@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <PackageId>Calendar</PackageId>
     <UserSecretsId>aspnet-Calendar-745a06c9-9e2e-489e-bbab-8e2492038138</UserSecretsId>
-    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>1.1.2</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
 
