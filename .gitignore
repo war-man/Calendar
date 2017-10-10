@@ -242,5 +242,5 @@ ModelManifest.xml
 .fake/
 
 #Calendar
-/src/Calendar/wwwroot/uploads
-/src/Calendar/appsettings.*
+wwwroot/uploads
+appsettings.*
