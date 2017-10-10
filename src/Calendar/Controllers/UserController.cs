@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Calendar.Services;
 using Calendar.Models.SignOnViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;  /* .netcore 2.0 */
 using System.Security.Claims;
 
 namespace Calendar.Controllers
@@ -16,8 +17,10 @@ namespace Calendar.Controllers
 
     public class UserController : Controller
     {
-        private readonly IAuthenticationService _authService;
-        public UserController(IAuthenticationService authService)
+        //private readonly Microsoft.AspNetCore.Authentication.IAuthenticationService _authService;
+        //public UserController(Microsoft.AspNetCore.Authentication.IAuthenticationService authService)
+        private readonly Calendar.Services.IAuthenticationService _authService;
+        public UserController(Calendar.Services.IAuthenticationService authService)
         {
             _authService = authService;
         }
@@ -56,9 +59,12 @@ namespace Calendar.Controllers
                             userClaims.Add(new Claim(ClaimTypes.Role, "Admins"));
                         }
                         var principal = new ClaimsPrincipal(new ClaimsIdentity(userClaims, _authService.GetType().Name));
-                        await HttpContext.Authentication.SignInAsync(
+                        /* .netore 2.0 begin */
+                        //await HttpContext.Authentication.SignInAsync(
+                        await HttpContext.SignInAsync(
                             "CalendarApp",
                             principal);
+                        /* .netcore 2.0 end */
                         if (returnUrl == null)
                             return RedirectToAction("Calendar", "Events");
                         else
@@ -77,7 +83,10 @@ namespace Calendar.Controllers
         /*[Authorize(Roles = UserRoles.Everyone)]*/
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.Authentication.SignOutAsync("CalendarApp");
+            /* .netcore 2.0 begin */
+            //await HttpContext.Authentication.SignOutAsync("CalendarApp");
+            await HttpContext.SignOutAsync("CalendarApp");
+            /* .netcore 2.0 end */
             return RedirectToAction("Calendar", "Events");
         }
     }
