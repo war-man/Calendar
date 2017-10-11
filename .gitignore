@@ -243,5 +243,6 @@ ModelManifest.xml
 
 #Calendar
 wwwroot/uploads
-appsettings.*
-Dockerfile*
+appsettings*.json
+Dockerfile
+Dockerfile.dotnet
