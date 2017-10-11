@@ -1,0 +1,35 @@
+﻿{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=aspnet-Calendar-745a06c9-9e2e-489e-bbab-8e2492038138;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+  "ldapdev": {
+    "url": "ldapscorpdev.server.ha.org.hk",
+    "port": 636,
+    "bindDn": "CN=Normal Test User 1 HA4,OU=Users,OU=HA4,OU=ITIS,DC=corpdev,DC=hadev,DC=org,DC=hk",
+    "bindCredentials": "******",
+    "searchBase": "OU=Hospitals,DC=corpdev,DC=hadev,DC=org,DC=hk",
+    "searchFilter": "(&(objectClass=user)(objectClass=person)(sAMAccountName={0}))",
+    "adminCn": "CN=CmbAdminGrp,OU=Users,OU=HA4,OU=ITIS,DC=corpdev,DC=hadev,DC=org,DC=hk"
+  },
+  "ldap": {
+    "url": "ldapscorp.server.ha.org.hk",
+	"port": 636,
+    "bindDn": "CN=ERP LDAP Readonly User,OU=Users,OU=ERP,OU=ITIS,DC=corp,DC=ha,DC=org,DC=hk",
+    "bindCredentials": "******",
+    "searchBase": "OU=Hospitals,DC=corp,DC=ha,DC=org,DC=hk",
+    "searchFilter": "(&(objectClass=user)(objectClass=person)(sAMAccountName={0}))",
+    "adminCn": "CN=CmbAdminGrp,OU=Groups,OU=ERP,OU=ITIS,DC=corp,DC=ha,DC=org,DC=hk"
+  },  
+  "AppSettings": {
+    "ia_url": "http://ha4-sm-w03:8080/impact_analysis",                                      /* Impact Analysis */
+    "cm_url": "http://o1-itsm-app1/ITIP_Projects/ChgMgt/new_scripts/viewCR/Detail.asp" /* Operation Team Change Management URL */
+  },
+  "Logging": {
+    "IncludeScopes": false,
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  }
+}
