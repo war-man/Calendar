@@ -244,3 +244,4 @@ ModelManifest.xml
 #Calendar
 wwwroot/uploads
 appsettings.*
+Dockerfile*
