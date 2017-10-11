@@ -1,8 +1,8 @@
 FROM microsoft/aspnetcore-build:2.0.0 AS build-env
 WORKDIR /app
 
-ENV http_proxy http://user:passwd@192.168.x.x:8080
-ENV https_proxy http://user:passwd@192.168.x.x:8080
+ENV http_proxy http://user:passwd@192.168.10.x:8080
+ENV https_proxy http://user:passwd@192.168.10.x:8080
 
  
 # Copy csproj and restore as distinct layers
