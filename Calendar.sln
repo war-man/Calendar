@@ -1,16 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F06D1378-B7F7-45D4-A982-42C345692A94}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{397D0360-9313-4945-B4DF-5B4F74308C3B}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Calendar", "src\Calendar\Calendar.xproj", "{5335D106-A2D0-4495-A91D-9625E1B7D788}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calendar", "src\Calendar\Calendar.csproj", "{5335D106-A2D0-4495-A91D-9625E1B7D788}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
