@@ -242,7 +242,7 @@ ModelManifest.xml
 .fake/
 
 #Calendar
-wwwroot/uploads
+wwwroot/uploads/*
 appsettings*.json
 Dockerfile
 Dockerfile.dotnet
