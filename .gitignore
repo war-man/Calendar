@@ -17,7 +17,7 @@
 [Rr]eleases/
 [Xx]64/
 [Xx]86/
-[Bb]uild/
+#[Bb]uild/    #if uncommented the eonasdan-bootstrap-datetimepicker/build folder will be ignored
 bld/
 [Bb]in/
 [Oo]bj/
@@ -242,7 +242,7 @@ ModelManifest.xml
 .fake/
 
 #Calendar
-wwwroot/uploads
+wwwroot/uploads/*
 appsettings*.json
 Dockerfile
 Dockerfile.dotnet
