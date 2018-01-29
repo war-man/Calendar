@@ -78,6 +78,8 @@ namespace Calendar.Models
         {
             if (StartDateTime > EndDateTime)
                 yield return new ValidationResult("Start Time cannot be later than End Time.", new[] { "StartDateTime", "EndDateTime" });
+            if (StartDateTime == EndDateTime)
+                yield return new ValidationResult("Start Time and End Time cannot be the same.", new[] { "StartDateTime", "EndDateTime" });
         }
         /* navigation properties */
         public ICollection<Acknowledgement> Acknowledgements { get; set; }
