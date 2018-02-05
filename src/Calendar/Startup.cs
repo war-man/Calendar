@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,25 +25,27 @@ namespace Calendar
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            //            var builder = new ConfigurationBuilder()
+            //                .SetBasePath(env.ContentRootPath)
+            //                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            //                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
-            if (env.IsDevelopment())
-            {
-                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
-                // builder.AddUserSecrets();
-                builder.AddUserSecrets<Startup>();
-            }
+            //            if (env.IsDevelopment())
+            //            {
+            //                // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
+            //                // builder.AddUserSecrets();
+            //                builder.AddUserSecrets<Startup>();
+            //            }
 
-            builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
+            //            builder.AddEnvironmentVariables();
+            //            Configuration = builder.Build();
+
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -54,6 +58,44 @@ namespace Calendar
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+
+            /* .netcore 2.0 begin */
+            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
+
+            /* Use cookies without identity */
+
+            // If you don't want the cookie to be automatically authenticated and assigned to HttpContext.User, 
+            // remove the CookieAuthenticationDefaults.AuthenticationScheme parameter passed to AddAuthentication.
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+
+            services.AddAuthentication(o => { o.DefaultAuthenticateScheme = "CalendarApp"; o.DefaultSignInScheme = "CalendarApp"; })
+                .AddCookie("CalendarApp", options => {
+                    //options.LoginPath = "/Account/LogIn";
+                    //options.LogoutPath = "/Account/LogOff";
+                    options.LoginPath = new PathString("/login");
+                 });
+
+            /* Begin external auth */
+            //services.UseCookieAuthentication(new CookieAuthenticationOptions
+            //{
+            //    Events = new CookieAuthenticationEvents
+            //    {
+            //        // You will need this only if you use Ajax calls with a library not compatible with IsAjaxRequest
+            //        // More info here: https://github.com/aspnet/Security/issues/1056
+            //        OnRedirectToAccessDenied = context =>
+            //        {
+            //            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            //            return TaskCache.CompletedTask;
+            //        }
+            //    },
+            //    AuthenticationScheme = "CalendarApp",
+            //    LoginPath = new PathString("/login"),
+            //    AutomaticAuthenticate = true,
+            //    AutomaticChallenge = true
+            //});
+            /* End external auth */
+
+            /* .netcore 2.0 end */
 
             services.AddMvc();
 
@@ -94,34 +136,17 @@ namespace Calendar
             }
 
 //            app.UseStaticFiles();
+
             var provider = new FileExtensionContentTypeProvider();
             provider.Mappings[".msg"] = "application/octect-stream";         
 
             app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
+            /* .netcore 2.0 begin */
+            app.UseAuthentication();
 
-            app.UseIdentity();
+            //app.UseIdentity();
+            /* .netcore 2.0 end */
 
-            // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
-
-            /* Begin external auth */
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                Events = new CookieAuthenticationEvents
-                {
-                    // You will need this only if you use Ajax calls with a library not compatible with IsAjaxRequest
-                    // More info here: https://github.com/aspnet/Security/issues/1056
-                    OnRedirectToAccessDenied = context =>
-                    {
-                        context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                        return TaskCache.CompletedTask;
-                    }
-                },
-                AuthenticationScheme = "CalendarApp",
-                LoginPath = new PathString("/login"),
-                AutomaticAuthenticate = true,
-                AutomaticChallenge = true
-            });
-            /* End external auth */
 
 
             app.UseMvc(routes =>
@@ -142,7 +167,7 @@ namespace Calendar
                 );
             });
 
-            SeedData.Initialize(app.ApplicationServices);
+            //SeedData.Initialize(app.ApplicationServices);
 
         }
     }
