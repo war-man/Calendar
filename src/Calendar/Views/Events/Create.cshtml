@@ -37,11 +37,11 @@
             <div class="col-md-4">
                 <div class='input-group date' id='dtpickerStart'>
                     @if (ViewData["Title"].ToString().Equals("Copy Event")) { 
-                    <input asp-for="StartDateTime" class="form-control" value=""/>
+                    <input asp-for="StartDateTime" class="form-control" type="text" value=""/>
                     }
                     else
                     {
-                        <input asp-for="StartDateTime" class="form-control" />
+                        <input asp-for="StartDateTime" class="form-control" type="text" />
                     }
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
@@ -62,11 +62,11 @@
                 <div class='input-group date' id='dtpickerEnd'>
                     @if (ViewData["Title"].ToString().Equals("Copy Event"))
                     {
-                        <input asp-for="EndDateTime" class="form-control" value="" />
+                        <input asp-for="EndDateTime" class="form-control" type="text" value="" />
                     }
                     else
                     {
-                        <input asp-for="EndDateTime" class="form-control" />
+                        <input asp-for="EndDateTime" class="form-control" type="text" />
                     }
                     <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
