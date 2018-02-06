@@ -1,5 +1,3 @@
-Calendar View of Maintenance Events with Team and Project Relationship
-
 # Simple Maintenance Event Calendar
 
 ## A simple Calendar to Mark All Your System Maintenance Events
