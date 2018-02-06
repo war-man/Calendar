@@ -2,16 +2,16 @@ Calendar View of Maintenance Events with Team and Project Relationship
 
 # Simple Maintenance Event Calendar
 
-## A simple calendar to mark all your system maintenance eventsusing
+## A simple Calendar to Mark All Your System Maintenance Events
 
-![](https://github.com/ngwwm/Calendar/screenshots/calendar.png)
+![](https://github.com/ngwwm/Calendar/blob/master/screenshots/Calendar.png)
 
 ## Features
 
 * View and filter events by Project Teams and Systems based on the Project Teams-Systems Relationship you defined.
-* Support Project Teams Acknowledgement
-* Support Attachement Function
-* Support LDAP Authenication
+* Project Teams Acknowledgement
+* Attachement Function
+* LDAP Authenication
 
 ## Platform
 
