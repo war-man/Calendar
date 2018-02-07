@@ -6,7 +6,7 @@
     "url": "ldapscorpdev.server.ha.org.hk",
     "port": 636,
     "bindDn": "CN=Normal Test User 1 HA4,OU=Users,OU=HA4,OU=ITIS,DC=corpdev,DC=hadev,DC=org,DC=hk",
-    "bindCredentials": "******",
+    "bindCredentials": "*******",
     "searchBase": "OU=Hospitals,DC=corpdev,DC=hadev,DC=org,DC=hk",
     "searchFilter": "(&(objectClass=user)(objectClass=person)(sAMAccountName={0}))",
     "adminCn": "CN=CmbAdminGrp,OU=Users,OU=HA4,OU=ITIS,DC=corpdev,DC=hadev,DC=org,DC=hk"
@@ -15,7 +15,7 @@
     "url": "ldapscorp.server.ha.org.hk",
 	"port": 636,
     "bindDn": "CN=ERP LDAP Readonly User,OU=Users,OU=ERP,OU=ITIS,DC=corp,DC=ha,DC=org,DC=hk",
-    "bindCredentials": "******",
+    "bindCredentials": "*******",
     "searchBase": "OU=Hospitals,DC=corp,DC=ha,DC=org,DC=hk",
     "searchFilter": "(&(objectClass=user)(objectClass=person)(sAMAccountName={0}))",
     "adminCn": "CN=CmbAdminGrp,OU=Groups,OU=ERP,OU=ITIS,DC=corp,DC=ha,DC=org,DC=hk"
