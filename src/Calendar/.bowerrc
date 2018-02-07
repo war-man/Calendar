@@ -1,5 +1,5 @@
 {
   "directory": "wwwroot/lib",
-  "proxy": "http://ngwmm:@proxy.ha.org.hk:8080",
-  "https-proxy":"http://ngwmm:@proxy.ha.org.hk:8080"
+  "proxy": "http://:@proxy.ha.org.hk:8080",
+  "https-proxy":"http://:@proxy.ha.org.hk:8080"
 }
