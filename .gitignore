@@ -246,3 +246,4 @@ wwwroot/uploads/*
 appsettings*.json
 Dockerfile
 Dockerfile.dotnet
+.bowerrc
