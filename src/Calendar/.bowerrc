@@ -1,5 +1,0 @@
-{
-  "directory": "wwwroot/lib",
-  "proxy": "http://:@proxy.ha.org.hk:8080",
-  "https-proxy":"http://:@proxy.ha.org.hk:8080"
-}
