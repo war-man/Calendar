@@ -21,8 +21,17 @@
       "launchBrowser": true,
       "launchUrl": "http://localhost:5000/Events",
       "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Calendar_STG": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "http://localhost:5000/Events",
+      "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Staging"
       }
     }
+
   }
 }

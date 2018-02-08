@@ -22,9 +22,9 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="jQuery" Version="3.1.1" />
+    <PackageReference Include="jQuery" Version="3.3.1" />
     <PackageReference Include="Bootstrap.Less" Version="3.3.7" />
-    <PackageReference Include="Bootstrap.v3.Datetimepicker" Version="4.17.44" />
+    <PackageReference Include="Bootstrap.v3.Datetimepicker" Version="4.17.45" />
     <PackageReference Include="HubSpot.Tether" Version="1.1.1" />
     <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="2.3.7" />
   </ItemGroup>
