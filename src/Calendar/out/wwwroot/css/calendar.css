@@ -1,0 +1,214 @@
+﻿/* Calendar */
+.grid-container {
+    position: relative;    
+    margin-right: 0;
+}
+.mv-container {
+    height: 100%;
+    position: relative;
+    white-space: nowrap;
+}
+
+.mv-daynames-table {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #555555;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.mv-dayname {
+    font-size: 12px;
+    font-weight: normal;
+    padding: 0 0 0 10px;
+    text-align: left;
+}
+
+.mv-event-container {
+    background: none repeat scroll 0 0 white;
+    border-bottom: 1px solid #DDDDDD;
+    border-top: 1px solid #DDDDDD;
+    border-right: 1px solid #DDDDDD;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    position: absolute;
+    top: 20px;
+    width: 100%;
+}
+
+.month-row {
+    left: 0;
+    overflow: hidden;    
+    position: absolute;
+    width: 100%;
+}
+
+.st-bg-table {
+    height: 100%;
+    left: 0;
+    position: absolute;
+    table-layout: fixed;
+    top: 0;
+    width: 100%;
+    /*border-collapse: unset;*/
+}
+
+.st-bg {
+    border-left: 1px solid #DDDDDD;
+}
+
+.st-dtitle-fr {
+    border-top: 0 none;
+}
+
+.st-grid {
+    position: relative;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.st-dtitle {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-left: 1px solid #DDDDDD;
+    border-top: 1px solid #DDDDDD;
+    color: #222222;
+    line-height: 16px;
+    overflow: hidden;
+    padding: 4px 9px 0;
+}
+
+.st-dtitle-nonmonth {
+    background: none repeat scroll 0 0 #FFFFFF;
+    color: #AAAAAA;
+}
+
+.st-dtitle-today {
+    background-color: #EAEAEA;
+    border-left: 1px solid #666666;
+    border-top: 1px solid #666666;
+    border-right: 1px solid #666666;
+    color: #222222;
+    font-weight: bold;
+}
+
+.st-bg-today {
+    background: none repeat scroll 0 0 #EAEAEA;
+    border: 1px solid #666666;
+}
+.st-c {
+    vertical-align: top;
+}
+
+.st-c-pos {
+    position: relative;
+}
+
+.st-c-pos {
+    cursor: pointer;
+    font-family: Arial,sans-serif;
+    padding: 1px 1px 0 2px;
+}
+
+.rb-n {
+    /*
+    cursor: pointer;
+    height: 14px;
+    line-height: 1.2;
+    */
+    padding: 0 7px;
+}
+
+.rb-ni {
+    overflow: hidden;    
+}
+
+.m-title { 
+    display: block;
+    font-size: 2.57em;
+    margin: 0 0 0 0;
+    font-weight: bold;
+    padding: 0 5px 0 0;
+}
+
+/* style for severity is obsoleted and should be replaced by risklevel. */
+.cal-proj-color-severity-1 {
+    font-size: 12px;
+    border:1px solid #f59b95;
+    color:#EAEAEA;
+    background-color:#ff0000;
+}
+
+.cal-proj-color-severity-2 {
+    font-size: 12px;
+    border:1px solid #e67515;
+    color:#777777;
+    background-color:#f39c12;
+}
+
+.cal-proj-color-severity-3 {
+    font-size: 12px;    
+    border:1px solid #0b8724;
+    color:#EAEAEA;
+    background-color:#2bc406;
+}
+
+/*Begin of Project Style.*/
+.cal-proj-color-5 {
+    font-size: 11px;
+    border:1px solid #605ca8;
+    color:#777777;
+    background-color:#f012be;
+}
+
+.cal-proj-color-6 {
+    font-size: 11px;
+    border:1px solid #f012be;
+    color:#777777;
+    background-color:#00a65a;
+}
+
+.cal-proj-color-7 {
+    font-size: 11px;
+    border:1px solid #00a65a;
+    color:#777777;
+    background-color:#001f3f;
+}
+
+.cal-proj-color-8 {
+    font-size: 11px;
+    border:1px solid #001f3f;
+    color:#777777;
+    background-color:#01ff70;
+}
+
+.cal-proj-color-9 {
+    font-size: 11px;
+    border:1px solid #01ff70;
+    color:#777777;
+    background-color:#f0d0ce;
+}
+/*End of Project Style.*/
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+.section-node {
+    font-weight: bold;
+}
+
+.team-node {
+    /*font-size: 1.1vw;*/
+}
+
+.project-node {
+    font-size: 0.85em;
+    /*font-size: 0.9vw;*/
+    padding: 5px 15px;
+    color: #428bca;
+}
+
+.popover{
+    max-width: 25%; /* Max Width of the popover (depending on the container!) */
+}

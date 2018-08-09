@@ -1,0 +1,35 @@
+﻿.cal-risklevel-1 {
+    font-size: 12px;
+    border:1px solid #269f89;
+    color:#ffffff;
+    background-color:#269f89;
+}
+
+.cal-risklevel-2 {
+    font-size: 12px;
+    border:1px solid #86b62e;
+    color:#ffffff;    
+    background-color:#86b62e;
+}
+
+.cal-risklevel-3 {
+    font-size: 12px;
+    border:1px solid #f8b71b;
+    color:#ffffff;
+    background-color:#f8b71b;
+}
+.cal-risklevel-4 {
+    font-size: 12px;    
+    border:1px solid #ec8b20;
+    color:#ffffff;    
+    background-color:#ec8b20;    
+}
+
+/*critical*/
+.cal-risklevel-5 {
+    font-size: 12px;
+    border:1px solid #d81921;
+    color:#ffffff;
+    background-color:#d81921;
+    
+}

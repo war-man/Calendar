@@ -1,0 +1,54 @@
+[
+  {
+    "outputFileName": "wwwroot/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site.min.js",
+    "inputFiles": [
+      "wwwroot/js/site.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/calendar.min.css",
+    "inputFiles": [
+      "wwwroot/css/calendar.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/calendar.min.js",
+    "inputFiles": [
+      "wwwroot/js/calendar.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap-treeview/src/js/bootstrap-treeview.min.js",
+    "inputFiles": [
+      "wwwroot/lib/bootstrap-treeview/src/js/bootstrap-treeview.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/event.min.css",
+    "inputFiles": [
+      "wwwroot/css/event.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/calendar-common.min.css",
+    "inputFiles": [
+      "wwwroot/css/calendar-common.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/event.min.js",
+    "inputFiles": [
+      "wwwroot/js/event.js"
+    ]
+  }
+]
