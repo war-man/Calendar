@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+
 using Calendar.Data;
 using Calendar.Models;
 using Calendar.Services;
@@ -97,7 +98,10 @@ namespace Calendar
 
             /* .netcore 2.0 end */
 
-            services.AddMvc();
+            /* .netcore 2.1 begin */
+            services.AddMvc()
+                .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+            /* .netcore 2.1 end */
 
             // Add application services.
             /* Statistics on Events by Team/Project used in the navigation menu in LHS. */
@@ -120,7 +124,7 @@ namespace Calendar
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
+        {            
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
@@ -128,7 +132,9 @@ namespace Calendar
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+                /* begin .netcore 2.1
                 app.UseBrowserLink();
+                   .netcore 2.1 end */
             }
             else
             {
@@ -141,14 +147,12 @@ namespace Calendar
             provider.Mappings[".msg"] = "application/octect-stream";         
 
             app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
+          
             /* .netcore 2.0 begin */
             app.UseAuthentication();
-
             //app.UseIdentity();
             /* .netcore 2.0 end */
-
-
-
+         
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -165,7 +169,7 @@ namespace Calendar
                     template: "logout",
                     defaults: new { controller = "User", action = "Logout" }
                 );
-            });
+            });            
 
             //SeedData.Initialize(app.ApplicationServices);
 

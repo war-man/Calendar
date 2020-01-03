@@ -3,8 +3,8 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:54382/",
-      "sslPort": 0
+      "applicationUrl": "http://localhost:39191/",
+      "sslPort": 44390
     }
   },
   "profiles": {
@@ -19,7 +19,7 @@
     "Calendar": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "http://localhost:5000/Events",
+      "launchUrl": "https://localhost:5001/Events;http://localhost:5000/Events",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
