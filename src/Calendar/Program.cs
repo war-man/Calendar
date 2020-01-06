@@ -17,7 +17,20 @@ namespace Calendar
         {
             //BuildWebHost(args).Run();
 
+            /* .netcore 2.2 begin */
+            /*
             CreateWebHostBuilder(args).Build().Run();
+            */
+            CreateWebHostBuilder(args)
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole();
+                    logging.AddDebug();
+                })
+                .Build().Run();
+            /* .netcore 2.2 end */
+
             /* .netcore 2.0
             var host = BuildWebHost(args);
             

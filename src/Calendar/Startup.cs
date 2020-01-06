@@ -98,10 +98,12 @@ namespace Calendar
 
             /* .netcore 2.0 end */
 
+            /* .netcore 2.2 begin */
             /* .netcore 2.1 begin */
             services.AddMvc()
-                .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
+                .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
             /* .netcore 2.1 end */
+            /* .netcore 2.2 end */
 
             // Add application services.
             /* Statistics on Events by Team/Project used in the navigation menu in LHS. */
@@ -123,10 +125,15 @@ namespace Calendar
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {            
+        /* .netcore 2.2 begin, logging moved to Program.Main() 
+         * public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+         * .netcore 2.2 end */
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            /* .netcore 2.2 begin, logging moved to Program.Main() 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            .netcore 2.2 end */
 
             if (env.IsDevelopment())
             {
