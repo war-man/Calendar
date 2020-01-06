@@ -110,7 +110,8 @@
         </dt>
         <dd>
             <div id="idAckPartialView">
-                @Html.Partial("AckPartial", Model.Acks)
+                @await Html.PartialAsync("AckPartial", Model.Acks)
+                <!--<partial name="AckPartial" model="Model.Acks" />-->
             </div>
 
         </dd>
@@ -179,7 +180,8 @@
         </dt>
         <dd>
             <div id="idAttachPartialView" style1="position:absolute; top:60px; left:620px; height:200px; overflow:hidden">
-                @Html.Partial("AttachPartial", Model.Attachs)
+                @await Html.PartialAsync("AttachPartial", Model.Attachs)
+                <!--<partial name="AttachPartial" model="Model.Attachs" />-->
             </div>
         </dd>
 
