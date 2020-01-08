@@ -334,12 +334,23 @@ namespace Calendar.Controllers
         }
 
         // GET: Events/Create
-        public IActionResult Create(string redir = null)
+        public IActionResult Create(string redir = null, string date = null)
         {
             ViewBag.Title = "Create Event";
             ViewBag.Redir = redir;
+
             if (User.IsInRole(Constants.ROLE_ADMIN))
-                return View();
+            {                
+                if (date != null && date != "")
+                {
+                    Event e = new Event();
+
+                    e.StartDateTime = DateTime.ParseExact(date, "d/m/yyyy", null);
+                    e.EndDateTime = e.StartDateTime.AddHours(12);
+                    return View(e);
+                } else
+                    return View();
+            }
             else
                 return NotFound();
         }

@@ -111,6 +111,7 @@ namespace Calendar
                 .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
             */
             services.AddRazorPages()
+                    .AddRazorRuntimeCompilation()
                     .AddNewtonsoftJson();  /* https://github.com/dotnet/corefx/issues/40120 */
             
             /* .netcore 2.1 end */
