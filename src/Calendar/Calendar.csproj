@@ -18,15 +18,22 @@
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
 .netcore 3.0 end -->    
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\uploads\**" />
+    <Content Remove="wwwroot\uploads\**" />
+    <EmbeddedResource Remove="wwwroot\uploads\**" />
+    <None Remove="wwwroot\uploads\**" />
+  </ItemGroup>
 <!--
   https://docs.microsoft.com/en-us/visualstudio/msbuild/common-msbuild-project-items?view=vs-2019#none
--->  
   <ItemGroup>
     <None Update="wwwroot\**\*">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
   </ItemGroup>
-
+-->
+  
 <!-- .netcore 3.0 begin   
   <ItemGroup>    
     <PackageReference Include="Microsoft.AspNetCore.App"/>
