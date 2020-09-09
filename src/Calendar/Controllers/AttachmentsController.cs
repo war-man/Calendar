@@ -11,7 +11,6 @@ using Calendar.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using System.IO;
-using Microsoft.AspNetCore.Hosting.Server;
 using System.Net;
 
 namespace Calendar.Controllers
@@ -19,7 +18,7 @@ namespace Calendar.Controllers
     public class AttachmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IHostingEnvironment _environment;
+        private readonly IWebHostEnvironment _environment;
         public Attachment tempAttachment;
 
         public IEnumerable<Attachment> ListAll()
@@ -32,7 +31,7 @@ namespace Calendar.Controllers
         //    _context = context;
         //}
 
-        public AttachmentsController(ApplicationDbContext context, IHostingEnvironment environment)
+        public AttachmentsController(ApplicationDbContext context, IWebHostEnvironment environment)
         {
             _context = context;
             _environment = environment;

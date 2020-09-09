@@ -17,8 +17,23 @@ namespace Calendar
         {
             //BuildWebHost(args).Run();
 
-            var host = BuildWebHost(args);
+            /* .netcore 2.2 begin */
+            /*
+            CreateWebHostBuilder(args).Build().Run();
+            */
+            CreateWebHostBuilder(args)
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddConsole();
+                    logging.AddDebug();
+                })
+                .Build().Run();
+            /* .netcore 2.2 end */
 
+            /* .netcore 2.0
+            var host = BuildWebHost(args);
+            
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -36,12 +51,17 @@ namespace Calendar
             }
 
             host.Run();
+            */
         }
-
+        /* .netcore 2.0
         public static IWebHost BuildWebHost(string[] args) =>
            WebHost.CreateDefaultBuilder(args)
                .UseStartup<Startup>()
                .Build();
+        */
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+           WebHost.CreateDefaultBuilder(args)
+               .UseStartup<Startup>();
 
     }
 }

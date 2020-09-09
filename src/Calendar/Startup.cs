@@ -11,13 +11,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+/* .netcore 3.0 begin */
+using Microsoft.Extensions.Hosting;
+/* .netcore 3.0 end */
 using Calendar.Data;
 using Calendar.Models;
 using Calendar.Services;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Net;
-using Microsoft.AspNetCore.Mvc.Internal;
+/* .netcore 3.0 begin */
+//using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+/* .netcore 3.0 end */
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 
@@ -97,7 +103,20 @@ namespace Calendar
 
             /* .netcore 2.0 end */
 
-            services.AddMvc();
+            /* .netcore 3.0 begin */
+            /* .netcore 2.2 begin */
+            /* .netcore 2.1 begin */
+            /*
+            services.AddMvc()
+                .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_2);
+            */
+            services.AddRazorPages()
+                    .AddRazorRuntimeCompilation()
+                    .AddNewtonsoftJson();  /* https://github.com/dotnet/corefx/issues/40120 */
+            
+            /* .netcore 2.1 end */
+            /* .netcore 2.2 end */
+            /* .netcore 3.0 end */
 
             // Add application services.
             /* Statistics on Events by Team/Project used in the navigation menu in LHS. */
@@ -119,16 +138,26 @@ namespace Calendar
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        /* .netcore 2.2 begin, logging moved to Program.Main() 
+         * public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+         * .netcore 2.2 end */
+        /* .netcore 3.0 begin
+         * public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+         * .netcore 3.0 end */
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            /* .netcore 2.2 begin, logging moved to Program.Main() 
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            .netcore 2.2 end */
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+                /* begin .netcore 2.1
                 app.UseBrowserLink();
+                   .netcore 2.1 end */
             }
             else
             {
@@ -141,14 +170,25 @@ namespace Calendar
             provider.Mappings[".msg"] = "application/octect-stream";         
 
             app.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });
+          
             /* .netcore 2.0 begin */
             app.UseAuthentication();
-
             //app.UseIdentity();
             /* .netcore 2.0 end */
 
-
-
+            /* .netcore 3.0 begin */
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapRazorPages();
+                endpoints.MapControllerRoute(
+                    "default", "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute(
+                    "login", "{controller=User}/{action=Login}");
+                endpoints.MapControllerRoute(
+                    "logout", "{controller=User}/{action=Logout}");
+            });
+            /*
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -166,7 +206,8 @@ namespace Calendar
                     defaults: new { controller = "User", action = "Logout" }
                 );
             });
-
+            */
+            /* .netcore 3.0 end */
             //SeedData.Initialize(app.ApplicationServices);
 
         }

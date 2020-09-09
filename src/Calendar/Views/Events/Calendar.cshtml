@@ -39,6 +39,8 @@
 
     /* Provide summary figures on Event,Team,Project */
     EventStatsService.Initialize(FirstDateOfTheCalendar, LastDateOfTheCalendar);
+
+    string UserName = (User.Identity.IsAuthenticated)? User.Claims.Where(m => m.Type == "username").SingleOrDefault().Value : "";
 }
 
 @* Local functions for this View *@
@@ -202,12 +204,13 @@
                             </table>
                             @{
                                 int offset = (int)FirstDateofTheMonth.DayOfWeek * -1 + 1;
-        int lastday = LastDateofTheMonth.Day;
+                                int lastday = LastDateofTheMonth.Day;
 
-        double RowHeightPCent, RowTop;
-        DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar, starting from FirstDateOfTheCalendar. 
+                                double RowHeightPCent, RowTop;
+                                DateTime bgcaldate = FirstDateOfTheCalendar;
+                                DateTime gridcaldate = FirstDateOfTheCalendar;  // displaying the day in each cell of the calendar, starting from FirstDateOfTheCalendar.         
 
-        RowHeightPCent = 100.0 / NumOfCalRow;
+                                RowHeightPCent = 100.0 / NumOfCalRow;
 
                                 <div id="mvEventContainer" class="mv-event-container" style="height:700px;">
                                     @for (var row = 0; row < NumOfCalRow; row++)
@@ -221,7 +224,9 @@
                                                         @for (var col = 0; col < DAYSINAWEEK; col++)
                                                         {
                                                             int d = col + row * DAYSINAWEEK + offset;
-                                                            <td class="st-bg @GetTodayCSS(FirstDateofTheMonth, d, "st-bg")">&nbsp;</td>
+
+                                                            <td class="st-bg @GetTodayCSS(FirstDateofTheMonth, d, "st-bg") st-create-e" date="@bgcaldate.Day/@bgcaldate.Month/@bgcaldate.Year">&nbsp;</td>
+                                                            bgcaldate = bgcaldate.AddDays(1);
                                                             /*
                                                             if (d >= 1 && d <= lastday)
                                                             {
@@ -270,23 +275,23 @@
                                                             @for (var col = 0; col < DAYSINAWEEK; col++)
                                                             {
                                                                 int NumOfDays = 1;
-    int d = caldate.Day;
+                                                                int d = caldate.Day;
                                                                 {
                                                                     int ColSpan = 1;
 
-    /* Get the first event of the date */
-    var ce = GetNextEventByDate(caldate);
+                                                                    /* Get the first event of the date */
+                                                                    var ce = GetNextEventByDate(caldate);
                                                                     if (ce != null)
                                                                     {
                                                                         var e = ce.Event;
 
-    /* Now, calculate the colspan of event. 
-     * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0
-     *      1-Feb-2017 0:00 to 5-Feb-2017 3:00 => colspan=4,1
-     */
-    //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
+                                                                        /* Now, calculate the colspan of event. 
+                                                                         * e.g. 1-Feb-2017 0:00 to 5-Feb-2017 0:00 => colspan=4,0
+                                                                         *      1-Feb-2017 0:00 to 5-Feb-2017 3:00 => colspan=4,1
+                                                                         */
+                                                                        //int NumOfDays = (int)Math.Ceiling((e.EndDateTime - e.StartDateTime).TotalDays);
 
-    NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
+                                                                        NumOfDays = (int)(e.EndDateTime.Date - e.StartDateTime.Date).TotalDays + 1;
                                                                         if (e.EndDateTime == e.EndDateTime.Date) /* for those end date with timestamp 0:00, it should not be counted as one day */
                                                                         {
                                                                             NumOfDays -= 1;
@@ -303,10 +308,10 @@
                                                                         }
 
                                                                         var over_title = ((e.RiskLevel == "50") ? "<span class='glyphicon glyphicon-exclamation-sign' style='color:red'></span>" : "") + ce.OriginalStart.ToString("dd-MMM h:mmtt") + " - " + ce.OriginalEnd.ToString("dd-MMM h:mmtt") + " (ID " + ce.Event.ID + ")";
-    var over_content = GetPopoverContent(ce);
-    var over_placement = (row <= 1) ? "bottom" : "top";
+                                                                        var over_content = GetPopoverContent(ce);
+                                                                        var over_placement = (row <= 1) ? "bottom" : "top";
 
-                                                                        <td class="st-c" colspan="@ColSpan">
+                                                                        <td class="st-c" colspan="@ColSpan" date="@caldate.Day/@caldate.Month/@caldate.Year">
                                                                             <div class="st-c-pos">
                                                                          @*
                                                                             @if (!ce.Continue && e.Severity == 1)
@@ -350,7 +355,7 @@
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td class="st-c">&nbsp;</td>   @* ce is null*@
+                                                                        <td class="st-c st-create-e" date="@caldate.Day/@caldate.Month/@caldate.Year">&nbsp;</td>   @* ce is null*@
                                                                     }
                                                                 }
                                                                 @* Bug fix for event spread more than one day. START *@
@@ -432,7 +437,7 @@
         for (i = 0; i < calevents.length; i++) {
             var ce = calevents[i];
             if (ce.event.id == currentEventId) {
-            comingEventId = (direction > 0) ? ce.nextEventID : ce.prevEventID;            
+            comingEventId = (direction > 0) ? ce.nextEventID : ce.prevEventID;
             break;
         }
     }
@@ -440,20 +445,20 @@
     }
 
     function NextEventModal(direction) {
-        /* #idModalReviewEventId is the current view event id or the default event id when the page is just loaded */        
+        /* #idModalReviewEventId is the current view event id or the default event id when the page is just loaded */
         var modalEvent  = $("#idModalReviewEventId");
         var currentEventId = modalEvent.text();     /* Current reviewing Event ID */
         var comingEventId = GetNextEventID(direction, currentEventId);                      /* Coming Event ID to be reviewed, can be next or previous */
 
         modalEvent.text(comingEventId);
-        /* comingEventId  = 0 means cannot find any coming event on the current calendar to review. 
+        /* comingEventId  = 0 means cannot find any coming event on the current calendar to review.
            let's navigate to previous/new for more events. */
 
         if (comingEventId == 0 && direction < 0) {
             location.href = "Calendar?year=@ViewDate_Prev.Year&month=@ViewDate_Prev.Month&reviewDirection=-1&reviewEventId=" + currentEventId;
         } else if (comingEventId == 0 && direction > 0) {
             location.href = "Calendar?year=@ViewDate_Next.Year&month=@ViewDate_Next.Month&reviewDirection=1&reviewEventId=" + currentEventId;
-        } else {            
+        } else {
             $("#idEventModalContent").load("Details/" + comingEventId + "?modal=1 #idContainer", updModalHeader);
         }
     };
@@ -473,12 +478,12 @@
             comingEventId = currentEventId;
             if (comingEventId != 0) {
                 $("#idEventModalContent").load("Details/" + comingEventId + "?modal=1 #idContainer", updModalHeader);
-                
+
             } else {
                 $("#idmodalEventHeader").text("Press 'Next' for more event(s), if any.");
             }
         } else {
-            if (lastReviewEventId == 0) 
+            if (lastReviewEventId == 0)
                 comingEventId = currentEventId; /* we came from no where, just use the default event when the page just loaded */
             else {
                 comingEventId = GetNextEventID(direction, lastReviewEventId);
@@ -490,7 +495,7 @@
 
             /* need to handle if comingEventId == 0. i.e. no more event to review */
             if (comingEventId != 0) {
-                $("#idEventModalContent").load("Details/" + comingEventId + "?modal=1 #idContainer", updModalHeader);                        
+                $("#idEventModalContent").load("Details/" + comingEventId + "?modal=1 #idContainer", updModalHeader);
                 /* if direction is not zero, that means we are moving and need to show the modal right away. */
                 $("#idShowModalEvent").trigger('click');
             } else {
@@ -498,6 +503,11 @@
                 $("#idEventDetailsModal").modal('hide');
             }
         }        
+        if (@(User.IsInRole(Constants.ROLE_ADMIN)? "true":"false")) {
+            $('td.st-create-e').click(function () {
+                location.href = "@Context.Request.PathBase/Events/Create?date=" + this.getAttribute('date') + "&redir=" + encodeURIComponent("Calendar?year=@ViewBag.ViewDate.Year&month=@ViewBag.ViewDate.Month");                
+            });
+        }
     });
 
     /* Update the Modeal Header with Event Duration */

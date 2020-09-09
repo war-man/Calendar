@@ -1,10 +1,10 @@
 ﻿@using System.Collections.Generic
-@using Microsoft.AspNetCore.Http
-@using Microsoft.AspNetCore.Http.Authentication
+<!-- .netcore 3.0 begin-->
+@using Microsoft.AspNetCore.Authentication
+<!-- .netcore 3.0 end-->
 @using Calendar.Models.SignOnViewModels
 
 @model SignOnViewModel
-
 @*@inject Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnv*@
 
 @{
@@ -22,7 +22,7 @@
                 <div class="form-group">
                     <label asp-for="Username" class="col-md-2 control-label"></label>
                     <div class="col-md-10">
-                        <input asp-for="Username" class="form-control" autofocus/>
+                        <input asp-for="Username" class="form-control" autofocus />
                         <span asp-validation-for="Username" class="text-danger"></span>
                     </div>
                 </div>

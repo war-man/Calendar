@@ -1,32 +1,63 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>        
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>        
+    <UserSecretsId>aspnet-Calendar-745a06c9-9e2e-489e-bbab-8e2492038138</UserSecretsId>        
+    <Version>3.1.0</Version>        
+    <Authors>Martin NG</Authors>        
+    <Company>HA</Company>
+<!-- .netcore 3.0 begin   
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>Calendar</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Calendar</PackageId>
-    <UserSecretsId>aspnet-Calendar-745a06c9-9e2e-489e-bbab-8e2492038138</UserSecretsId>
-    <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
+    <RuntimeFrameworkVersion>2.2.8</RuntimeFrameworkVersion>
     <AssetTargetFallback>$(AssetTargetFallback);dotnet5.6;portable-net45+win8</AssetTargetFallback>
+	  <CopyRefAssembliesToPublishDirectory>true</CopyRefAssembliesToPublishDirectory>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+.netcore 3.0 end -->    
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\uploads\**\*" />
+    <Content Remove="wwwroot\uploads\**\*" />
+    <EmbeddedResource Remove="wwwroot\uploads\**\*" />
+    <None Remove="wwwroot\uploads\**\*" />
+  </ItemGroup>     
+
+<!--
+  https://docs.microsoft.com/en-us/visualstudio/msbuild/common-msbuild-project-items?view=vs-2019#none
 
   <ItemGroup>
     <None Update="wwwroot\**\*">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
   </ItemGroup>
+-->
+
+<!-- .netcore 3.0 begin   
+  <ItemGroup>    
+    <PackageReference Include="Microsoft.AspNetCore.App"/>
+  </ItemGroup>
+.netcore 3.0 end -->    
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />    
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.0" />    
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0" />    
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="jQuery" Version="3.1.1" />
+    <PackageReference Include="jQuery" Version="3.3.1" />
     <PackageReference Include="Bootstrap.Less" Version="3.3.7" />
-    <PackageReference Include="Bootstrap.v3.Datetimepicker" Version="4.17.44" />
+    <PackageReference Include="Bootstrap.v3.Datetimepicker" Version="4.17.45" />
     <PackageReference Include="HubSpot.Tether" Version="1.1.1" />
-    <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="2.3.7" />
+    <PackageReference Include="Novell.Directory.Ldap.NETStandard" Version="2.3.8" />
   </ItemGroup>
 
 <!--
@@ -38,9 +69,6 @@
 
   <ItemGroup>
     <DotNetCliToolReference Include="BundlerMinifier.Core" Version="2.2.301" />
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
-    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
-    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
 
 </Project>
