@@ -1,6 +1,6 @@
 # Simple Maintenance Event Calendar
 
-## A Simple Calendar to Mark All Your System Maintenance Events
+## A Simple Calendar to Mark All Your System Maintenance Events CALENDAr
 
 ![](https://github.com/ngwwm/Calendar/blob/master/screenshots/Calendar.png)
 
